@@ -66,4 +66,13 @@ platform :ios do
       team_id: "442P244AFS"
     )
   end
+
+  desc "Upload the existing VaultApp.ipa to App Store Connect (no build, no bump)"
+  lane :upload do
+    upload_to_app_store(
+      ipa: "./VaultApp.ipa",
+      skip_metadata: true,
+      skip_screenshots: true
+    )
+  end
 end
