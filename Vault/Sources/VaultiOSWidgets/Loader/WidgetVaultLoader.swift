@@ -1,6 +1,6 @@
 import Foundation
 import FoundationExtensions
-public import VaultCore
+import VaultCore
 public import VaultFeed
 
 /// Reads the shared vault store from the widget extension process and

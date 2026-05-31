@@ -144,7 +144,6 @@ extension PersistedLocalVaultStore: VaultStoreReader {
 
         let full = VaultEncodingConstants.SearchableLevel.full
         let onlyTitle = VaultEncodingConstants.SearchableLevel.onlyTitle
-        let onlyPassphrase = VaultEncodingConstants.SearchableLevel.onlyPassphrase
         let titleSearchable = #Predicate<PersistedVaultItem> {
             $0.searchableLevel == full || $0.searchableLevel == onlyTitle
         }
