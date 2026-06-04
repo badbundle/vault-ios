@@ -11,6 +11,27 @@ env:
   XCODE_VERSION: "26.1"
 
 jobs:
+  release-config:
+    name: Release Config
+    timeout-minutes: 5
+    runs-on: macos-26
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: .ruby-version
+          bundler-cache: true
+
+      - name: Validate Ruby and Fastlane config
+        run: |
+          ruby -v
+          bundle exec ruby -c fastlane/Fastfile
+          bundle exec fastlane --version
+          bundle exec fastlane lanes
+
   lint:
     name: Lint
     timeout-minutes: 2

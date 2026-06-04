@@ -34,9 +34,10 @@ platform :ios do
   lane :release do
     get_certificates
     get_provisioning_profile(app_identifier: "com.badbundle.vault")
-    get_provisioning_profile(app_identifier: "com.badbundle.vault.VaultAppAutofill")
+    get_provisioning_profile(app_identifier: "com.badbundle.vault.VaultAutofill")
+    get_provisioning_profile(app_identifier: "com.badbundle.vault.Widgets")
     increment_build
-    
+
     # Build and export - skip validation during export to avoid auth issues
     gym(
       workspace: "Vault.xcworkspace",
@@ -45,7 +46,8 @@ platform :ios do
       export_options: {
         provisioningProfiles: {
           "com.badbundle.vault" => "vault.mobileprovision",
-          "com.badbundle.vault.VaultAppAutofill" => "vault-autofill.mobileprovision"
+          "com.badbundle.vault.VaultAutofill" => "vault-autofill.mobileprovision",
+          "com.badbundle.vault.Widgets" => "vault-widgets.mobileprovision"
         },
         uploadSymbols: true,
         uploadBitcode: false,
@@ -62,6 +64,15 @@ platform :ios do
     upload_to_app_store(
       username: "badbundlelimited@gmail.com",
       team_id: "442P244AFS"
+    )
+  end
+
+  desc "Upload the existing VaultApp.ipa to App Store Connect (no build, no bump)"
+  lane :upload do
+    upload_to_app_store(
+      ipa: "./VaultApp.ipa",
+      skip_metadata: true,
+      skip_screenshots: true
     )
   end
 end

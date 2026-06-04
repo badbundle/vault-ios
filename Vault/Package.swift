@@ -10,6 +10,7 @@ let swiftFormatChecksum: String = "d2ee571b3f15c173b1789b82b9fcf1e799cff66de0ae9
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ExistentialAny"),
     .enableExperimentalFeature("AccessLevelOnImport"),
+    .unsafeFlags(["-warnings-as-errors"]),
 //    .unsafeFlags([
 //        "-Xfrontend",
 //        "-warn-long-function-bodies=100",
