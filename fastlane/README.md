@@ -34,6 +34,14 @@ Increments the build number and commits this change
 
 Push a new release build to the App Store
 
+### ios upload
+
+```sh
+[bundle exec] fastlane ios upload
+```
+
+Upload the existing VaultApp.ipa to App Store Connect (no build, no bump)
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
