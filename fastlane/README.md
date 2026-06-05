@@ -19,7 +19,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane increment_build
 ```
 
-Increments the build number and commits this change
+Prints the next global App Store/TestFlight build number without changing project files
 
 ----
 
@@ -41,6 +41,14 @@ Push a new release build to the App Store
 ```
 
 Upload the existing VaultApp.ipa to App Store Connect (no build, no bump)
+
+### ios tag_release
+
+```sh
+[bundle exec] fastlane ios tag_release
+```
+
+Tag and push the current commit for an uploaded App Store build
 
 ----
 
