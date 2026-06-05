@@ -19,7 +19,7 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 [bundle exec] fastlane increment_build
 ```
 
-Increments the build number and commits this change
+Prints the next global App Store/TestFlight build number without changing project files
 
 ----
 

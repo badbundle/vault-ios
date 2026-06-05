@@ -15,16 +15,29 @@
 
 default_platform(:ios)
 
-desc "Increments the build number and commits this change"
-lane :increment_build do
-  ensure_git_status_clean
-  increment_build_number(
+private_lane :next_release_build_number do
+  current_project_build = get_build_number(
     xcodeproj: "VaultApp/VaultApp.xcodeproj"
-  )
-  commit_version_bump(
-    xcodeproj: "VaultApp/VaultApp.xcodeproj",
-    force: true
-  )
+  ).to_i
+
+  latest_uploaded_build = latest_testflight_build_number(
+    app_identifier: "com.badbundle.vault",
+    username: "badbundlelimited@gmail.com",
+    team_id: "127471357",
+    platform: "ios",
+    initial_build_number: current_project_build
+  ).to_i
+
+  ([current_project_build, latest_uploaded_build].max + 1).to_s
+rescue => error
+  UI.user_error!("Unable to determine the next App Store build number: #{error.message}")
+end
+
+desc "Prints the next global App Store/TestFlight build number without changing project files"
+lane :increment_build do
+  build_number = next_release_build_number
+  UI.message("Next release build number: #{build_number}")
+  build_number
 end
 
 platform :ios do
@@ -32,11 +45,14 @@ platform :ios do
 
 
   lane :release do
+    ensure_git_status_clean
+    release_build_number = next_release_build_number
+    UI.message("Using release build number #{release_build_number}")
+
     get_certificates
     get_provisioning_profile(app_identifier: "com.badbundle.vault")
     get_provisioning_profile(app_identifier: "com.badbundle.vault.VaultAutofill")
     get_provisioning_profile(app_identifier: "com.badbundle.vault.Widgets")
-    increment_build
 
     # Build and export - skip validation during export to avoid auth issues
     gym(
@@ -57,7 +73,7 @@ platform :ios do
       clean: true,
       export_team_id: "442P244AFS",
       # Use xcargs to pass additional options
-      xcargs: "-allowProvisioningUpdates"
+      xcargs: "-allowProvisioningUpdates CURRENT_PROJECT_VERSION=#{release_build_number}"
     )
     
     # Upload to App Store using the correct Apple ID
