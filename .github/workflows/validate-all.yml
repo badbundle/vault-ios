@@ -19,11 +19,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
+      - name: Install Ruby dependencies
+        run: |
+          ruby -v
+          ruby -e 'expected = File.read(".ruby-version").strip; abort("Expected Ruby #{expected}, got #{RUBY_VERSION}") unless RUBY_VERSION == expected'
+          bundle install
 
       - name: Validate Ruby and Fastlane config
         run: |

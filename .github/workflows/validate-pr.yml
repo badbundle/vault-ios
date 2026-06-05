@@ -1,8 +1,0 @@
-# These jobs are only run on PRs.
-name: Validate PR
-
-on:
-  pull_request:
-    branches: [main]
-# env:
-#   XCODE_VERSION: "15.3"
