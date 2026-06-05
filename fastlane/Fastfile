@@ -91,4 +91,36 @@ platform :ios do
       skip_screenshots: true
     )
   end
+
+  desc "Tag and push the current commit for an uploaded App Store build"
+  lane :tag_release do |options|
+    ensure_git_status_clean
+
+    version = (options[:version] || get_version_number(
+      xcodeproj: "VaultApp/VaultApp.xcodeproj",
+      target: "VaultApp"
+    )).to_s.strip
+    version = "#{version}.0" if version.split(".").length == 2
+    UI.user_error!("Version must look like 2.0.0") unless version.match?(/\A\d+\.\d+\.\d+\z/)
+
+    build_number = options[:build_number].to_s.strip
+    UI.user_error!("Pass build_number:100123") if build_number.empty?
+    UI.user_error!("Build number must be numeric") unless build_number.match?(/\A\d+\z/)
+
+    tag_name = "v#{version}+#{build_number}"
+    unless sh("git tag --list #{tag_name}", log: false).strip.empty?
+      UI.user_error!("Git tag #{tag_name} already exists locally")
+    end
+    unless sh("git ls-remote --tags origin refs/tags/#{tag_name}", log: false).strip.empty?
+      UI.user_error!("Git tag #{tag_name} already exists on origin")
+    end
+
+    add_git_tag(
+      tag: tag_name,
+      message: "Release #{version} (build #{build_number})"
+    )
+    push_git_tags(tag: tag_name)
+    UI.success("Tagged and pushed #{tag_name}")
+    tag_name
+  end
 end

@@ -42,6 +42,14 @@ Push a new release build to the App Store
 
 Upload the existing VaultApp.ipa to App Store Connect (no build, no bump)
 
+### ios tag_release
+
+```sh
+[bundle exec] fastlane ios tag_release
+```
+
+Tag and push the current commit for an uploaded App Store build
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.
