@@ -68,11 +68,11 @@ extension VaultKeyDeriver {
             }
         }
 
-        public init(tryFromString string: String) throws {
+        public init(tryFromString string: String) throws(MissingKeyDeriverError) {
             if let value = Self(rawValue: string) {
                 self = value
             } else {
-                throw MissingKeyDervierError()
+                throw MissingKeyDeriverError()
             }
         }
     }
@@ -81,9 +81,9 @@ extension VaultKeyDeriver {
 // MARK: - Derviers
 
 extension VaultKeyDeriver {
-    private struct MissingKeyDervierError: Error, LocalizedError {
-        var errorDescription: String? { "Missing Key Deriver" }
-        var failureReason: String? { "The key deriver used to generate this key is invalid" }
+    public struct MissingKeyDeriverError: Error, LocalizedError {
+        public var errorDescription: String? { "Missing Key Deriver" }
+        public var failureReason: String? { "The key deriver used to generate this key is invalid" }
     }
 
     public static func lookup(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {

@@ -4,13 +4,13 @@ import Foundation
 ///
 /// https://docs.yubico.com/yesdk/users-manual/application-oath/uri-string-format.html
 public struct OTPAuthURIEncoder {
-    enum URIEncodingError: Error {
+    public enum URIEncodingError: Error {
         case badURIComponents
     }
 
     public init() {}
 
-    public func encode(code: OTPAuthCode) throws -> OTPAuthURI {
+    public func encode(code: OTPAuthCode) throws(URIEncodingError) -> OTPAuthURI {
         var components = URLComponents()
         components.scheme = OTPAuthURI.otpAuthScheme
         components.host = makeFormatted(type: code.type)

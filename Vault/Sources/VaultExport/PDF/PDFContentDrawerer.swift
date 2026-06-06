@@ -23,7 +23,7 @@ struct PDFContentDrawerer {
     /// Draws to the current page or next page (if there's not enough room).
     ///
     /// Throws an error if unable to draw due to insufficient space, even on a new page.
-    func drawContent() throws {
+    func drawContent() throws(DrawError) {
         let result = draw()
         switch result {
         case .success:

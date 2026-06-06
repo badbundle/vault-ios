@@ -91,7 +91,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     }
 
     /// Throws if unable to draw.
-    func draw(label: DataBlockLabel) throws {
+    func draw(label: DataBlockLabel) throws(PDFContentDrawerer.DrawError) {
         let drawerer = PDFContentDrawerer { [self] in
             let currentLayoutEngine = pageLayout(contentArea.currentBounds)
             let attributedString = labelRenderer.makeAttributedTextForLabel(label)
@@ -126,7 +126,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         images: [Data],
         imageRenderer: some ImageDataRenderer,
         rectSeriesLayout: @escaping (CGRect) -> some RectSeriesLayout,
-    ) throws {
+    ) throws(PDFContentDrawerer.DrawError) {
         var currentImageNumberOnPage: UInt = 0
         var currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
 

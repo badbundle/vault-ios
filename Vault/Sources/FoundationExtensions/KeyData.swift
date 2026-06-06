@@ -6,7 +6,7 @@ public struct KeyData< let bytes: Int>: Equatable, Hashable, Sendable {
 
     public struct LengthError: Error {}
 
-    public init(data: Data) throws {
+    public init(data: Data) throws(LengthError) {
         guard data.count == bytes else { throw LengthError() }
         self.data = data
     }

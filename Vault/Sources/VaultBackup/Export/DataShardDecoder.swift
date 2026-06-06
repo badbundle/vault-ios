@@ -57,7 +57,7 @@ public struct DataShardDecoder {
     }
 
     /// Extract the data based on the shards.
-    public func decodeData() throws -> Data {
+    public func decodeData() throws(DecoderError) -> Data {
         guard isReadyToDecode else { throw DecoderError.missingShards }
         let sortedShards = currentShards.sorted { $0.key < $1.key }.map(\.value)
         return sortedShards.reduce(into: Data()) { result, shard in

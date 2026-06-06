@@ -1,12 +1,15 @@
 import Foundation
 
 @inlinable
-public func withMappedError<T>(body: () throws -> T, error: (any Error) -> some Error) throws -> T {
-    try Result {
-        try body()
-    }.mapError {
-        error($0)
-    }.get()
+public func withMappedError<T, Failure: Error>(
+    body: () throws -> T,
+    error mapError: (any Error) -> Failure,
+) throws(Failure) -> T {
+    do {
+        return try body()
+    } catch {
+        throw mapError(error)
+    }
 }
 
 /// Catches an error and returns the error type.

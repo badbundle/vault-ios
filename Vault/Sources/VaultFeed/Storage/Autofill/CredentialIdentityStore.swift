@@ -43,7 +43,7 @@ public final class RealCredentialIdentityStore: CredentialIdentityStore {
         try await store.removeAllCredentialIdentities()
     }
 
-    public func getCredentialIdentities() async throws -> [any ASCredentialIdentity] {
+    public func getCredentialIdentities() async throws(CredentialIdentityStoreError) -> [any ASCredentialIdentity] {
         let state = await store.state()
 
         guard state.isEnabled else {

@@ -35,7 +35,7 @@ public struct OTPAuthURIDecoder {
 // MARK: - Helpers
 
 extension OTPAuthURIDecoder {
-    private func decodeSecret(uri: URL) throws -> OTPAuthSecret {
+    private func decodeSecret(uri: URL) throws(Base32Error) -> OTPAuthSecret {
         guard let secret = uri.otpParameter(.secret) else {
             return .empty(.base32)
         }
@@ -43,7 +43,7 @@ extension OTPAuthURIDecoder {
         return .init(data: data, format: .base32)
     }
 
-    private func decodeDigits(uri: URL) throws -> OTPAuthDigits {
+    private func decodeDigits(uri: URL) throws(URIDecodingError) -> OTPAuthDigits {
         guard let digits = uri.otpParameter(.digits) else {
             return .default
         }
@@ -53,7 +53,7 @@ extension OTPAuthURIDecoder {
         return OTPAuthDigits(value: value)
     }
 
-    private func decodeAlgorithm(uri: URL) throws -> OTPAuthAlgorithm {
+    private func decodeAlgorithm(uri: URL) throws(URIDecodingError) -> OTPAuthAlgorithm {
         guard let algorithm = uri.otpParameter(.algorithm) else {
             return .default
         }
@@ -69,7 +69,7 @@ extension OTPAuthURIDecoder {
         }
     }
 
-    private func decodeLabel(uri: URL) throws -> (accountName: String, issuer: String) {
+    private func decodeLabel(uri: URL) throws(URIDecodingError) -> (accountName: String, issuer: String) {
         guard uri.pathComponents.count > 1 else {
             throw URIDecodingError.invalidLabel
         }
@@ -85,7 +85,7 @@ extension OTPAuthURIDecoder {
         return (String(accountName), issuer)
     }
 
-    private func decodeType(uri: URL) throws -> OTPAuthType {
+    private func decodeType(uri: URL) throws(URIDecodingError) -> OTPAuthType {
         guard let host = uri.host else {
             throw URIDecodingError.invalidType
         }
