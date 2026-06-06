@@ -22,8 +22,6 @@ struct VaultSettingsView: View {
 
     var body: some View {
         Form {
-            headerSection
-            aboutSection
             viewOptionsSection
             universalClipboardSection
             dangerSection
@@ -46,31 +44,6 @@ struct VaultSettingsView: View {
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-
-    private var headerSection: some View {
-        PlaceholderView(
-            systemIcon: "gear",
-            title: "Settings",
-            subtitle: "Control your Vault settings, customizations, and more.",
-        )
-        .padding()
-        .containerRelativeFrame(.horizontal)
-    }
-
-    private var aboutSection: some View {
-        Section {
-            NavigationLink {
-                VaultAboutView(viewModel: viewModel)
-            } label: {
-                FormRow(
-                    image: Image(systemName: "info.bubble.fill"),
-                    color: .blue,
-                ) {
-                    Text(viewModel.aboutTitle)
                 }
             }
         }
