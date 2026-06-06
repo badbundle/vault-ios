@@ -191,6 +191,67 @@ struct DeviceAuthenticationServiceTests {
     }
 
     @Test
+    func policyExtension_authenticateReturnsFalseWhenNoPolicyAvailable() async throws {
+        let policy = DeviceAuthenticationPolicyCannotAuthenticate()
+
+        let result = try await policy.authenticate(reason: "reason")
+        let cannotAuthenticate: DeviceAuthenticationPolicyCannotAuthenticate = .cannotAuthenticate
+
+        #expect(policy.canAuthenticate == false)
+        #expect(result == false)
+        #expect(cannotAuthenticate.canAuthenticate == false)
+    }
+
+    @Test
+    func policyExtension_authenticateUsesPasscodeWhenBiometricsUnavailable() async throws {
+        let policy = DeviceAuthenticationPolicyMock(
+            canAuthenicateWithPasscode: true,
+            canAuthenticateWithBiometrics: false,
+        )
+        policy.authenticateWithPasscodeHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
+
+        let result = try await policy.authenticate(reason: "reason")
+
+        #expect(result)
+        #expect(policy.authenticateWithBiometricsCallCount == 0)
+        #expect(policy.authenticateWithPasscodeCallCount == 1)
+    }
+
+    @Test
+    func staticPolicies_allowAndDenyAuthentication() async throws {
+        let allow = DeviceAuthenticationPolicyAlwaysAllow()
+        let deny = DeviceAuthenticationPolicyAlwaysDeny()
+
+        #expect(allow.canAuthenicateWithPasscode)
+        #expect(allow.canAuthenticateWithBiometrics)
+        #expect(try await allow.authenticateWithPasscode(reason: "reason"))
+        #expect(try await allow.authenticateWithBiometrics(reason: "reason"))
+
+        #expect(deny.canAuthenicateWithPasscode)
+        #expect(deny.canAuthenticateWithBiometrics)
+        #expect(try await deny.authenticateWithPasscode(reason: "reason") == false)
+        #expect(try await deny.authenticateWithBiometrics(reason: "reason") == false)
+
+        let factoryAllow: DeviceAuthenticationPolicyAlwaysAllow = .alwaysAllow
+        let factoryDeny: DeviceAuthenticationPolicyAlwaysDeny = .alwaysDeny
+
+        #expect(try await factoryAllow.authenticate(reason: "reason"))
+        #expect(try await factoryDeny.authenticate(reason: "reason") == false)
+    }
+
+    @Test
+    func devicePolicyDefaultFactoriesCreateUsingDevicePolicy() {
+        let defaultPolicy: DeviceAuthenticationPolicyUsingDevice = .default
+        let usingDevicePolicy: DeviceAuthenticationPolicyUsingDevice = .usingDevice
+
+        _ = defaultPolicy
+        _ = usingDevicePolicy
+    }
+
+    @Test
     func validateAuthenticationDoesNotThrowIfValid() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
