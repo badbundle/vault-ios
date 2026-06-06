@@ -1,1 +1,1 @@
-2fa,backup,secure,note,authenticator,google,authy,paper,pdf,qr,code,encrypted
+2fa,backup,secure,note,authenticator,totp,authy,paper,pdf,qr,code,encrypted

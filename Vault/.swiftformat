@@ -42,3 +42,4 @@
 --enable todos
 --enable throwingTests
 --disable hoistAwait
+--disable redundantThrows

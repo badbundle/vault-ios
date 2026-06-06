@@ -54,27 +54,48 @@ platform :ios do
     get_provisioning_profile(app_identifier: "com.badbundle.vault.VaultAutofill")
     get_provisioning_profile(app_identifier: "com.badbundle.vault.Widgets")
 
-    # Build and export - skip validation during export to avoid auth issues
-    gym(
+    export_options = {
+      provisioningProfiles: {
+        "com.badbundle.vault" => "vault.mobileprovision",
+        "com.badbundle.vault.VaultAutofill" => "vault-autofill.mobileprovision",
+        "com.badbundle.vault.Widgets" => "vault-widgets.mobileprovision"
+      },
+      uploadSymbols: true,
+      uploadBitcode: false,
+      # Keep Xcode from mutating App Store Connect version/build metadata during export.
+      manageAppVersionAndBuildNumber: false
+    }
+
+    # Archive with the normal PATH so the configured xcodebuild formatter uses the active Ruby toolchain.
+    archive_path = gym(
       workspace: "Vault.xcworkspace",
       scheme: "VaultApp",
-      export_method: "app-store",
-      export_options: {
-        provisioningProfiles: {
-          "com.badbundle.vault" => "vault.mobileprovision",
-          "com.badbundle.vault.VaultAutofill" => "vault-autofill.mobileprovision",
-          "com.badbundle.vault.Widgets" => "vault-widgets.mobileprovision"
-        },
-        uploadSymbols: true,
-        uploadBitcode: false,
-        # This is the key - skip the Apple validation during export
-        manageAppVersionAndBuildNumber: false
-      },
       clean: true,
-      export_team_id: "442P244AFS",
-      # Use xcargs to pass additional options
-      xcargs: "-allowProvisioningUpdates CURRENT_PROJECT_VERSION=#{release_build_number}"
+      skip_package_ipa: true,
+      # Allow non-interactive release archives to run approved SwiftPM build tool plugins.
+      xcargs: "-allowProvisioningUpdates -skipPackagePluginValidation CURRENT_PROJECT_VERSION=#{release_build_number}"
     )
+
+    original_path = ENV["PATH"]
+    begin
+      # Xcode's export step launches /usr/bin/rsync, which can spawn an rsync helper from PATH.
+      # Keep Apple's system bins first so Homebrew rsync does not reject Apple's xattr flags.
+      ENV["PATH"] = ["/usr/bin", "/bin", "/usr/sbin", "/sbin", original_path].compact.join(":")
+
+      gym(
+        workspace: "Vault.xcworkspace",
+        scheme: "VaultApp",
+        archive_path: archive_path,
+        skip_build_archive: true,
+        # Fastlane 2.235 still validates the pre-Xcode-26 name; Xcode accepts it with a warning.
+        export_method: "app-store",
+        export_options: export_options,
+        export_team_id: "442P244AFS",
+        export_xcargs: "-allowProvisioningUpdates"
+      )
+    ensure
+      ENV["PATH"] = original_path
+    end
     
     # Upload to App Store using the correct Apple ID
     upload_to_app_store(

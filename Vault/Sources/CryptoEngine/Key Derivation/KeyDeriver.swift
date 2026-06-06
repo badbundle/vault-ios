@@ -21,7 +21,7 @@ public struct FailingKeyDeriver<let bytes: Int>: KeyDeriver {
     public init() {}
 
     public struct KeyDeriverError: Error {}
-    public func key(password _: Data, salt _: Data) throws(KeyDeriverError) -> KeyData<bytes> {
+    public func key(password _: Data, salt _: Data) throws -> KeyData<bytes> {
         throw KeyDeriverError()
     }
 
