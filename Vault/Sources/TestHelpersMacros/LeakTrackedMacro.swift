@@ -41,9 +41,9 @@ public struct LeakTrackedMacro: BodyMacro {
 
         let statements = body.statements
         let wrapperCall: ExprSyntax = if isAsync {
-            "try await withLeakTracking { \(statements) }"
+            "try await withLeakTracking { () async throws in \(statements) }"
         } else {
-            "try withLeakTracking { \(statements) }"
+            "try withLeakTracking { () throws in \(statements) }"
         }
 
         return [CodeBlockItemSyntax(item: .expr(wrapperCall))]
