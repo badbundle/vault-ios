@@ -23,7 +23,6 @@ struct VaultSettingsView: View {
     var body: some View {
         Form {
             headerSection
-            aboutSection
             viewOptionsSection
             universalClipboardSection
             dangerSection
@@ -59,21 +58,6 @@ struct VaultSettingsView: View {
         )
         .padding()
         .containerRelativeFrame(.horizontal)
-    }
-
-    private var aboutSection: some View {
-        Section {
-            NavigationLink {
-                VaultAboutView(viewModel: viewModel)
-            } label: {
-                FormRow(
-                    image: Image(systemName: "info.bubble.fill"),
-                    color: .blue,
-                ) {
-                    Text(viewModel.aboutTitle)
-                }
-            }
-        }
     }
 
     private var viewOptionsSection: some View {

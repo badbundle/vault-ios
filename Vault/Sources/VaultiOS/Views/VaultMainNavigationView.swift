@@ -21,6 +21,7 @@ struct VaultMainNavigationView: View {
         case backup
         case restore
         case settings
+        case about
         case demos
     }
 
@@ -43,19 +44,24 @@ struct VaultMainNavigationView: View {
                     NavigationLink(value: SidebarItem.restore) {
                         Label("Restore", systemImage: "arrow.down.doc.fill")
                     }
+                }
+
+                Section {
                     NavigationLink(value: SidebarItem.settings) {
                         Label("Settings", systemImage: "gear")
                     }
-                }
 
-                #if DEBUG
-                Section {
+                    NavigationLink(value: SidebarItem.about) {
+                        Label("About", systemImage: "info.bubble.fill")
+                    }
+
+                    #if DEBUG
                     NavigationLink(value: SidebarItem.demos) {
                         Label("Developer", systemImage: "hammer.fill")
                     }
                     .tint(.purple)
+                    #endif
                 }
-                #endif
             }
             .navigationTitle("Vault")
             .listStyle(.sidebar)
@@ -77,6 +83,11 @@ struct VaultMainNavigationView: View {
             case .settings:
                 NavigationStack {
                     VaultSettingsView(viewModel: SettingsViewModel(), localSettings: localSettings)
+                }
+                .navigationBarTitleDisplayMode(.inline)
+            case .about:
+                NavigationStack {
+                    VaultAboutView(viewModel: SettingsViewModel())
                 }
                 .navigationBarTitleDisplayMode(.inline)
             case .backup:
