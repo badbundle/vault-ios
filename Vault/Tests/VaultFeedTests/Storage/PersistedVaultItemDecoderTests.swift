@@ -103,6 +103,30 @@ extension PersistedVaultItemDecoderTests {
         #expect(decoded.metadata.color == expectedColor)
     }
 
+    @Test
+    func decodeMetadata_decodesQuickTypeAndPreviewMode() throws {
+        let item = makePersistedItem(
+            showInQuickType: false,
+            previewMode: NotePreviewMode.hidden.rawValue,
+        )
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+
+        #expect(decoded.metadata.showInQuickType == false)
+        #expect(decoded.metadata.previewMode == .hidden)
+    }
+
+    @Test
+    func decodeMetadata_invalidPreviewModeDefaultsToTitleAndFirstLine() throws {
+        let item = makePersistedItem(previewMode: "INVALID")
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+
+        #expect(decoded.metadata.previewMode == .titleAndFirstLine)
+    }
+
     @Test(arguments: [
         (VaultItemVisibility.always, "ALWAYS"),
         (VaultItemVisibility.onlySearch, "ONLY_SEARCH"),
@@ -500,6 +524,8 @@ extension PersistedVaultItemDecoderTests {
         killphraseDigest: Data? = nil,
         lockState: String? = nil,
         color: PersistedColor? = nil,
+        showInQuickType: Bool = true,
+        previewMode: String = NotePreviewMode.titleAndFirstLine.rawValue,
         tags: [PersistedVaultTag] = [],
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(
@@ -529,8 +555,8 @@ extension PersistedVaultItemDecoderTests {
             killphraseDigest: killphraseDigest,
             lockState: lockState,
             color: color,
-            showInQuickType: true,
-            previewMode: NotePreviewMode.titleAndFirstLine.rawValue,
+            showInQuickType: showInQuickType,
+            previewMode: previewMode,
             tags: tags,
             noteDetails: noteDetails,
             otpDetails: otpDetails,

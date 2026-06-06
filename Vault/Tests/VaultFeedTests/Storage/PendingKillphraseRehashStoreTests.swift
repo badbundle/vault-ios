@@ -66,19 +66,26 @@ struct PendingKillphraseRehashStoreTests {
 
     @Test
     func clear_overwritesContentBeforeDeletion() throws {
-        // Best-effort residue minimisation: clear() writes zeros over
-        // the file before removing it. We can't easily prove residue is
-        // gone (filesystem semantics), but we can verify the overwrite
-        // path runs by intercepting between overwrite and delete.
         let url = tmpURL()
         defer { try? FileManager.default.removeItem(at: url) }
-        let sut = makeSUT(at: url)
+        var overwrittenData: Data?
+        var overwrittenURL: URL?
+        let sut = PendingKillphraseRehashStore(
+            fileURL: url,
+            overwriteWrite: { data, url in
+                overwrittenData = data
+                overwrittenURL = url
+                try data.write(to: url, options: [.atomic])
+            },
+        )
         try sut.write([.init(itemID: UUID(), phrase: "secret")])
         let originalSize = try sizeOfFile(at: url)
         #expect(originalSize > 0)
 
         try sut.clear()
 
+        #expect(overwrittenURL == url)
+        #expect(overwrittenData == Data(count: originalSize))
         #expect(FileManager.default.fileExists(atPath: url.path(percentEncoded: false)) == false)
     }
 }

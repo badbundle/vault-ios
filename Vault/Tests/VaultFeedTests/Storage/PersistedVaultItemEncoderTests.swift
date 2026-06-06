@@ -129,6 +129,21 @@ extension PersistedVaultItemEncoderTests {
         #expect(newCode.color?.blue == 0.7)
     }
 
+    @Test
+    func encodeMetadata_encodesQuickTypeAndPreviewMode() throws {
+        let sut = makeSUT()
+        let item = makeWritable(
+            code: uniqueCode(),
+            showInQuickType: false,
+            previewMode: .hidden,
+        )
+
+        let encoded = try encode(sut: sut, item: item)
+
+        #expect(encoded.showInQuickType == false)
+        #expect(encoded.previewMode == NotePreviewMode.hidden.rawValue)
+    }
+
     @Test(arguments: [
         (VaultItemVisibility.always, "ALWAYS"),
         (VaultItemVisibility.onlySearch, "ONLY_SEARCH"),

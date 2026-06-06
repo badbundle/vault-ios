@@ -33,9 +33,9 @@ public final class DeviceAuthenticationService {
     }
 
     /// Throws if the user is not authenticated or for any other error.
-    public func validateAuthentication(reason _: String) async throws {
+    public func validateAuthentication(reason: String) async throws {
         let result = try await policy
-            .authenticate(reason: "Validate access to the backup password store.")
+            .authenticate(reason: reason)
         guard result else {
             throw DeviceAuthenticationFailure.authenticationFailure
         }

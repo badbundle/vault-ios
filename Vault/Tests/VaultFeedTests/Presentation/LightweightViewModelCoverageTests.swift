@@ -1,0 +1,86 @@
+import Foundation
+import Testing
+@testable import VaultFeed
+
+@MainActor
+struct LightweightViewModelCoverageTests {
+    @Test
+    func backupCreateViewModel_exposesStrings() {
+        let sut = BackupCreateViewModel()
+
+        #expect(sut.strings.homeTitle.isEmpty == false)
+        #expect(sut.strings.backupPasswordSectionTitle.isEmpty == false)
+        #expect(sut.strings.backupPasswordCreateTitle.isEmpty == false)
+        #expect(sut.strings.backupPasswordUpdateTitle.isEmpty == false)
+        #expect(sut.strings.backupPasswordExportTitle.isEmpty == false)
+        #expect(sut.strings.backupPasswordLoadingTitle.isEmpty == false)
+        #expect(sut.strings.backupPasswordErrorTitle.isEmpty == false)
+        #expect(sut.strings.backupPasswordErrorDetail.isEmpty == false)
+    }
+
+    @Test
+    func backupRestoreViewModel_exposesStrings() {
+        let sut = BackupRestoreViewModel()
+
+        #expect(sut.strings.homeTitle.isEmpty == false)
+        #expect(sut.strings.backupPasswordImportTitle.isEmpty == false)
+    }
+
+    @Test
+    func vaultTagFeedViewModel_exposesStrings() {
+        let sut = VaultTagFeedViewModel()
+
+        #expect(sut.strings.title.isEmpty == false)
+        #expect(sut.strings.createTagTitle.isEmpty == false)
+        #expect(sut.strings.noTagsTitle.isEmpty == false)
+        #expect(sut.strings.noTagsDescription.isEmpty == false)
+        #expect(sut.strings.retrieveErrorTitle.isEmpty == false)
+        #expect(sut.strings.retrieveErrorDescription.isEmpty == false)
+    }
+
+    @Test
+    func settingsDangerViewModel_failedAuthenticationResetsDeletingState() async {
+        let deleter = VaultStoreDeleterMock()
+        let dataModel = anyVaultDataModel(vaultDeleter: deleter)
+        let authentication = DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysDeny())
+        let sut = SettingsDangerViewModel(dataModel: dataModel, authenticationService: authentication)
+
+        await #expect(throws: (any Error).self) {
+            try await sut.deleteEntireVault()
+        }
+
+        #expect(sut.isDeleting == false)
+        #expect(deleter.deleteVaultCallCount == 0)
+    }
+
+    @Test
+    func genericVaultItemCopyActionHandler_returnsFirstChildAction() {
+        let itemID = Identifier<VaultItem>.new()
+        let first = VaultItemCopyActionHandlerMock()
+        let second = VaultItemCopyActionHandlerMock()
+        let expected = VaultTextCopyAction(text: "123456", requiresAuthenticationToCopy: false, contentType: .otp)
+        first.textToCopyForVaultItemHandler = { _ in nil }
+        second.textToCopyForVaultItemHandler = { id in
+            #expect(id == itemID)
+            return expected
+        }
+        let sut = GenericVaultItemCopyActionHandler(childHandlers: [first, second])
+
+        let action = sut.textToCopyForVaultItem(id: itemID)
+
+        #expect(action == expected)
+        #expect(first.textToCopyForVaultItemCallCount == 1)
+        #expect(second.textToCopyForVaultItemCallCount == 1)
+    }
+
+    @Test
+    func genericVaultItemCopyActionHandler_returnsNilWhenNoChildMatches() {
+        let child = VaultItemCopyActionHandlerMock()
+        let sut = GenericVaultItemCopyActionHandler(childHandlers: [child])
+
+        let action = sut.textToCopyForVaultItem(id: .new())
+
+        #expect(action == nil)
+        #expect(child.textToCopyForVaultItemCallCount == 1)
+    }
+}

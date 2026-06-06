@@ -69,7 +69,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in true }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
@@ -84,7 +87,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in false }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return false
+        }
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
@@ -99,7 +105,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            throw TestError()
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: (any Error).self) {
@@ -115,7 +124,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
         )
-        policy.authenticateWithPasscodeHandler = { _ in true }
+        policy.authenticateWithPasscodeHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
@@ -130,7 +142,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
         )
-        policy.authenticateWithPasscodeHandler = { _ in false }
+        policy.authenticateWithPasscodeHandler = { reason in
+            #expect(reason == "reason")
+            return false
+        }
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
@@ -145,7 +160,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
         )
-        policy.authenticateWithPasscodeHandler = { _ in throw TestError() }
+        policy.authenticateWithPasscodeHandler = { reason in
+            #expect(reason == "reason")
+            throw TestError()
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: (any Error).self) {
@@ -161,7 +179,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in true }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
         let sut = makeSUT(policy: policy)
 
         _ = try await sut.authenticate(reason: "reason")
@@ -170,12 +191,76 @@ struct DeviceAuthenticationServiceTests {
     }
 
     @Test
+    func policyExtension_authenticateReturnsFalseWhenNoPolicyAvailable() async throws {
+        let policy = DeviceAuthenticationPolicyCannotAuthenticate()
+
+        let result = try await policy.authenticate(reason: "reason")
+        let cannotAuthenticate: DeviceAuthenticationPolicyCannotAuthenticate = .cannotAuthenticate
+
+        #expect(policy.canAuthenticate == false)
+        #expect(result == false)
+        #expect(cannotAuthenticate.canAuthenticate == false)
+    }
+
+    @Test
+    func policyExtension_authenticateUsesPasscodeWhenBiometricsUnavailable() async throws {
+        let policy = DeviceAuthenticationPolicyMock(
+            canAuthenicateWithPasscode: true,
+            canAuthenticateWithBiometrics: false,
+        )
+        policy.authenticateWithPasscodeHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
+
+        let result = try await policy.authenticate(reason: "reason")
+
+        #expect(result)
+        #expect(policy.authenticateWithBiometricsCallCount == 0)
+        #expect(policy.authenticateWithPasscodeCallCount == 1)
+    }
+
+    @Test
+    func staticPolicies_allowAndDenyAuthentication() async throws {
+        let allow = DeviceAuthenticationPolicyAlwaysAllow()
+        let deny = DeviceAuthenticationPolicyAlwaysDeny()
+
+        #expect(allow.canAuthenicateWithPasscode)
+        #expect(allow.canAuthenticateWithBiometrics)
+        #expect(try await allow.authenticateWithPasscode(reason: "reason"))
+        #expect(try await allow.authenticateWithBiometrics(reason: "reason"))
+
+        #expect(deny.canAuthenicateWithPasscode)
+        #expect(deny.canAuthenticateWithBiometrics)
+        #expect(try await deny.authenticateWithPasscode(reason: "reason") == false)
+        #expect(try await deny.authenticateWithBiometrics(reason: "reason") == false)
+
+        let factoryAllow: DeviceAuthenticationPolicyAlwaysAllow = .alwaysAllow
+        let factoryDeny: DeviceAuthenticationPolicyAlwaysDeny = .alwaysDeny
+
+        #expect(try await factoryAllow.authenticate(reason: "reason"))
+        #expect(try await factoryDeny.authenticate(reason: "reason") == false)
+    }
+
+    @Test
+    func devicePolicyDefaultFactoriesCreateUsingDevicePolicy() {
+        let defaultPolicy: DeviceAuthenticationPolicyUsingDevice = .default
+        let usingDevicePolicy: DeviceAuthenticationPolicyUsingDevice = .usingDevice
+
+        _ = defaultPolicy
+        _ = usingDevicePolicy
+    }
+
+    @Test
     func validateAuthenticationDoesNotThrowIfValid() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in true }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: Never.self) {
@@ -191,7 +276,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in false }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return false
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: (any Error).self) {
@@ -205,7 +293,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            throw TestError()
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: (any Error).self) {

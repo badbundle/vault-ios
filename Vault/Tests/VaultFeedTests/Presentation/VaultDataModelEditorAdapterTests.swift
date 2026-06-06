@@ -80,6 +80,7 @@ struct VaultDataModelEditorAdapterTests {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await loadDigesters(on: dataModel)
         let sut = makeSUT(dataModel: dataModel)
 
         var code = uniqueCode()
@@ -114,6 +115,13 @@ struct VaultDataModelEditorAdapterTests {
             store.updateHandler = { _, data in
                 defer { confirmation() }
                 #expect(data.userDescription == "new description")
+                #expect(data.visibility == .always)
+                #expect(data.searchableLevel == .full)
+                #expect(data.searchPassphraseUpdate == .clear)
+                assertKillphrase(data.killphraseUpdate, matches: "new kill", using: dataModel)
+                #expect(data.lockState == .notLocked)
+                #expect(data.showInQuickType == true)
+                #expect(data.previewMode == .titleAndFirstLine)
                 switch data.item {
                 case let .otpCode(otpCode):
                     #expect(otpCode.data.accountName == "new account name")
@@ -180,6 +188,7 @@ struct VaultDataModelEditorAdapterTests {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await loadDigesters(on: dataModel)
         let sut = makeSUT(dataModel: dataModel)
 
         var initialEdits = SecureNoteDetailEdits.new()
@@ -196,7 +205,10 @@ struct VaultDataModelEditorAdapterTests {
                 #expect(data.userDescription == "second line")
                 #expect(data.visibility == .onlySearch)
                 #expect(data.searchableLevel == .onlyPassphrase)
-                // Search passphrase is now stored as one-way digest, so we can't assert plaintext equality here.
+                assertSearchPassphrase(data.searchPassphraseUpdate, matches: "pass", using: dataModel)
+                assertKillphrase(data.killphraseUpdate, matches: "this is kill", using: dataModel)
+                #expect(data.lockState == .lockedWithNativeSecurity)
+                #expect(data.previewMode == .titleAndFirstLine)
                 switch data.item {
                 case let .secureNote(note):
                     #expect(note.title == "first line")
@@ -216,6 +228,7 @@ struct VaultDataModelEditorAdapterTests {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await loadDigesters(on: dataModel)
         let deriverMock = KeyDeriverMock<Bits256>()
         let keyDeriverFactory = VaultKeyDeriverFactoryMock()
         keyDeriverFactory.makeVaultItemKeyDeriverHandler = {
@@ -239,7 +252,10 @@ struct VaultDataModelEditorAdapterTests {
                     #expect(data.userDescription == "", "Empty because note is encrypted")
                     #expect(data.visibility == .onlySearch)
                     #expect(data.searchableLevel == .onlyPassphrase)
-                    // Search passphrase is now stored as one-way digest, so we can't assert plaintext equality here.
+                    assertSearchPassphrase(data.searchPassphraseUpdate, matches: "pass", using: dataModel)
+                    assertKillphrase(data.killphraseUpdate, matches: "this is kill", using: dataModel)
+                    #expect(data.lockState == .lockedWithNativeSecurity)
+                    #expect(data.previewMode == .titleAndFirstLine)
                     switch data.item {
                     case let .encryptedItem(item):
                         #expect(item.title == "first line")
@@ -270,6 +286,7 @@ struct VaultDataModelEditorAdapterTests {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await loadDigesters(on: dataModel)
         let keyDeriverFactory = VaultKeyDeriverFactoryMock()
         keyDeriverFactory.makeVaultItemKeyDeriverHandler = { .testing }
         let sut = makeSUT(dataModel: dataModel, keyDeriverFactory: keyDeriverFactory)
@@ -290,7 +307,10 @@ struct VaultDataModelEditorAdapterTests {
                 #expect(data.userDescription == "", "Empty because note is encrypted")
                 #expect(data.visibility == .onlySearch)
                 #expect(data.searchableLevel == .onlyPassphrase)
-                // Search passphrase is now stored as one-way digest, so we can't assert plaintext equality here.
+                assertSearchPassphrase(data.searchPassphraseUpdate, matches: "pass", using: dataModel)
+                assertKillphrase(data.killphraseUpdate, matches: "this is kill", using: dataModel)
+                #expect(data.lockState == .lockedWithNativeSecurity)
+                #expect(data.previewMode == .titleAndFirstLine)
                 switch data.item {
                 case let .encryptedItem(item):
                     #expect(item.title == "first line")
@@ -326,6 +346,7 @@ struct VaultDataModelEditorAdapterTests {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await loadDigesters(on: dataModel)
         let sut = makeSUT(dataModel: dataModel)
 
         var note = anySecureNote()
@@ -349,7 +370,10 @@ struct VaultDataModelEditorAdapterTests {
                 #expect(data.userDescription == "second line")
                 #expect(data.visibility == .always)
                 #expect(data.searchableLevel == .full)
-                // Search passphrase is now stored as one-way digest, so we can't assert plaintext equality here.
+                #expect(data.searchPassphraseUpdate == .clear)
+                assertKillphrase(data.killphraseUpdate, matches: "this kill", using: dataModel)
+                #expect(data.lockState == .notLocked)
+                #expect(data.previewMode == .titleAndFirstLine)
                 switch data.item {
                 case let .secureNote(note):
                     #expect(note.title == "first line")
@@ -450,5 +474,42 @@ extension VaultDataModelEditorAdapterTests {
             color: nil,
             showInQuickType: true,
         )
+    }
+
+    private func loadDigesters(on dataModel: VaultDataModel) async {
+        await dataModel.loadKillphraseDigester()
+        await dataModel.loadSearchPassphraseDigester()
+    }
+
+    private func assertSearchPassphrase(
+        _ update: VaultItem.SearchPassphraseUpdate,
+        matches phrase: String,
+        using dataModel: VaultDataModel,
+    ) {
+        guard case let .set(digest) = update else {
+            Issue.record("Expected search passphrase to be set, got \(update)")
+            return
+        }
+        #expect(dataModel.searchPassphraseDigester?.matches(
+            query: phrase,
+            salt: digest.salt,
+            digest: digest.digest,
+        ) == true)
+    }
+
+    private func assertKillphrase(
+        _ update: VaultItem.KillphraseUpdate,
+        matches phrase: String,
+        using dataModel: VaultDataModel,
+    ) {
+        guard case let .set(digest) = update else {
+            Issue.record("Expected killphrase to be set, got \(update)")
+            return
+        }
+        #expect(dataModel.killphraseDigester?.matches(
+            query: phrase,
+            salt: digest.salt,
+            digest: digest.digest,
+        ) == true)
     }
 }

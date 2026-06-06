@@ -96,6 +96,27 @@ final class VaultDataModelTests {
     }
 
     @Test
+    func searchPresentationValues_reflectQueryAndFilters() {
+        let sut = makeSUT()
+        let originalHash = sut.itemSearchHash
+
+        sut.items = [uniqueVaultItem(), uniqueVaultItem()]
+        sut.itemsSearchQuery = "query"
+        sut.itemsFilteringByTags = [.new(), .new()]
+
+        #expect(sut.itemSearchHash != originalHash)
+        #expect(sut.feedTitle.isEmpty == false)
+        #expect(sut.filteringByTagsDescription.isEmpty == false)
+    }
+
+    @Test
+    func feedTitle_usesListTitleWhenNotSearching() {
+        let sut = makeSUT()
+
+        #expect(sut.feedTitle.isEmpty == false)
+    }
+
+    @Test
     func init_initialPayloadHashIsNil() {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
@@ -112,6 +133,60 @@ final class VaultDataModelTests {
 
         #expect(store.calledMethods == [.export])
         #expect(sut.currentPayloadHash != nil)
+    }
+
+    @Test
+    func loadKillphraseDigester_isNoopWhenAlreadyLoaded() async throws {
+        let keyStore = KillphraseKeyStoreMock()
+        keyStore.loadOrCreateHandler = {
+            try KeyData<Bits256>(data: Data(repeating: 1, count: 32))
+        }
+        let sut = makeSUT(killphraseKeyStore: keyStore)
+
+        await sut.loadKillphraseDigester()
+        await sut.loadKillphraseDigester()
+
+        #expect(keyStore.loadOrCreateCallCount == 1)
+        #expect(sut.killphraseDigester != nil)
+    }
+
+    @Test
+    func loadKillphraseDigester_swallowsKeyStoreError() async {
+        let keyStore = KillphraseKeyStoreMock()
+        keyStore.loadOrCreateHandler = { throw TestError() }
+        let sut = makeSUT(killphraseKeyStore: keyStore)
+
+        await sut.loadKillphraseDigester()
+
+        #expect(keyStore.loadOrCreateCallCount == 1)
+        #expect(sut.killphraseDigester == nil)
+    }
+
+    @Test
+    func loadSearchPassphraseDigester_isNoopWhenAlreadyLoaded() async throws {
+        let keyStore = SearchPassphraseKeyStoreMock()
+        keyStore.loadOrCreateHandler = {
+            try KeyData<Bits256>(data: Data(repeating: 2, count: 32))
+        }
+        let sut = makeSUT(searchPassphraseKeyStore: keyStore)
+
+        await sut.loadSearchPassphraseDigester()
+        await sut.loadSearchPassphraseDigester()
+
+        #expect(keyStore.loadOrCreateCallCount == 1)
+        #expect(sut.searchPassphraseDigester != nil)
+    }
+
+    @Test
+    func loadSearchPassphraseDigester_swallowsKeyStoreError() async {
+        let keyStore = SearchPassphraseKeyStoreMock()
+        keyStore.loadOrCreateHandler = { throw TestError() }
+        let sut = makeSUT(searchPassphraseKeyStore: keyStore)
+
+        await sut.loadSearchPassphraseDigester()
+
+        #expect(keyStore.loadOrCreateCallCount == 1)
+        #expect(sut.searchPassphraseDigester == nil)
     }
 
     @Test
@@ -262,6 +337,16 @@ final class VaultDataModelTests {
     }
 
     @Test
+    func reloadTags_presentsErrorOnFailure() async {
+        let tagStore = VaultTagStoreErroring(error: TestError())
+        let sut = makeSUT(vaultTagStore: tagStore)
+
+        await sut.reloadTags()
+
+        #expect(sut.allTagsRetrievalError != nil)
+    }
+
+    @Test
     func reloadItems_deletesKillphraseItemsBeforeReturningResults() async throws {
         let store = VaultStoreStub()
         let killphraseDeleter = VaultStoreKillphraseDeleterMock()
@@ -296,6 +381,54 @@ final class VaultDataModelTests {
                 await sut.reloadItems()
             }
         }
+    }
+
+    @Test
+    func reloadItems_syncsAutofillAndNotifiesWhenKillphraseDeletesItems() async throws {
+        let store = VaultStoreStub()
+        let killphraseDeleter = VaultStoreKillphraseDeleterMock()
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let keyStore = KillphraseKeyStoreMock()
+        keyStore.loadOrCreateHandler = {
+            (try? KeyData<Bits256>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
+        }
+        let sut = makeSUT(
+            vaultStore: store,
+            vaultKillphraseDeleter: killphraseDeleter,
+            vaultOtpAutofillStore: vaultOtpAutofillStore,
+            killphraseKeyStore: keyStore,
+        )
+        await sut.setup()
+        sut.itemsSearchQuery = "hello world"
+        let remainingItem = uniqueVaultItem()
+        var retrievedQueries: [String?] = []
+
+        killphraseDeleter.deleteItemsHandler = { query, _ in
+            #expect(query == "hello world")
+            return true
+        }
+        store.retrieveHandler = { query in
+            retrievedQueries.append(query.filterText)
+            return .init(items: [remainingItem])
+        }
+
+        await confirmation("Autofill synced", expectedCount: 1) { confirmSync in
+            vaultOtpAutofillStore.syncAllHandler = { items in
+                #expect(items.map(\.id) == [remainingItem.id])
+                confirmSync()
+            }
+
+            await confirmation("Data change notified", expectedCount: 1) { confirmChange in
+                sut.onDataChanged = {
+                    confirmChange()
+                }
+
+                await sut.reloadItems()
+            }
+        }
+
+        #expect(retrievedQueries == ["hello world", nil])
+        #expect(vaultOtpAutofillStore.syncAllCallCount == 1)
     }
 
     @Test
@@ -514,6 +647,7 @@ final class VaultDataModelTests {
         await sut.loadBackupPassword()
 
         #expect(sut.backupPassword.isRetryable == false)
+        #expect(sut.backupPassword.fetchedPassword == password)
     }
 
     @Test
@@ -568,6 +702,48 @@ final class VaultDataModelTests {
 
         #expect(vaultStore.calledMethods == [.retrieve])
         #expect(vaultTagStore.calledMethods == [.retrieveTags])
+    }
+
+    @Test
+    func code_returnsMatchingItemFromLoadedItems() {
+        let expected = uniqueVaultItem()
+        let sut = makeSUT()
+        sut.items = [uniqueVaultItem(), expected]
+
+        #expect(sut.code(id: expected.id) == expected)
+        #expect(sut.code(id: .new()) == nil)
+    }
+
+    @Test
+    func incrementCounter_incrementsStoreReloadsAndNotifiesChange() async throws {
+        let store = VaultStoreStub()
+        let sut = makeSUT(vaultStore: store)
+
+        try await confirmation { confirm in
+            sut.onDataChanged = {
+                confirm()
+            }
+
+            try await sut.incrementCounter(id: .new())
+        }
+
+        #expect(store.incrementCounterCallCount == 1)
+        #expect(store.calledMethods == [.retrieve])
+    }
+
+    @Test
+    func autofillStoreHelpers_forwardToStore() async throws {
+        let autofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultOtpAutofillStore: autofillStore)
+        let id = UUID()
+
+        let identities = try await sut.getOTPAutofillStoreIdentities()
+        try await sut.removeOTPItemFromAutofillStore(id: id)
+
+        #expect(identities == [])
+        #expect(autofillStore.getAllIdentitiesCallCount == 1)
+        #expect(autofillStore.removeCallCount == 1)
+        #expect(autofillStore.removeArgValues.first?.id == id)
     }
 
     @Test

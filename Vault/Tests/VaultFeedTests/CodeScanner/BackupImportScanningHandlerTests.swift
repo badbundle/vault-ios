@@ -29,6 +29,20 @@ struct BackupImportScanningHandlerTests {
         #expect(result == .continueScanning(.invalidCode))
     }
 
+    @Test
+    func makeSimulatedHandler_returnsExampleVault() throws {
+        let simulated = sut.makeSimulatedHandler()
+
+        let result = simulated.decodeSimulated()
+
+        guard case let .endScanning(.dataRetrieved(vault)) = result else {
+            Issue.record("Expected simulated vault")
+            return
+        }
+        #expect(vault.version == "1.0.0")
+        #expect(vault.data.isEmpty == false)
+    }
+
     @Test(arguments: ["", "invalid", "{}"])
     func decode_addShardErrorIgnoresError(string _: String) throws {
         let result1 = sut.decode(data: """

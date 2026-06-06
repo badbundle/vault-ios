@@ -1,6 +1,7 @@
 import Foundation
 import TestHelpers
 import Testing
+import UIKit
 import VaultCore
 import VaultKeygen
 @testable import VaultFeed
@@ -132,6 +133,7 @@ struct DeviceTransferExportViewModelTests {
 
         // Advance the timer
         try await timer.finishTimer(at: 0)
+        await waitForDisplayingIndex(1, in: sut)
 
         // Should advance to index 1
         if case let .displayingQR(currentIndex, _) = sut.state {
@@ -162,6 +164,7 @@ struct DeviceTransferExportViewModelTests {
         // Each finishTimer call needs the correct index since a new timer is created each time
         for i in 0 ..< totalCount {
             try await timer.finishTimer(at: i)
+            await waitForDisplayingIndex((i + 1) % totalCount, in: sut)
         }
 
         // Should wrap back to index 0
@@ -183,16 +186,17 @@ struct DeviceTransferExportViewModelTests {
 
         await sut.generateShards()
 
-        let initialImage = sut.currentQRCodeImage
+        let initialImageData = sut.currentQRCodeImage?.pngData()
 
         // Advance the timer
         try await timer.finishTimer(at: 0)
+        await waitForDisplayingIndex(1, in: sut)
 
-        let updatedImage = sut.currentQRCodeImage
+        let updatedImageData = sut.currentQRCodeImage?.pngData()
 
-        // Images should be different (different QR code rendered)
-        #expect(initialImage != nil)
-        #expect(updatedImage != nil)
+        #expect(initialImageData != nil)
+        #expect(updatedImageData != nil)
+        #expect(initialImageData != updatedImageData)
     }
 }
 
@@ -229,5 +233,15 @@ extension DeviceTransferExportViewModelTests {
             backupEventLogger: backupEventLogger,
             intervalTimer: intervalTimer,
         )
+    }
+
+    private func waitForDisplayingIndex(_ expectedIndex: Int, in sut: DeviceTransferExportViewModel) async {
+        for _ in 0 ..< 100 {
+            if case let .displayingQR(currentIndex, _) = sut.state, currentIndex == expectedIndex {
+                return
+            }
+            await Task.yield()
+        }
+        Issue.record("Expected displayingQR index \(expectedIndex), got \(sut.state)")
     }
 }
