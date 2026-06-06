@@ -300,7 +300,6 @@ let package = Package(
         .testTarget(
             name: "VaultiOSWidgetsTests",
             dependencies: ["VaultiOSWidgets", "VaultiOSShared", "VaultCore", "VaultFeed", "TestHelpers"],
-            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins,
         ),
