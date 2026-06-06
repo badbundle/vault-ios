@@ -25,7 +25,7 @@ struct PDFDataBlockDocumentRendererUnitTests {
     }
 
     @Test
-    func render_makesSingleRendererFromFactory() throws {
+    func render_makesSingleRendererFromFactory() {
         let rendererFactory = makeRendererFactory()
         let sut = makeSUT(rendererFactory: rendererFactory)
 

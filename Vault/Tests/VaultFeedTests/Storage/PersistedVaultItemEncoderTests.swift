@@ -6,7 +6,6 @@ import Testing
 import VaultCore
 @testable import VaultFeed
 
-@Suite
 struct PersistedVaultItemEncoderTests {
     private let context: ModelContext
 

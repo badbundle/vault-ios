@@ -1,6 +1,6 @@
 import Foundation
 
-public struct VaultRetrievalResult<T>: Equatable, Sendable where T: Equatable, T: Sendable {
+public struct VaultRetrievalResult<T: Equatable & Sendable>: Equatable, Sendable {
     public var items: [T]
     public var errors: [Error]
 

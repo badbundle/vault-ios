@@ -172,7 +172,7 @@ struct Base32Tests {
     }
 
     @Test
-    func base32Decode() throws {
+    func base32Decode() {
         let b32 = "AY22KLPRBYJXNH6TRM4I3LPBYA======"
         #expect(throws: Never.self, performing: {
             _ = try b32.base32DecodedData

@@ -36,7 +36,7 @@ extension PDFDocumentSize {
         )
     }
 
-    /// The size of the margins in pixels, given the `pointsPerInch`.
+    // The size of the margins in pixels, given the `pointsPerInch`.
 
     /// The number of squares most appropriate for the size of the paper.
     ///

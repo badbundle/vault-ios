@@ -409,7 +409,7 @@ private struct OffCenterMarginsDocumentSize: PDFDocumentSize {
 }
 
 private struct StubPDFRendererFactory: PDFRendererFactory {
-    // us letter size for stub
+    /// us letter size for stub
     var size: any PDFDocumentSize = USLetterDocumentSize()
 }
 

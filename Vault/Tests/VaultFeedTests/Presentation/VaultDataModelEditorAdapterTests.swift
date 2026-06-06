@@ -6,7 +6,6 @@ import Testing
 import VaultCore
 import VaultFeed
 
-@Suite
 @MainActor
 struct VaultDataModelEditorAdapterTests {
     @Test

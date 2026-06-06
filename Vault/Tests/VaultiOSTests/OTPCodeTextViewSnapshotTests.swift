@@ -6,7 +6,6 @@ import VaultFeed
 import VaultiOSShared
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class OTPCodeTextViewSnapshotTests {
     @Test

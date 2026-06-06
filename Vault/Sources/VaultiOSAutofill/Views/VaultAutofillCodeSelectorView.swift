@@ -13,20 +13,6 @@ struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<Va
     let textToInsertSubject: PassthroughSubject<String, Never>
     let cancelSubject: PassthroughSubject<VaultAutofillViewModel.RequestCancelReason, Never>
 
-    init(
-        localSettings: LocalSettings,
-        viewGenerator: Generator,
-        copyActionHandler: any VaultItemCopyActionHandler,
-        textToInsertSubject: PassthroughSubject<String, Never>,
-        cancelSubject: PassthroughSubject<VaultAutofillViewModel.RequestCancelReason, Never>,
-    ) {
-        self.localSettings = localSettings
-        self.viewGenerator = viewGenerator
-        self.copyActionHandler = copyActionHandler
-        self.textToInsertSubject = textToInsertSubject
-        self.cancelSubject = cancelSubject
-    }
-
     @Environment(VaultDataModel.self) private var dataModel
     @Environment(DeviceAuthenticationService.self) var authenticationService
     @Environment(\.scenePhase) private var scenePhase

@@ -73,7 +73,9 @@ extension OTPAuthDigits: ExpressibleByIntegerLiteral {
 }
 
 extension OTPAuthDigits {
-    public static var `default`: OTPAuthDigits { .init(value: 6) }
+    public static var `default`: OTPAuthDigits {
+        .init(value: 6)
+    }
 }
 
 public enum OTPAuthAlgorithm: Equatable, Hashable, IdentifiableSelf, CaseIterable, Sendable {
@@ -81,7 +83,9 @@ public enum OTPAuthAlgorithm: Equatable, Hashable, IdentifiableSelf, CaseIterabl
     case sha256
     case sha512
 
-    public static var `default`: OTPAuthAlgorithm { .sha1 }
+    public static var `default`: OTPAuthAlgorithm {
+        .sha1
+    }
 
     public var stringValue: String {
         switch self {
@@ -97,11 +101,15 @@ public enum OTPAuthType: Equatable, Hashable, Sendable {
     case hotp(counter: UInt64 = HOTP.defaultCounter)
 
     public enum TOTP {
-        public static var defaultPeriod: UInt64 { 30 }
+        public static var defaultPeriod: UInt64 {
+            30
+        }
     }
 
     public enum HOTP {
-        public static var defaultCounter: UInt64 { 0 }
+        public static var defaultCounter: UInt64 {
+            0
+        }
     }
 
     public enum Kind: Equatable, Hashable, IdentifiableSelf, CaseIterable, Sendable {

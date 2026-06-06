@@ -29,8 +29,7 @@ struct LocalSettingsTests {
 
 extension LocalSettingsTests {
     private func makeSUT(defaults: Defaults) throws -> LocalSettings {
-        let settings = LocalSettings(defaults: defaults)
-        return settings
+        LocalSettings(defaults: defaults)
     }
 }
 

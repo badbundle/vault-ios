@@ -6,9 +6,8 @@ import VaultExport
 /// A renderer for an exported vault.
 ///
 /// Internally uses a data block renderer to render the data to a PDF.
-struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
+struct VaultExportPDFDocumentRenderer<Renderer: PDFDocumentRenderer>: PDFDocumentRenderer
     where
-    Renderer: PDFDocumentRenderer,
     Renderer.Document == DataBlockDocument
 {
     typealias Document = VaultExportPayload

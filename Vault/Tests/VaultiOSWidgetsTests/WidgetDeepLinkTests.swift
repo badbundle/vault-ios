@@ -2,7 +2,6 @@ import Foundation
 import Testing
 @testable import VaultiOSShared
 
-@Suite
 struct WidgetDeepLinkTests {
     @Test
     func hotpIncrement_roundTripsViaParse() {

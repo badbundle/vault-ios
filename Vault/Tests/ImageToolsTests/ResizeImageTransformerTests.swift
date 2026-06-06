@@ -25,7 +25,6 @@ extension ResizeImageTransformerTests {
     private func exampleImage() throws -> UIImage {
         let qr = QRCodeImageRenderer()
         let data = Data(repeating: 0xFF, count: 200)
-        let image = try #require(qr.makeImage(fromData: data))
-        return image
+        return try #require(qr.makeImage(fromData: data))
     }
 }

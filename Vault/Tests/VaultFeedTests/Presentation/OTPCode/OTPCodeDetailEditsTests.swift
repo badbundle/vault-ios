@@ -4,7 +4,6 @@ import Testing
 import VaultCore
 @testable import VaultFeed
 
-@Suite
 struct OTPCodeDetailEditsTests {
     @Test
     func initHydratedFromCode_assignsTOTPCodeType() {
@@ -118,7 +117,7 @@ struct OTPCodeDetailEditsTests {
     }
 
     @Test
-    func isValid_validSecretIsValid() throws {
+    func isValid_validSecretIsValid() {
         let code = anyOTPAuthCode(secret: makeExampleSecret())
 
         let sut = OTPCodeDetailEdits(
@@ -139,7 +138,7 @@ struct OTPCodeDetailEditsTests {
     }
 
     @Test
-    func isValid_invalidForEmptySecret() throws {
+    func isValid_invalidForEmptySecret() {
         var sut = OTPCodeDetailEdits.new()
         sut.secretBase32String = ""
 
@@ -147,7 +146,7 @@ struct OTPCodeDetailEditsTests {
     }
 
     @Test
-    func isValid_invalidForEmptyIssuer() throws {
+    func isValid_invalidForEmptyIssuer() {
         var sut = OTPCodeDetailEdits.new()
         sut.issuerTitle = ""
 
@@ -155,7 +154,7 @@ struct OTPCodeDetailEditsTests {
     }
 
     @Test
-    func isValid_invalidSecretIsInvalid() throws {
+    func isValid_invalidSecretIsInvalid() {
         var sut = OTPCodeDetailEdits.new()
         sut.secretBase32String = "A" // this is invalid
 
@@ -163,7 +162,7 @@ struct OTPCodeDetailEditsTests {
     }
 
     @Test
-    func isValid_invalidForEmptyPassphrase() throws {
+    func isValid_invalidForEmptyPassphrase() {
         var sut = OTPCodeDetailEdits.new()
         sut.searchPassphrase = ""
         sut.viewConfig = .requiresSearchPassphrase
@@ -172,7 +171,7 @@ struct OTPCodeDetailEditsTests {
     }
 
     @Test
-    func isValid_validForNonEmptyPassphrase() throws {
+    func isValid_validForNonEmptyPassphrase() {
         var sut = OTPCodeDetailEdits.new()
         sut.secretBase32String = "AA"
         sut.issuerTitle = "any"

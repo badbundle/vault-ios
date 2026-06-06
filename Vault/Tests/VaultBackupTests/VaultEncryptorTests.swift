@@ -66,8 +66,7 @@ extension VaultEncryptorTests {
         keygenSalt: Data = Data(),
         keygenSignature: String = "my-signature",
     ) -> VaultEncryptor {
-        let sut = VaultEncryptor(key: key, keygenSalt: keygenSalt, keygenSignature: keygenSignature)
-        return sut
+        VaultEncryptor(key: key, keygenSalt: keygenSalt, keygenSignature: keygenSignature)
     }
 
     private func anyVaultKey() -> VaultKey {

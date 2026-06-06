@@ -23,7 +23,7 @@ struct TextArea: UIViewRepresentable {
         Coordinator(text: $text)
     }
 
-    // Coordinator to handle UITextViewDelegate events
+    /// Coordinator to handle UITextViewDelegate events
     class Coordinator: NSObject, UITextViewDelegate {
         @Binding var text: String
 

@@ -11,7 +11,7 @@ struct DetailEditingModelTests {
     }
 
     @Test
-    func isDirtyResetsOncePersisted() async throws {
+    func isDirtyResetsOncePersisted() {
         var sut = makeSUT(detail: .init(value: "hello"))
 
         sut.detail.value = "next"
@@ -21,7 +21,7 @@ struct DetailEditingModelTests {
     }
 
     @Test
-    func isDirtyIsInitiallyDirtyAlwaysMakesDirty() throws {
+    func isDirtyIsInitiallyDirtyAlwaysMakesDirty() {
         var sut = makeSUT(detail: .init(value: "hello"), isInitiallyDirty: true)
 
         #expect(sut.isDirty)
@@ -34,7 +34,7 @@ struct DetailEditingModelTests {
     }
 
     @Test
-    func isDirtyIsInitiallyDirtyPersistEnablesNormalDirtyState() throws {
+    func isDirtyIsInitiallyDirtyPersistEnablesNormalDirtyState() {
         var sut = makeSUT(detail: .init(value: "hello"), isInitiallyDirty: true)
 
         #expect(sut.isDirty)
@@ -58,6 +58,8 @@ extension DetailEditingModelTests {
 
     struct EditableStateMock: EditableState {
         var value: String
-        var isValid: Bool { true }
+        var isValid: Bool {
+            true
+        }
     }
 }

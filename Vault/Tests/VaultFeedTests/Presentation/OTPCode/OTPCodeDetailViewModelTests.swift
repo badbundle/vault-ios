@@ -5,7 +5,6 @@ import Testing
 import VaultCore
 import VaultFeed
 
-@Suite
 @MainActor
 struct OTPCodeDetailViewModelTests {
     @Test
@@ -107,7 +106,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func startEditing_setsEditModeTrue() async throws {
+    func startEditing_setsEditModeTrue() {
         let sut = makeSUTEditing()
 
         sut.startEditing()
@@ -123,7 +122,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_creatingUpdatesEditor() async throws {
+    func saveChanges_creatingUpdatesEditor() async {
         let editor = OTPCodeDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
@@ -138,7 +137,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_creatingDoesNotPersistEditingModelWhenSuccessful() async throws {
+    func saveChanges_creatingDoesNotPersistEditingModelWhenSuccessful() async {
         let sut = makeSUTCreating()
         makeDirty(sut: sut)
 
@@ -170,7 +169,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
+    func saveChanges_creatingSetsSavingToFalseAfterSaveError() async {
         let editor = OTPCodeDetailEditorMock()
         editor.createCodeHandler = { _ in
             throw TestError()
@@ -183,7 +182,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_editingPersistsEditingModelIfSuccessful() async throws {
+    func saveChanges_editingPersistsEditingModelIfSuccessful() async {
         let sut = makeSUTEditing()
         makeDirty(sut: sut)
 
@@ -193,7 +192,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_editingSetsSavingToFalseAfterSaveError() async throws {
+    func saveChanges_editingSetsSavingToFalseAfterSaveError() async {
         let editor = OTPCodeDetailEditorMock()
         editor.updateCodeHandler = { _, _, _ in
             throw TestError()
@@ -206,7 +205,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_editingDoesNotPersistEditingModelIfSaveFailed() async throws {
+    func saveChanges_editingDoesNotPersistEditingModelIfSaveFailed() async {
         let editor = OTPCodeDetailEditorMock()
         editor.updateCodeHandler = { _, _, _ in
             throw TestError()
@@ -233,7 +232,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func deleteCode_hasNoActionIfCreatingCode() async throws {
+    func deleteCode_hasNoActionIfCreatingCode() async {
         let editor = OTPCodeDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
@@ -243,7 +242,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func deleteCode_editingIsSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
+    func deleteCode_editingIsSavingSetsBackToFalseAfterSuccessfulDelete() async {
         let sut = makeSUTEditing()
 
         await sut.deleteCode()
@@ -274,7 +273,7 @@ struct OTPCodeDetailViewModelTests {
     }
 
     @Test
-    func done_restoresInitialEditingStateIfInEditMode() async throws {
+    func done_restoresInitialEditingStateIfInEditMode() {
         let sut = makeSUT()
         sut.startEditing()
         makeDirty(sut: sut)
@@ -459,12 +458,11 @@ extension OTPCodeDetailViewModelTests {
         ),
         allTags _: [VaultItemTag] = [],
     ) -> OTPCodeDetailViewModel {
-        let sut = OTPCodeDetailViewModel(
+        OTPCodeDetailViewModel(
             mode: .creating(initialCode: initialCode),
             dataModel: dataModel,
             editor: editor,
         )
-        return sut
     }
 
     @MainActor
@@ -487,12 +485,11 @@ extension OTPCodeDetailViewModelTests {
             backupEventLogger: BackupEventLoggerMock(),
         ),
     ) -> OTPCodeDetailViewModel {
-        let sut = OTPCodeDetailViewModel(
+        OTPCodeDetailViewModel(
             mode: .editing(code: code, metadata: metadata),
             dataModel: dataModel,
             editor: editor,
         )
-        return sut
     }
 
     @MainActor
@@ -515,12 +512,11 @@ extension OTPCodeDetailViewModelTests {
             backupEventLogger: BackupEventLoggerMock(),
         ),
     ) -> OTPCodeDetailViewModel {
-        let sut = OTPCodeDetailViewModel(
+        OTPCodeDetailViewModel(
             mode: .editing(code: code, metadata: metadata),
             dataModel: dataModel,
             editor: editor,
         )
-        return sut
     }
 
     @MainActor
@@ -532,8 +528,7 @@ extension OTPCodeDetailViewModelTests {
 
 extension OTPCodeDetailEditorMock {
     static func defaultMock() -> OTPCodeDetailEditorMock {
-        let s = OTPCodeDetailEditorMock()
-        return s
+        OTPCodeDetailEditorMock()
     }
 
     func assertNoOperations() {

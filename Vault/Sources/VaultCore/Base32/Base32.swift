@@ -75,7 +75,7 @@ public func base32HexDecode(_ string: String) throws(Base32Error) -> [UInt8] {
 // MARK: extensions
 
 extension String {
-    // base32
+    /// base32
     public var base32DecodedData: Data {
         get throws(Base32Error) {
             try base32DecodeToData(self)
@@ -93,7 +93,7 @@ extension String {
         return String(data: data, encoding: .utf8)
     }
 
-    // base32Hex
+    /// base32Hex
     public var base32HexDecodedData: Data {
         get throws(Base32Error) {
             try base32HexDecodeToData(self)
@@ -113,7 +113,7 @@ extension String {
 }
 
 extension Data {
-    // base32
+    /// base32
     public var base32EncodedString: String {
         base32Encode(self)
     }
@@ -128,7 +128,7 @@ extension Data {
         }
     }
 
-    // base32Hex
+    /// base32Hex
     public var base32HexEncodedString: String {
         base32HexEncode(self)
     }
@@ -350,7 +350,7 @@ private func base32decode(_ string: String, _ table: [UInt8]) throws(Base32Error
         return []
     }
 
-    // calc padding length
+    /// calc padding length
     func getLeastPaddingLength(_ string: String) -> Int {
         if string.hasSuffix("======") {
             6

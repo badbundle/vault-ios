@@ -148,9 +148,9 @@ public enum VaultRoot {
         return repo
     }()
 
-    // Ideally this would just vend the generic `some VaultItemPreviewViewGenerator<VaultItem.Payload>`
-    // But that currently gives us a compiler error (only while archiving?!) so let's vend the full (massive) concrete
-    // type for now :(
+    /// Ideally this would just vend the generic `some VaultItemPreviewViewGenerator<VaultItem.Payload>`
+    /// But that currently gives us a compiler error (only while archiving?!) so let's vend the full (massive) concrete
+    /// type for now :(
     @MainActor
     public static let genericVaultItemPreviewViewGenerator =
         GenericVaultItemPreviewViewGenerator(

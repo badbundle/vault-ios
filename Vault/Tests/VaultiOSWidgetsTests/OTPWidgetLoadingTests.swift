@@ -4,7 +4,6 @@ import VaultCore
 import VaultFeed
 @testable import VaultiOSWidgets
 
-@Suite
 struct OTPWidgetLoadingTests {
     @Test
     func eligibleItems_retriesAfterStoreOpenFailure() async throws {
@@ -127,7 +126,7 @@ struct OTPWidgetLoadingTests {
     }
 }
 
-private enum WidgetTestError: Error, Equatable, Sendable {
+private enum WidgetTestError: Error, Equatable {
     case open
     case retrieve
 }
@@ -136,7 +135,7 @@ private enum WidgetTestError: Error, Equatable, Sendable {
 // so actor isolation cannot model its scripted open sequence.
 // swiftlint:disable:next no_unchecked_sendable
 private final class StoreFactoryScript: @unchecked Sendable {
-    enum Result: Sendable {
+    enum Result {
         case failure(WidgetTestError)
         case success(any VaultStoreReader)
     }

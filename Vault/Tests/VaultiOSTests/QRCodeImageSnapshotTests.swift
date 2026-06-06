@@ -6,7 +6,7 @@ import Testing
 @MainActor
 struct QRCodeImageSnapshotTests {
     @Test
-    func image_rendersCode() throws {
+    func image_rendersCode() {
         let sut = QRCodeImage(data: Data(repeating: 0x32, count: 100))
             .frame(width: 100, height: 100)
 

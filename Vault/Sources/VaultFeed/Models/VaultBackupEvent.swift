@@ -48,7 +48,7 @@ extension VaultBackupEvent {
             }
         }
 
-        // Custom Codable for backwards compatibility
+        /// Custom Codable for backwards compatibility
         private enum CodingKeys: String, CodingKey {
             case type
             case providerID

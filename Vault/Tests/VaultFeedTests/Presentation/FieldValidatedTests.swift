@@ -3,7 +3,6 @@ import TestHelpers
 import Testing
 @testable import VaultFeed
 
-@Suite
 struct FieldValidatedTests {
     @Test
     func wrappedValue_setsBasedOnValue() {

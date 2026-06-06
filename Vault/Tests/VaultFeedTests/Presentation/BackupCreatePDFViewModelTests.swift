@@ -5,7 +5,6 @@ import VaultCore
 import VaultKeygen
 @testable import VaultFeed
 
-@Suite
 @MainActor
 struct BackupCreatePDFViewModelTests {
     @Test

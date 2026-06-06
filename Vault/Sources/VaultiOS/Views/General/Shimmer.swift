@@ -57,7 +57,7 @@ public struct Shimmer: ViewModifier {
     /// The default animation effect.
     public static let defaultAnimation = Animation.linear(duration: 1.5).delay(0.25).repeatForever(autoreverses: false)
 
-    // A default gradient for the animated mask.
+    /// A default gradient for the animated mask.
     public static let defaultGradient = Gradient(colors: [
         .black.opacity(0.3), // translucent
         .black, // opaque

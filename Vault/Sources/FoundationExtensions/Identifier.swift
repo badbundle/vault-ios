@@ -23,11 +23,7 @@ extension Identifier: RawRepresentable {
     }
 }
 
-extension Identifier: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id
-    }
-}
+extension Identifier: Equatable {}
 
 extension Identifier: Hashable {
     public func hash(into hasher: inout Hasher) {

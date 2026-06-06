@@ -30,7 +30,7 @@ struct EncryptedItemPreviewViewGeneratorTests {
     }
 
     @Test
-    func makeVaultPreviewView_propagatesPreviewMode() throws {
+    func makeVaultPreviewView_propagatesPreviewMode() {
         let factory = EncryptedItemPreviewViewFactoryMock()
         var capturedPreviewMode: NotePreviewMode?
         factory.makeEncryptedItemViewHandler = { viewModel, _ in

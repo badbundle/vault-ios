@@ -4,7 +4,7 @@ import Testing
 
 struct AutoBackupProviderCoverageTests {
     @Test
-    func iCloudDriveProvider_unconfiguredStateIsAvailableForSetup() async throws {
+    func iCloudDriveProvider_unconfiguredStateIsAvailableForSetup() async {
         let sut = iCloudDriveProvider()
 
         #expect(sut.id == iCloudDriveProvider.providerID)

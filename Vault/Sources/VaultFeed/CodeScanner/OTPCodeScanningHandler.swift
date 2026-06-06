@@ -17,7 +17,9 @@ public final class OTPCodeScanningHandler: CodeScanningHandler {
         }
     }
 
-    public var hasPartialState: Bool { false }
+    public var hasPartialState: Bool {
+        false
+    }
 
     public func makeSimulatedHandler() -> some SimulatedCodeScanningHandler<OTPAuthCode> {
         SimulatedOTPCodeScanningHandler()

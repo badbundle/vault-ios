@@ -7,7 +7,7 @@ import Testing
 
 struct ScryptKeyDeriverTests {
     @Test
-    func key_doesNotThrowForValidParameters() async {
+    func key_doesNotThrowForValidParameters() {
         let params = ScryptKeyDeriver<8>.Parameters(
             costFactor: 1 << 4,
             blockSizeFactor: 2,
@@ -21,7 +21,7 @@ struct ScryptKeyDeriverTests {
     }
 
     @Test
-    func key_throwsForInvalidParameters() async {
+    func key_throwsForInvalidParameters() {
         let params = ScryptKeyDeriver<8>.Parameters(
             costFactor: 16385,
             blockSizeFactor: 8,
@@ -35,7 +35,7 @@ struct ScryptKeyDeriverTests {
     }
 
     @Test
-    func key_throwsIfMissingSalt() async {
+    func key_throwsIfMissingSalt() {
         let sut = makeSUT(parameters: .fastForTesting)
 
         #expect(throws: (any Error).self) {
@@ -44,7 +44,7 @@ struct ScryptKeyDeriverTests {
     }
 
     @Test
-    func key_generatesValidKeyWithSalt() async throws {
+    func key_generatesValidKeyWithSalt() throws {
         let password = Data(byteString: "hello world")
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)
@@ -54,7 +54,7 @@ struct ScryptKeyDeriverTests {
     }
 
     @Test
-    func key_generatesValidKeyWithEmptyPassword() async throws {
+    func key_generatesValidKeyWithEmptyPassword() throws {
         let password = Data()
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)
@@ -64,7 +64,7 @@ struct ScryptKeyDeriverTests {
     }
 
     @Test
-    func key_generatesTheSameKeyMultipleTimes() async throws {
+    func key_generatesTheSameKeyMultipleTimes() throws {
         let password = Data()
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)

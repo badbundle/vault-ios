@@ -9,12 +9,6 @@ struct LiteratureView: View {
     var bodyText: FormattedString
     var bodyColor: Color
 
-    init(title: String, bodyText: FormattedString, bodyColor: Color) {
-        self.title = title
-        self.bodyText = bodyText
-        self.bodyColor = bodyColor
-    }
-
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading) {

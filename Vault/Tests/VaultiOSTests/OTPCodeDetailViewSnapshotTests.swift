@@ -6,11 +6,10 @@ import VaultFeed
 import VaultSettings
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class OTPCodeDetailViewSnapshotTests {
     @Test
-    func emptyState() async {
+    func emptyState() {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
@@ -42,7 +41,7 @@ final class OTPCodeDetailViewSnapshotTests {
     }
 
     @Test
-    func lockedState() async {
+    func lockedState() {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
@@ -74,7 +73,7 @@ final class OTPCodeDetailViewSnapshotTests {
     }
 
     @Test
-    func lockedStateNoAuthentication() async {
+    func lockedStateNoAuthentication() {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
@@ -106,7 +105,7 @@ final class OTPCodeDetailViewSnapshotTests {
     }
 
     @Test
-    func withUserDescription() async {
+    func withUserDescription() {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
@@ -138,7 +137,7 @@ final class OTPCodeDetailViewSnapshotTests {
     }
 
     @Test
-    func editMode_emptyState() async {
+    func editMode_emptyState() {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),

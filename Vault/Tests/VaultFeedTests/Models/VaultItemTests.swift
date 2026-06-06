@@ -5,7 +5,6 @@ import Testing
 import VaultCore
 @testable import VaultFeed
 
-@Suite
 struct VaultItemTests {
     @Test
     func isContentEqual_comparesIDs() {

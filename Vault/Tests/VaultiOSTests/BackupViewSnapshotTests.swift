@@ -8,7 +8,7 @@ import VaultFeed
 @MainActor
 struct BackupViewSnapshotTests {
     @Test
-    func backupCreate_passwordNotFetched() async throws {
+    func backupCreate_passwordNotFetched() {
         let sut = makeBackupCreateSUT(dataModel: anyVaultDataModel())
             .framedForTest()
 

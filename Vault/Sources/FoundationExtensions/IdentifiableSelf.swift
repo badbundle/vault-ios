@@ -3,5 +3,7 @@ public protocol IdentifiableSelf: Identifiable where Self: Hashable, ID: Hashabl
 }
 
 extension IdentifiableSelf {
-    public var id: Self { self }
+    public var id: Self {
+        self
+    }
 }

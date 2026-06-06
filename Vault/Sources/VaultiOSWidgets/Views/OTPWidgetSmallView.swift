@@ -31,7 +31,6 @@ struct OTPWidgetSmallView: View {
 
     // MARK: - Pieces
 
-    @ViewBuilder
     private var icon: some View {
         Image(systemName: "key.horizontal.fill")
             .font(.caption2.weight(.semibold))

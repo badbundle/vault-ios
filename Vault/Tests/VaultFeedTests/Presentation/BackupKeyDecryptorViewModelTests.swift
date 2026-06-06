@@ -9,7 +9,7 @@ import VaultKeygen
 @MainActor
 struct BackupKeyDecryptorViewModelTests {
     @Test @LeakTracked
-    func init_setsInitialState() throws {
+    func init_setsInitialState() {
         let sut = makeSUT()
 
         #expect(sut.enteredPassword == "")
@@ -17,7 +17,7 @@ struct BackupKeyDecryptorViewModelTests {
     }
 
     @Test @LeakTracked
-    func canAttemptDecryption_falseIfPasswordEmpty() async throws {
+    func canAttemptDecryption_falseIfPasswordEmpty() {
         let sut = makeSUT()
         sut.enteredPassword = ""
 
@@ -25,7 +25,7 @@ struct BackupKeyDecryptorViewModelTests {
     }
 
     @Test @LeakTracked
-    func canAttemptDecryption_trueIfPasswordNotEmpty() async throws {
+    func canAttemptDecryption_trueIfPasswordNotEmpty() {
         let sut = makeSUT()
         sut.enteredPassword = "a"
 
@@ -33,7 +33,7 @@ struct BackupKeyDecryptorViewModelTests {
     }
 
     @Test @LeakTracked
-    func attemptDecryption_validPasswordGeneratesConsistentlyWithSalt() async throws {
+    func attemptDecryption_validPasswordGeneratesConsistentlyWithSalt() async {
         let vaultApplicationPayload = VaultApplicationPayload(userDescription: "my stuff", items: [], tags: [])
         let decoder = EncryptedVaultDecoderMock()
         // returned payload implies successful decryption
@@ -64,7 +64,7 @@ struct BackupKeyDecryptorViewModelTests {
     }
 
     @Test @LeakTracked
-    func generateKey_emptyPasswordGeneratesError() async throws {
+    func generateKey_emptyPasswordGeneratesError() async {
         let decoder = EncryptedVaultDecoderMock()
         decoder.verifyCanDecryptHandler = { _, _ in throw TestError() }
         let sut = makeSUT(encryptedVaultDecoder: decoder)
@@ -76,7 +76,7 @@ struct BackupKeyDecryptorViewModelTests {
     }
 
     @Test @LeakTracked
-    func generateKey_keyDeriverErrorGeneratesError() async throws {
+    func generateKey_keyDeriverErrorGeneratesError() async {
         let sut = makeSUT(keyDeriverFactory: .failing)
         sut.enteredPassword = "hello"
 

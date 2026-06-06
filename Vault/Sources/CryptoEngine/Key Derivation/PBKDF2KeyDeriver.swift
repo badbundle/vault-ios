@@ -1,8 +1,8 @@
+internal import CryptoSwift
 import Foundation
 import FoundationExtensions
-internal import CryptoSwift
 
-public struct PBKDF2KeyDeriver< let bytes: Int>: KeyDeriver {
+public struct PBKDF2KeyDeriver<let bytes: Int>: KeyDeriver {
     public let parameters: Parameters
 
     public init(parameters: Parameters) {

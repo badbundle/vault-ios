@@ -4,7 +4,7 @@ import FoundationExtensions
 /// A key deriver that is composed of a sequence of other `KeyDeriver`s
 ///
 /// The output from the first is fed into the second, etc.
-public struct CombinationKeyDeriver< let bytes: Int>: KeyDeriver {
+public struct CombinationKeyDeriver<let bytes: Int>: KeyDeriver {
     private let derivers: [any KeyDeriver<KeyData<bytes>>]
 
     public init(derivers: [any KeyDeriver<KeyData<bytes>>]) {

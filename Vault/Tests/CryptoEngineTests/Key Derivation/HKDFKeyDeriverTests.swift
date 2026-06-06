@@ -24,7 +24,7 @@ struct HKDFKeyDeriverTests {
     }
 
     @Test
-    func key_generatesValidKeyWithSalt() async throws {
+    func key_generatesValidKeyWithSalt() throws {
         // https://gchq.github.io/CyberChef/#recipe=Derive_HKDF_key(%7B'option':'Hex','string':'ABCDEF'%7D,%7B'option':'Hex','string':''%7D,'SHA256','with%20salt',8)&input=aGVsbG8gd29ybGQ
         let password = Data(byteString: "hello world")
         let salt = Data(hex: "ABCDEF")

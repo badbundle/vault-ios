@@ -58,7 +58,9 @@ struct BackupGeneratedPDFView: View {
         let index: Int
         let document: PDFDocument
         let totalPages: Int
-        var id: Int { index }
+        var id: Int {
+            index
+        }
     }
 
     private var pdfPreviewSection: some View {

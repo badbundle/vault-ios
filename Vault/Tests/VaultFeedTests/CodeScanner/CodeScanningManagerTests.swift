@@ -4,7 +4,6 @@ import Testing
 import VaultCore
 import VaultFeed
 
-@Suite
 @MainActor
 struct CodeScanningManagerTests {
     @Test
@@ -133,7 +132,7 @@ struct CodeScanningManagerTests {
     }
 
     @Test
-    func scan_unrecoverableErrorSetsStateToDataError() async throws {
+    func scan_unrecoverableErrorSetsStateToDataError() {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .endScanning(.unrecoverableError) }
@@ -163,7 +162,7 @@ struct CodeScanningManagerTests {
     }
 
     @Test
-    func scan_scanningStateUnchangedIfShouldIgnore() async throws {
+    func scan_scanningStateUnchangedIfShouldIgnore() {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.ignore) }

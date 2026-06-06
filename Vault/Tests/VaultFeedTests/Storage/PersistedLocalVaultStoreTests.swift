@@ -6,7 +6,6 @@ import Testing
 import VaultCore
 @testable import VaultFeed
 
-@Suite
 final class PersistedLocalVaultStoreTests {
     private var sut: PersistedLocalVaultStore
 

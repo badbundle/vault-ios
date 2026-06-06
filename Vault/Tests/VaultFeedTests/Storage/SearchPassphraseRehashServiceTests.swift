@@ -89,7 +89,7 @@ struct SearchPassphraseRehashServiceTests {
 
 extension SearchPassphraseRehashServiceTests {
     fileprivate actor WriterRecorder {
-        struct Call: Sendable {
+        struct Call {
             let itemID: UUID
             let digest: SearchPassphraseDigest
         }

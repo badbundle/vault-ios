@@ -2,10 +2,9 @@ import Foundation
 import Testing
 @testable import TestHelpers
 
-@Suite
 struct LeakTrackingTests {
     @Test @LeakTracked
-    func cleanDeallocation_recordsNoIssue() throws {
+    func cleanDeallocation_recordsNoIssue() {
         _ = trackForMemoryLeaks(Probe())
     }
 
@@ -29,13 +28,13 @@ struct LeakTrackingTests {
 
     @Test @LeakTracked
     @MainActor
-    func mainActor_cleanDeallocation_recordsNoIssue() throws {
+    func mainActor_cleanDeallocation_recordsNoIssue() {
         _ = trackForMemoryLeaks(Probe())
     }
 
     @Test @LeakTracked
     @MainActor
-    func mainActor_async_cleanDeallocation_recordsNoIssue() async throws {
+    func mainActor_async_cleanDeallocation_recordsNoIssue() {
         _ = trackForMemoryLeaks(Probe())
     }
 }

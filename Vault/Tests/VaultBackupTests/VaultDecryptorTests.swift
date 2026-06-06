@@ -66,8 +66,7 @@ struct VaultDecryptorTests {
 
 extension VaultDecryptorTests {
     private func makeSUT(key: Data) throws -> VaultDecryptor {
-        let sut = try VaultDecryptor(key: .init(data: key))
-        return sut
+        try VaultDecryptor(key: .init(data: key))
     }
 
     private func anyVaultKey() throws -> Data {

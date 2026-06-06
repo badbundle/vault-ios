@@ -3,7 +3,6 @@ import TestHelpers
 import Testing
 @testable import VaultFeed
 
-@Suite
 @MainActor
 struct TOTPPreviewViewRepositoryImplTests {
     @Test
@@ -141,7 +140,7 @@ struct TOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func obfuscateForPrivacy_obfuscatesViewModelsForPrivacy() async {
+    func obfuscateForPrivacy_obfuscatesViewModelsForPrivacy() {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyTOTPCode())
         viewModel.update(.visible("123456"))

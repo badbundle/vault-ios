@@ -3,7 +3,6 @@ import SwiftData
 import Testing
 @testable import VaultFeed
 
-@Suite
 struct PersistedLocalVaultStoreFactoryTests {
     @Test
     func makeVaultStore_createsEmptyStoreWhenNoExistingStoreExists() async throws {
@@ -323,7 +322,7 @@ struct PersistedLocalVaultStoreFactoryTests {
     }
 }
 
-enum StoreFile: Sendable {
+enum StoreFile {
     case primary
     case wal
     case shm
@@ -331,7 +330,7 @@ enum StoreFile: Sendable {
     case pendingSearchPassphrase
 }
 
-struct ActiveFileScenario: Sendable, CustomStringConvertible {
+struct ActiveFileScenario: CustomStringConvertible {
     let description: String
     let files: [StoreFile]
 
@@ -355,13 +354,13 @@ struct ActiveFileScenario: Sendable, CustomStringConvertible {
     ]
 }
 
-struct ArchiveNameScenario: Sendable {
+struct ArchiveNameScenario {
     let existingDirectories: [String]
     let expectedName: String
 }
 
-struct FatalMessageScenario: Sendable, CustomStringConvertible {
-    enum Failure: Sendable {
+struct FatalMessageScenario: CustomStringConvertible {
+    enum Failure {
         case noActiveFiles
         case createDirectory
         case retryOpen
@@ -401,7 +400,7 @@ struct FatalMessageScenario: Sendable, CustomStringConvertible {
     ]
 }
 
-struct DisappearingFileScenario: Sendable, CustomStringConvertible {
+struct DisappearingFileScenario: CustomStringConvertible {
     let description: String
     let existingFiles: [StoreFile]
     let disappearingFile: StoreFile
@@ -436,7 +435,7 @@ struct DisappearingFileScenario: Sendable, CustomStringConvertible {
     ]
 }
 
-struct LiveMoveFailureScenario: Sendable, CustomStringConvertible {
+struct LiveMoveFailureScenario: CustomStringConvertible {
     let description: String
     let existingFiles: [StoreFile]
     let failingFile: StoreFile
@@ -464,7 +463,7 @@ private enum StoreConnectionErrorCase {
     case unableToConnectAfterRecovery
 }
 
-private enum FactoryTestError: Error, Sendable {
+private enum FactoryTestError: Error {
     case initialOpen
     case retryOpen
     case createDirectory
@@ -473,7 +472,7 @@ private enum FactoryTestError: Error, Sendable {
 }
 
 final class ScriptedStoreOpener: PersistedLocalVaultStoreOpening {
-    enum Result: Sendable {
+    enum Result {
         case success
         case failure(any Error & Sendable)
     }

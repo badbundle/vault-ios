@@ -18,7 +18,7 @@ final class PersistedVaultTagEncoderTests {
 
 extension PersistedVaultTagEncoderTests {
     @Test
-    func encode_newItemCreatedUUID() throws {
+    func encode_newItemCreatedUUID() {
         let sut = makeSUT()
 
         var seenIds = Set<UUID>()
@@ -31,7 +31,7 @@ extension PersistedVaultTagEncoderTests {
     }
 
     @Test
-    func encode_name() throws {
+    func encode_name() {
         let name = "my tag name"
         let sut = makeSUT()
         let item = makeWritableVaultItemTag(name: name)
@@ -42,7 +42,7 @@ extension PersistedVaultTagEncoderTests {
     }
 
     @Test
-    func encode_colorWithValues() throws {
+    func encode_colorWithValues() {
         let sut = makeSUT()
         let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
         let item = makeWritableVaultItemTag(color: color)
@@ -55,7 +55,7 @@ extension PersistedVaultTagEncoderTests {
     }
 
     @Test
-    func encode_iconName() throws {
+    func encode_iconName() {
         let name = "my icon name"
         let sut = makeSUT()
         let item = makeWritableVaultItemTag(iconName: name)

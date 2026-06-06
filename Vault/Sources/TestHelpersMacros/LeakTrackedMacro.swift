@@ -57,6 +57,11 @@ private struct SimpleDiagnostic: DiagnosticMessage {
         self.message = message
     }
 
-    var diagnosticID: MessageID { MessageID(domain: "TestHelpersMacros", id: "LeakTracked") }
-    var severity: DiagnosticSeverity { .error }
+    var diagnosticID: MessageID {
+        MessageID(domain: "TestHelpersMacros", id: "LeakTracked")
+    }
+
+    var severity: DiagnosticSeverity {
+        .error
+    }
 }

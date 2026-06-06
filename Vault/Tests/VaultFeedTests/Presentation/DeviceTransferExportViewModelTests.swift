@@ -6,7 +6,6 @@ import VaultCore
 import VaultKeygen
 @testable import VaultFeed
 
-@Suite
 @MainActor
 struct DeviceTransferExportViewModelTests {
     @Test

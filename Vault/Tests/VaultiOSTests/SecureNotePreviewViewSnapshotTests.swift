@@ -5,7 +5,6 @@ import Testing
 import VaultFeed
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class SecureNotePreviewViewSnapshotTests {
     @Test

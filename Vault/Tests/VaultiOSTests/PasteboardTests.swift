@@ -7,11 +7,10 @@ import VaultFeed
 import VaultSettings
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class PasteboardTests {
     @Test
-    func init_hasNoSideEffects() async throws {
+    func init_hasNoSideEffects() async {
         let pasteboard = SystemPasteboardMock()
 
         await confirmation(expectedCount: 0) { confirm in
@@ -24,7 +23,7 @@ final class PasteboardTests {
     }
 
     @Test
-    func copy_copiesToPasteboard() async throws {
+    func copy_copiesToPasteboard() async {
         let pasteboard = SystemPasteboardMock()
         let sut = makeSUT(pasteboard: pasteboard)
         let action = VaultTextCopyAction(
@@ -112,7 +111,7 @@ final class PasteboardTests {
     }
 
     @Test
-    func copy_universalClipboardPolicyIsPerType() async throws {
+    func copy_universalClipboardPolicyIsPerType() throws {
         let pasteboard = SystemPasteboardMock()
         let defaults = try makeDefaults()
         let settings = LocalSettings(defaults: defaults)
@@ -147,8 +146,7 @@ extension PasteboardTests {
         file _: StaticString = #filePath,
         line _: UInt = #line,
     ) -> Pasteboard {
-        let pasteboard = Pasteboard(pasteboard, localSettings: localSettings)
-        return pasteboard
+        Pasteboard(pasteboard, localSettings: localSettings)
     }
 
     private func makeDefaults() throws -> Defaults {
