@@ -12,17 +12,21 @@ public struct SemVer: Equatable, Hashable, Sendable {
         self.patch = patch
     }
 
-    struct ParseError: Error {
-        var reason: String
+    public struct ParseError: Error {
+        public let reason: String
     }
 
-    public init(string: String) throws {
+    public init(string: String) throws(ParseError) {
         let values = string.split(separator: ".")
         guard values.count == 3 else {
             throw ParseError(reason: "Bad number of SemVer components")
         }
-        let ints = try values.map {
-            if let i = Int($0) { i } else { throw ParseError(reason: "Component is not a number.") }
+        var ints: [Int] = []
+        for value in values {
+            guard let int = Int(value) else {
+                throw ParseError(reason: "Component is not a number.")
+            }
+            ints.append(int)
         }
         major = ints[0]
         minor = ints[1]

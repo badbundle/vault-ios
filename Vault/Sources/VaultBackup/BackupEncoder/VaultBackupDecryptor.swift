@@ -17,7 +17,7 @@ public final class VaultBackupDecryptor {
 
     /// Throws decryption error if fails.
     /// Performs no other validation.
-    public func verifyCanDecrypt(encryptedVault: EncryptedVault) throws {
+    public func verifyCanDecrypt(encryptedVault: EncryptedVault) throws(Error) {
         try withMappedError {
             _ = try VaultDecryptor(key: key).decrypt(encryptedVault: encryptedVault)
         } error: {
@@ -25,7 +25,7 @@ public final class VaultBackupDecryptor {
         }
     }
 
-    public func decryptBackupPayload(from encryptedVault: EncryptedVault) throws -> VaultBackupPayload {
+    public func decryptBackupPayload(from encryptedVault: EncryptedVault) throws(Error) -> VaultBackupPayload {
         // Encrypted vault version.
         guard encryptedVault.version.isCompatible(with: "1.0.0") else {
             throw Error.incompatibleVersion

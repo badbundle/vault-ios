@@ -33,7 +33,7 @@ public struct BlockExporter {
     /// Generate the next block.
     ///
     /// - Returns: `nil` when there are no more blocks.
-    public mutating func next() throws -> Data? {
+    public mutating func next() throws(HeaderTooLargeError) -> Data? {
         defer { currentBlockNumber += 1 }
 
         let header = try makeHeader(blockNumber: currentBlockNumber)
@@ -50,7 +50,7 @@ public struct BlockExporter {
         return header + payload.subdata(in: blockRange)
     }
 
-    private func makeHeader(blockNumber: Int) throws -> Data {
+    private func makeHeader(blockNumber: Int) throws(HeaderTooLargeError) -> Data {
         let context = BlockContext(blockNumber: blockNumber)
         let header = blockHeader?(context) ?? Data()
         guard header.count < maxBlockSize else {

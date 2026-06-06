@@ -139,7 +139,7 @@ extension VaultBackupItemDecoder {
         }
     }
 
-    private func decodeSecret(data: VaultBackupItem.OTP) throws -> OTPAuthSecret {
+    private func decodeSecret(data: VaultBackupItem.OTP) throws(OTPDecodeError) -> OTPAuthSecret {
         let format: OTPAuthSecret.Format = switch data.secretFormat {
         case VaultEncodingConstants.OTPAuthSecret.Format.base32: .base32
         default: throw OTPDecodeError.invalidSecretFormat
@@ -150,7 +150,7 @@ extension VaultBackupItemDecoder {
         )
     }
 
-    private func decodeAlgorithm(data: VaultBackupItem.OTP) throws -> OTPAuthAlgorithm {
+    private func decodeAlgorithm(data: VaultBackupItem.OTP) throws(OTPDecodeError) -> OTPAuthAlgorithm {
         switch data.algorithm {
         case VaultEncodingConstants.OTPAuthAlgorithm.sha1: .sha1
         case VaultEncodingConstants.OTPAuthAlgorithm.sha256: .sha256
@@ -178,7 +178,7 @@ extension VaultBackupItemDecoder {
 // MARK: - Encrypted
 
 extension VaultBackupItemDecoder {
-    private func decodeEncrypted(item: VaultBackupItem.Encrypted) throws -> EncryptedItem {
+    private func decodeEncrypted(item: VaultBackupItem.Encrypted) throws(SemVer.ParseError) -> EncryptedItem {
         try .init(
             version: SemVer(string: item.version),
             title: item.title,

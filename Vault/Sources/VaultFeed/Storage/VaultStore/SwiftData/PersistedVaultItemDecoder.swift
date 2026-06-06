@@ -48,7 +48,7 @@ extension PersistedVaultItemDecoder {
         }.reducedToSet()
     }
 
-    private func decodeSearchableLevel(level: String) throws -> VaultItemSearchableLevel {
+    private func decodeSearchableLevel(level: String) throws(VaultItemDecodingError) -> VaultItemSearchableLevel {
         switch level {
         case VaultEncodingConstants.SearchableLevel.full: .full
         case VaultEncodingConstants.SearchableLevel.none: .none
@@ -58,7 +58,7 @@ extension PersistedVaultItemDecoder {
         }
     }
 
-    private func decodeVisibility(level: String) throws -> VaultItemVisibility {
+    private func decodeVisibility(level: String) throws(VaultItemDecodingError) -> VaultItemVisibility {
         switch level {
         case VaultEncodingConstants.Visibility.always: .always
         case VaultEncodingConstants.Visibility.onlySearch: .onlySearch
@@ -84,7 +84,7 @@ extension PersistedVaultItemDecoder {
         }
     }
 
-    private func decodeOTPCode(otp: PersistedOTPDetails) throws -> OTPAuthCode {
+    private func decodeOTPCode(otp: PersistedOTPDetails) throws(VaultItemDecodingError) -> OTPAuthCode {
         try OTPAuthCode(
             type: decodeOTPType(otp: otp),
             data: .init(
@@ -97,7 +97,7 @@ extension PersistedVaultItemDecoder {
         )
     }
 
-    private func decodeOTPType(otp: PersistedOTPDetails) throws -> OTPAuthType {
+    private func decodeOTPType(otp: PersistedOTPDetails) throws(VaultItemDecodingError) -> OTPAuthType {
         switch otp.authType {
         case VaultEncodingConstants.OTPAuthType.totp:
             guard let period = otp.period else {
@@ -114,14 +114,14 @@ extension PersistedVaultItemDecoder {
         }
     }
 
-    private func decode(digits: Int32) throws -> OTPAuthDigits {
+    private func decode(digits: Int32) throws(VaultItemDecodingError) -> OTPAuthDigits {
         guard (Int32(UInt16.min) ... Int32(UInt16.max)).contains(digits) else {
             throw VaultItemDecodingError.invalidNumberOfDigits
         }
         return OTPAuthDigits(value: UInt16(digits))
     }
 
-    private func decodeAlgorithm(value: String) throws -> OTPAuthAlgorithm {
+    private func decodeAlgorithm(value: String) throws(VaultItemDecodingError) -> OTPAuthAlgorithm {
         switch value {
         case VaultEncodingConstants.OTPAuthAlgorithm.sha1: .sha1
         case VaultEncodingConstants.OTPAuthAlgorithm.sha256: .sha256
@@ -130,14 +130,14 @@ extension PersistedVaultItemDecoder {
         }
     }
 
-    private func decodeSecretFormat(value: String) throws -> OTPAuthSecret.Format {
+    private func decodeSecretFormat(value: String) throws(VaultItemDecodingError) -> OTPAuthSecret.Format {
         switch value {
         case VaultEncodingConstants.OTPAuthSecret.Format.base32: .base32
         default: throw VaultItemDecodingError.invalidSecretFormat
         }
     }
 
-    private func decodeLockState(value: String?) throws -> VaultItemLockState {
+    private func decodeLockState(value: String?) throws(VaultItemDecodingError) -> VaultItemLockState {
         switch value {
         case VaultEncodingConstants.LockState.notLocked: .notLocked
         case VaultEncodingConstants.LockState.lockedWithNativeSecurity: .lockedWithNativeSecurity
@@ -146,7 +146,7 @@ extension PersistedVaultItemDecoder {
         }
     }
 
-    private func decodeTextFormat(value: String) throws -> TextFormat {
+    private func decodeTextFormat(value: String) throws(VaultItemDecodingError) -> TextFormat {
         switch value {
         case VaultEncodingConstants.TextFormat.plain: .plain
         case VaultEncodingConstants.TextFormat.markdown: .markdown
@@ -154,7 +154,7 @@ extension PersistedVaultItemDecoder {
         }
     }
 
-    private func decodeEncryptedItem(item: PersistedEncryptedItemDetails) throws -> EncryptedItem {
+    private func decodeEncryptedItem(item: PersistedEncryptedItemDetails) throws(SemVer.ParseError) -> EncryptedItem {
         try .init(
             version: SemVer(string: item.version),
             title: item.title,

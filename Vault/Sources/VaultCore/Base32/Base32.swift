@@ -44,12 +44,12 @@ public func base32HexEncode(_ data: Data) -> String {
     }
 }
 
-public func base32DecodeToData(_ string: String) throws -> Data {
+public func base32DecodeToData(_ string: String) throws(Base32Error) -> Data {
     let bytes = try base32decode(string, alphabetDecodeTable)
     return Data(bytes)
 }
 
-public func base32HexDecodeToData(_ string: String) throws -> Data {
+public func base32HexDecodeToData(_ string: String) throws(Base32Error) -> Data {
     let bytes = try base32decode(string, extendedHexAlphabetDecodeTable)
     return Data(bytes)
 }
@@ -64,11 +64,11 @@ public func base32HexEncode(_ array: [UInt8]) -> String {
     base32encode(array, array.count, extendedHexAlphabetEncodeTable)
 }
 
-public func base32Decode(_ string: String) throws -> [UInt8] {
+public func base32Decode(_ string: String) throws(Base32Error) -> [UInt8] {
     try base32decode(string, alphabetDecodeTable)
 }
 
-public func base32HexDecode(_ string: String) throws -> [UInt8] {
+public func base32HexDecode(_ string: String) throws(Base32Error) -> [UInt8] {
     try base32decode(string, extendedHexAlphabetDecodeTable)
 }
 
@@ -77,7 +77,7 @@ public func base32HexDecode(_ string: String) throws -> [UInt8] {
 extension String {
     // base32
     public var base32DecodedData: Data {
-        get throws {
+        get throws(Base32Error) {
             try base32DecodeToData(self)
         }
     }
@@ -88,14 +88,14 @@ extension String {
         }
     }
 
-    public func base32DecodedString(_: String.Encoding = .utf8) throws -> String? {
+    public func base32DecodedString(_: String.Encoding = .utf8) throws(Base32Error) -> String? {
         let data = try base32DecodedData
         return String(data: data, encoding: .utf8)
     }
 
     // base32Hex
     public var base32HexDecodedData: Data {
-        get throws {
+        get throws(Base32Error) {
             try base32HexDecodeToData(self)
         }
     }
@@ -106,7 +106,7 @@ extension String {
         }
     }
 
-    public func base32HexDecodedString(_: String.Encoding = .utf8) throws -> String? {
+    public func base32HexDecodedString(_: String.Encoding = .utf8) throws(Base32Error) -> String? {
         let data = try base32HexDecodedData
         return String(data: data, encoding: .utf8)
     }
@@ -123,7 +123,7 @@ extension Data {
     }
 
     public var base32DecodedData: Data? {
-        get throws {
+        get throws(Base32Error) {
             try String(data: self, encoding: .utf8).flatMap(base32DecodeToData)
         }
     }
@@ -138,7 +138,7 @@ extension Data {
     }
 
     public var base32HexDecodedData: Data? {
-        get throws {
+        get throws(Base32Error) {
             try String(data: self, encoding: .utf8).flatMap(base32HexDecodeToData)
         }
     }
@@ -344,7 +344,7 @@ let extendedHexAlphabetDecodeTable: [UInt8] = [
     __, __, __, __, __, __, __, __, __, __, __, __, __, __, __, __, // 0xF0 - 0xFF
 ]
 
-private func base32decode(_ string: String, _ table: [UInt8]) throws -> [UInt8] {
+private func base32decode(_ string: String, _ table: [UInt8]) throws(Base32Error) -> [UInt8] {
     let length = string.unicodeScalars.count
     if length == 0 {
         return []

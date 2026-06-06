@@ -19,7 +19,7 @@ struct VaultItemDecryptor {
     }
 
     /// Decrypts the identifier for this item, so we know what kind of item it is.
-    func decryptItemIdentifier(item: EncryptedItem) throws -> String {
+    func decryptItemIdentifier(item: EncryptedItem) throws(Error) -> String {
         let decryptor = AESGCMDecryptor(key: key.key.data)
         let item = try withMappedError {
             try decryptor.decrypt(
@@ -40,7 +40,7 @@ struct VaultItemDecryptor {
     }
 
     /// Decodes and decrypts an encryptable item from the vault.
-    func decrypt<T: VaultItemEncryptable>(item: EncryptedItem, expectedItemIdentifier: String) throws -> T {
+    func decrypt<T: VaultItemEncryptable>(item: EncryptedItem, expectedItemIdentifier: String) throws(Error) -> T {
         let decryptor = AESGCMDecryptor(key: key.key.data)
         let item = try withMappedError {
             try decryptor.decrypt(

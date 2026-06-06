@@ -15,7 +15,7 @@ final class DetailEditState<T: Equatable> {
         isInEditMode = true
     }
 
-    func saveChanges(performUpdate: @MainActor @Sendable () async throws -> Void) async throws {
+    func saveChanges(performUpdate: @MainActor @Sendable () async throws -> Void) async throws(OperationError) {
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
@@ -30,7 +30,7 @@ final class DetailEditState<T: Equatable> {
     func deleteItem(
         performDeletion: @MainActor @Sendable () async throws -> Void,
         finished: @MainActor @Sendable () -> Void,
-    ) async throws {
+    ) async throws(OperationError) {
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
