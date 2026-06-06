@@ -2,19 +2,19 @@ import Foundation
 import FoundationExtensions
 internal import CryptoSwift
 
-public struct PBKDF2KeyDeriver<Length: KeyLength>: KeyDeriver {
+public struct PBKDF2KeyDeriver< let bytes: Int>: KeyDeriver {
     public let parameters: Parameters
 
     public init(parameters: Parameters) {
         self.parameters = parameters
     }
 
-    public func key(password: Data, salt: Data) throws -> KeyData<Length> {
+    public func key(password: Data, salt: Data) throws -> KeyData<bytes> {
         let engine = try PKCS5.PBKDF2(
             password: password.byteArray,
             salt: salt.byteArray,
             iterations: parameters.iterations,
-            keyLength: Length.bytes,
+            keyLength: bytes,
             variant: parameters.variant.hmacVariant,
         )
         let data = try Data(engine.calculate())
@@ -23,7 +23,7 @@ public struct PBKDF2KeyDeriver<Length: KeyLength>: KeyDeriver {
 
     public var uniqueAlgorithmIdentifier: String {
         let parameters = [
-            "keyLength=\(Length.bytes)",
+            "keyLength=\(bytes)",
             "iterations=\(parameters.iterations)",
             "variant=\(parameters.variant)",
         ]

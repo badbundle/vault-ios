@@ -134,9 +134,9 @@ public final class VaultDataModel {
     private let vaultKillphraseDeleter: any VaultStoreKillphraseDeleter
     private let vaultOtpAutofillStore: any VaultOTPAutofillStore
     private let backupPasswordStore: any BackupPasswordStore
-    private let killphraseKeyStore: any KillphraseKeyStore
+    private let killphraseKeyStore: any KillphraseKeyStore<KeyData<32>>
     private let killphraseRehashService: KillphraseRehashService?
-    private let searchPassphraseKeyStore: any SearchPassphraseKeyStore
+    private let searchPassphraseKeyStore: any SearchPassphraseKeyStore<KeyData<32>>
     private let searchPassphraseRehashService: SearchPassphraseRehashService?
     private let backupEventLogger: any BackupEventLogger
     private var observationBag = Set<AnyCancellable>()
@@ -149,9 +149,9 @@ public final class VaultDataModel {
         vaultKillphraseDeleter: any VaultStoreKillphraseDeleter,
         vaultOtpAutofillStore: any VaultOTPAutofillStore,
         backupPasswordStore: any BackupPasswordStore,
-        killphraseKeyStore: any KillphraseKeyStore,
+        killphraseKeyStore: any KillphraseKeyStore<KeyData<32>>,
         killphraseRehashService: KillphraseRehashService?,
-        searchPassphraseKeyStore: any SearchPassphraseKeyStore,
+        searchPassphraseKeyStore: any SearchPassphraseKeyStore<KeyData<32>>,
         searchPassphraseRehashService: SearchPassphraseRehashService?,
         backupEventLogger: any BackupEventLogger,
         itemCaches: [any VaultItemCache] = [],

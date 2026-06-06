@@ -2,19 +2,19 @@ import Foundation
 import FoundationExtensions
 internal import CryptoSwift
 
-public struct HKDFKeyDeriver<Length: KeyLength>: KeyDeriver {
+public struct HKDFKeyDeriver< let bytes: Int>: KeyDeriver {
     private let parameters: Parameters
 
     public init(parameters: Parameters) {
         self.parameters = parameters
     }
 
-    public func key(password: Data, salt: Data) throws -> KeyData<Length> {
+    public func key(password: Data, salt: Data) throws -> KeyData<bytes> {
         let engine = try HKDF(
             password: password.byteArray,
             salt: salt.byteArray,
             info: nil,
-            keyLength: Length.bytes,
+            keyLength: bytes,
             variant: parameters.variant.hmacVariant,
         )
         let data = try Data(engine.calculate())
@@ -23,7 +23,7 @@ public struct HKDFKeyDeriver<Length: KeyLength>: KeyDeriver {
 
     public var uniqueAlgorithmIdentifier: String {
         let parameters = [
-            "keyLength=\(Length.bytes)",
+            "keyLength=\(bytes)",
             "variant=\(parameters.variant)",
         ]
         let parameterDescription = parameters.joined(separator: ";")

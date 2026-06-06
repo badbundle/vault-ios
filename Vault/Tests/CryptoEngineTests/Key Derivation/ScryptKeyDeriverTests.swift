@@ -8,7 +8,7 @@ import Testing
 struct ScryptKeyDeriverTests {
     @Test
     func key_doesNotThrowForValidParameters() async {
-        let params = ScryptKeyDeriver<Bits64>.Parameters(
+        let params = ScryptKeyDeriver<8>.Parameters(
             costFactor: 1 << 4,
             blockSizeFactor: 2,
             parallelizationFactor: 1,
@@ -22,12 +22,12 @@ struct ScryptKeyDeriverTests {
 
     @Test
     func key_throwsForInvalidParameters() async {
-        let params = ScryptKeyDeriver<Bits64>.Parameters(
+        let params = ScryptKeyDeriver<8>.Parameters(
             costFactor: 16385,
             blockSizeFactor: 8,
             parallelizationFactor: 1,
         )
-        let sut = ScryptKeyDeriver<Bits64>(parameters: params)
+        let sut = ScryptKeyDeriver<8>(parameters: params)
 
         #expect(throws: (any Error).self) {
             try sut.key(password: anyData(), salt: anyData())
@@ -69,7 +69,7 @@ struct ScryptKeyDeriverTests {
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)
 
-        let expected = try KeyData<Bits64>(data: Data(hex: "fa09cf2f564fb137"))
+        let expected = try KeyData<8>(data: Data(hex: "fa09cf2f564fb137"))
         let keys = try [
             sut.key(password: password, salt: salt),
             sut.key(password: password, salt: salt),
@@ -95,9 +95,9 @@ struct ScryptKeyDeriverTests {
 
 extension ScryptKeyDeriverTests {
     private func makeSUT(
-        parameters: ScryptKeyDeriver<Bits64>
+        parameters: ScryptKeyDeriver<8>
             .Parameters = .fastForTesting,
-    ) -> ScryptKeyDeriver<Bits64> {
+    ) -> ScryptKeyDeriver<8> {
         ScryptKeyDeriver(parameters: parameters)
     }
 }

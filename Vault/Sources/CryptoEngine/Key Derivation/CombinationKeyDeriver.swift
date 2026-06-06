@@ -4,10 +4,10 @@ import FoundationExtensions
 /// A key deriver that is composed of a sequence of other `KeyDeriver`s
 ///
 /// The output from the first is fed into the second, etc.
-public struct CombinationKeyDeriver<Length: KeyLength>: KeyDeriver {
-    private let derivers: [any KeyDeriver<Length>]
+public struct CombinationKeyDeriver< let bytes: Int>: KeyDeriver {
+    private let derivers: [any KeyDeriver<KeyData<bytes>>]
 
-    public init(derivers: [any KeyDeriver<Length>]) {
+    public init(derivers: [any KeyDeriver<KeyData<bytes>>]) {
         self.derivers = derivers
     }
 
@@ -15,7 +15,7 @@ public struct CombinationKeyDeriver<Length: KeyLength>: KeyDeriver {
         case noKeyDerviers
     }
 
-    public func key(password: Data, salt: Data) throws -> KeyData<Length> {
+    public func key(password: Data, salt: Data) throws -> KeyData<bytes> {
         guard let first = derivers.first else { throw KeyDeriverError.noKeyDerviers }
         let firstGeneration = try first.key(password: password, salt: salt)
         return try derivers[1...].reduce(firstGeneration) { currentKey, keyDeriver in

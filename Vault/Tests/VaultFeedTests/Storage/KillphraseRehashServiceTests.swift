@@ -135,7 +135,7 @@ extension KillphraseRehashServiceTests {
     }
 
     private func makeDigester() -> KillphraseDigester {
-        let key = (try? KeyData<Bits256>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
+        let key = (try? KeyData<32>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
         return KillphraseDigester(key: key)
     }
 

@@ -46,10 +46,10 @@ public enum VaultRoot {
     public static let backupPasswordStore: some BackupPasswordStore =
         BackupPasswordStoreImpl(secureStorage: secureStorage)
 
-    public static let killphraseKeyStore: some KillphraseKeyStore =
+    public static let killphraseKeyStore: some KillphraseKeyStore<KeyData<32>> =
         KillphraseKeyStoreImpl(secureStorage: secureStorage)
 
-    public static let searchPassphraseKeyStore: some SearchPassphraseKeyStore =
+    public static let searchPassphraseKeyStore: some SearchPassphraseKeyStore<KeyData<32>> =
         SearchPassphraseKeyStoreImpl(secureStorage: secureStorage)
 
     public static let vaultOtpAutofillStore: some VaultOTPAutofillStore =
@@ -191,7 +191,7 @@ public enum VaultRoot {
     @MainActor
     static let backupEventLogger: some BackupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
 
-    static let encryptedVaultDecoder: some EncryptedVaultDecoder = EncryptedVaultDecoderImpl()
+    static let encryptedVaultDecoder: some EncryptedVaultDecoder<KeyData<32>> = EncryptedVaultDecoderImpl()
 
     @MainActor
     public static let deviceAuthenticationService: DeviceAuthenticationService = .init(policy: .default)

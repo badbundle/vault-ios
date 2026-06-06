@@ -3,9 +3,9 @@ import FoundationExtensions
 import VaultCore
 
 public final class VaultBackupDecryptor {
-    private let key: KeyData<Bits256>
+    private let key: KeyData<32>
 
-    public init(key: KeyData<Bits256>) {
+    public init(key: KeyData<32>) {
         self.key = key
     }
 

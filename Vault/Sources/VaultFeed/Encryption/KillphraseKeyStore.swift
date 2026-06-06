@@ -14,9 +14,10 @@ import VaultCore
 /// generates a random key and stores it; on every subsequent call it
 /// returns the stored value.
 ///
-/// @mockable
-public protocol KillphraseKeyStore: Sendable {
-    func loadOrCreate() async throws -> KeyData<Bits256>
+/// @mockable(typealias: Key = KeyData<32>)
+public protocol KillphraseKeyStore<Key>: Sendable {
+    associatedtype Key: Sendable
+    func loadOrCreate() async throws -> Key
 }
 
 public struct KillphraseKeyStoreImpl: KillphraseKeyStore {
@@ -26,11 +27,11 @@ public struct KillphraseKeyStoreImpl: KillphraseKeyStore {
         self.secureStorage = secureStorage
     }
 
-    public func loadOrCreate() async throws -> KeyData<Bits256> {
+    public func loadOrCreate() async throws -> KeyData<32> {
         if let existing = try await secureStorage.retrieveSilent(key: KeychainKey.killphraseKey) {
-            return try KeyData<Bits256>(data: existing)
+            return try KeyData<32>(data: existing)
         }
-        let fresh = KeyData<Bits256>.random()
+        let fresh = KeyData<32>.random()
         try await secureStorage.storeSilent(data: fresh.data, forKey: KeychainKey.killphraseKey)
         return fresh
     }

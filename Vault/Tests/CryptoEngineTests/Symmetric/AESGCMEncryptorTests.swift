@@ -10,7 +10,7 @@ struct AESGCMEncryptorTests {
         Data.random(count: 15),
         Data.random(count: 100),
     ])
-    func encrypt_throwsForInvalidKeyLength(key: Data) throws {
+    func encrypt_throwsForInvalidKeyByteLength(key: Data) throws {
         let sut = makeSUT(key: key)
 
         #expect(throws: (any Error).self) {

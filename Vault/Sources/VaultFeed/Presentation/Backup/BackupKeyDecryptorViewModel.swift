@@ -50,12 +50,12 @@ public final class BackupKeyDecryptorViewModel {
 
     private let encryptedVault: EncryptedVault
     private let keyDeriverFactory: any VaultKeyDeriverFactory
-    private let encryptedVaultDecoder: any EncryptedVaultDecoder
+    private let encryptedVaultDecoder: any EncryptedVaultDecoder<KeyData<32>>
 
     public init(
         encryptedVault: EncryptedVault,
         keyDeriverFactory: any VaultKeyDeriverFactory,
-        encryptedVaultDecoder: any EncryptedVaultDecoder,
+        encryptedVaultDecoder: any EncryptedVaultDecoder<KeyData<32>>,
         decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never>,
     ) {
         self.encryptedVault = encryptedVault

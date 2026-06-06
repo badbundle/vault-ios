@@ -4,28 +4,30 @@ import FoundationExtensions
 import VaultBackup
 import VaultCore
 
-/// @mockable
-public protocol EncryptedVaultDecoder: Sendable {
+/// @mockable(typealias: Key = KeyData<32>)
+public protocol EncryptedVaultDecoder<Key>: Sendable {
+    associatedtype Key: Sendable
+
     func decryptAndDecode(
-        key: KeyData<Bits256>,
+        key: Key,
         encryptedVault: EncryptedVault,
     ) throws -> VaultApplicationPayload
     /// Throws if the given `key` cannot decrypt this vault.
-    func verifyCanDecrypt(key: KeyData<Bits256>, encryptedVault: EncryptedVault) throws
+    func verifyCanDecrypt(key: Key, encryptedVault: EncryptedVault) throws
 }
 
 /// From an encrypted vault, deconstruct to application-level items.
 public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder, Sendable {
     public init() {}
 
-    public func verifyCanDecrypt(key: KeyData<Bits256>, encryptedVault: EncryptedVault) throws {
+    public func verifyCanDecrypt(key: KeyData<32>, encryptedVault: EncryptedVault) throws {
         try rethrowing {
             try VaultBackupDecryptor(key: key).verifyCanDecrypt(encryptedVault: encryptedVault)
         }
     }
 
     public func decryptAndDecode(
-        key: KeyData<Bits256>,
+        key: KeyData<32>,
         encryptedVault: EncryptedVault,
     ) throws -> VaultApplicationPayload {
         try rethrowing {

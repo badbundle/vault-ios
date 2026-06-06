@@ -2,6 +2,7 @@
 
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 import VaultKeygen
 
 // To test this, make sure this is being run in the "release" configuration.
@@ -25,7 +26,7 @@ struct KeygenSpeedtest {
     }
 }
 
-func benchmark(keyDeriver: some KeyDeriver, description: String) throws {
+func benchmark(keyDeriver: some KeyDeriver<KeyData<32>>, description: String) throws {
     print("🚦 Starting '\(description)' derivation")
     let start = Date()
     let key = try keyDeriver.key(password: Data("hello world".utf8), salt: Data("salt".utf8))

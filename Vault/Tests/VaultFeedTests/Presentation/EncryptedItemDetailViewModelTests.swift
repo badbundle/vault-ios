@@ -32,7 +32,7 @@ final class EncryptedItemDetailViewModelTests {
     func startDecryption_setsStateToDecrypting() async {
         let keyDeriverFactory = VaultKeyDeriverFactoryMock()
         let handlerCalled = Pending.signal()
-        let keyDeriver = SuspendingKeyDeriver<Bits256> { _, _ in
+        let keyDeriver = SuspendingKeyDeriver<32> { _, _ in
             Task { await handlerCalled.fulfill() }
             return .random()
         }

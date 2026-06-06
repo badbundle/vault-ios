@@ -18,7 +18,7 @@ struct VaultItemEncryptor {
         let containerEncoding = try item.makeEncryptedContainer()
         let encodedFormat = try makeEncoder().encode(containerEncoding)
         let encryptor = AESGCMEncryptor(key: key.key.data)
-        let iv = KeyData<Bits256>.random()
+        let iv = KeyData<32>.random()
         let encrypted = try encryptor.encrypt(plaintext: encodedFormat, iv: iv.data)
         return EncryptedItem(
             version: "1.0.0",

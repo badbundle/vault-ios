@@ -27,7 +27,7 @@ struct BackupPasswordDecoderTests {
     }
 
     @Test
-    func decode_throwsErrorIfKeyLengthIncorrect() {
+    func decode_throwsErrorIfKeyByteLengthIncorrect() {
         let sut = makeSUT()
 
         let str = """

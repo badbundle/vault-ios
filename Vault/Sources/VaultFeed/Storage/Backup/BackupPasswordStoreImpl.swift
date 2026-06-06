@@ -41,7 +41,7 @@ public final class BackupPasswordStoreImpl: BackupPasswordStore {
 extension BackupPasswordStoreImpl {
     /// Codable container that is stored in the keychain.
     private struct BackupPasswordContainer: Codable {
-        var key: KeyData<Bits256>
+        var key: KeyData<32>
         var salt: Data
         var keyDervier: VaultKeyDeriver.Signature
 

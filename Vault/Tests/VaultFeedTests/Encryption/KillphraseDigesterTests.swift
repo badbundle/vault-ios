@@ -68,8 +68,8 @@ struct KillphraseDigesterTests {
     @Test
     func matches_returnsFalseForDifferentKey() throws {
         let phrase = "secret"
-        let keyA = try KeyData<Bits256>(data: Data(repeating: 0x01, count: 32))
-        let keyB = try KeyData<Bits256>(data: Data(repeating: 0x02, count: 32))
+        let keyA = try KeyData<32>(data: Data(repeating: 0x01, count: 32))
+        let keyB = try KeyData<32>(data: Data(repeating: 0x02, count: 32))
         let digesterA = KillphraseDigester(key: keyA)
         let digesterB = KillphraseDigester(key: keyB)
         let digest = digesterA.makeDigest(phrase: phrase)
@@ -101,10 +101,10 @@ extension KillphraseDigesterTests {
         KillphraseDigester(key: testKey())
     }
 
-    private func testKey() -> KeyData<Bits256> {
+    private func testKey() -> KeyData<32> {
         // The KeyData length is fixed at 32 bytes, and the seed below is
         // also 32 bytes, so this initialiser cannot throw. Using a
         // local helper avoids force-try in every test setup.
-        (try? KeyData<Bits256>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
+        (try? KeyData<32>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
     }
 }
