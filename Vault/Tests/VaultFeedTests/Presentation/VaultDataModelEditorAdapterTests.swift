@@ -229,7 +229,7 @@ struct VaultDataModelEditorAdapterTests {
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await loadDigesters(on: dataModel)
-        let deriverMock = KeyDeriverMock<Bits256>()
+        let deriverMock = KeyDeriverMock<KeyData<32>>()
         let keyDeriverFactory = VaultKeyDeriverFactoryMock()
         keyDeriverFactory.makeVaultItemKeyDeriverHandler = {
             VaultKeyDeriver(deriver: deriverMock, signature: .testing)

@@ -154,7 +154,7 @@ extension BackupKeyChangeViewModelTests {
     private struct KeyDeriverErroring: KeyDeriver {
         var uniqueAlgorithmIdentifier: String { "err" }
 
-        func key(password _: Data, salt _: Data) throws -> KeyData<Bits256> {
+        func key(password _: Data, salt _: Data) throws -> KeyData<32> {
             struct Err: Error {}
             throw Err()
         }

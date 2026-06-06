@@ -8,7 +8,7 @@ import VaultCore
 struct VaultBackupDecryptorTests {
     @Test
     func decryptBackupPayload_throwsForIncompatibleVersion() throws {
-        let key = KeyData<Bits256>.repeating(byte: 0xAA)
+        let key = KeyData<32>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
@@ -27,7 +27,7 @@ struct VaultBackupDecryptorTests {
 
     @Test
     func decryptBackupPayload_decryptsVaultWithCorrectKey() throws {
-        let key = KeyData<Bits256>.repeating(byte: 0xAA)
+        let key = KeyData<32>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
@@ -55,7 +55,7 @@ struct VaultBackupDecryptorTests {
 
     @Test
     func decryptBackupPayload_failsToDecryptGoodPayloadForInvalidKey() throws {
-        let key = KeyData<Bits256>.repeating(byte: 0xBB)
+        let key = KeyData<32>.repeating(byte: 0xBB)
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
@@ -80,7 +80,7 @@ struct VaultBackupDecryptorTests {
 
     @Test
     func decryptBackupPayload_failsToDecryptMalformedAuthentication() throws {
-        let key = KeyData<Bits256>.repeating(byte: 0xAA)
+        let key = KeyData<32>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
@@ -106,7 +106,7 @@ struct VaultBackupDecryptorTests {
 
     @Test
     func verifyCanDecrypt_failsToDecryptGoodPayloadForInvalidKey() throws {
-        let key = KeyData<Bits256>.repeating(byte: 0xBB)
+        let key = KeyData<32>.repeating(byte: 0xBB)
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
@@ -133,7 +133,7 @@ struct VaultBackupDecryptorTests {
 // MARK: - Helpers
 
 extension VaultBackupDecryptorTests {
-    private func makeSUT(key: KeyData<Bits256>) -> VaultBackupDecryptor {
+    private func makeSUT(key: KeyData<32>) -> VaultBackupDecryptor {
         VaultBackupDecryptor(key: key)
     }
 }

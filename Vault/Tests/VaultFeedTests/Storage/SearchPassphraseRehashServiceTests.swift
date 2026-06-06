@@ -133,7 +133,7 @@ extension SearchPassphraseRehashServiceTests {
     }
 
     private func makeDigester() -> SearchPassphraseDigester {
-        let key = (try? KeyData<Bits256>(data: Data(repeating: 0xBB, count: 32))) ?? .zero()
+        let key = (try? KeyData<32>(data: Data(repeating: 0xBB, count: 32))) ?? .zero()
         return SearchPassphraseDigester(key: key)
     }
 

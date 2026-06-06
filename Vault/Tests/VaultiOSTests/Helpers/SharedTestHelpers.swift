@@ -41,7 +41,7 @@ func anyVaultDataModel(
 /// the killphrase digest path. Returns a fixed all-zero key so
 /// `loadOrCreate` never fatal-errors when called from `setup()`.
 struct StubKillphraseKeyStore: KillphraseKeyStore {
-    func loadOrCreate() async throws -> KeyData<Bits256> {
+    func loadOrCreate() async throws -> KeyData<32> {
         .zero()
     }
 }
@@ -49,7 +49,7 @@ struct StubKillphraseKeyStore: KillphraseKeyStore {
 /// Default no-op key store for VaultDataModel tests that don't exercise
 /// the search-passphrase digest path.
 struct StubSearchPassphraseKeyStore: SearchPassphraseKeyStore {
-    func loadOrCreate() async throws -> KeyData<Bits256> {
+    func loadOrCreate() async throws -> KeyData<32> {
         .zero()
     }
 }

@@ -4,7 +4,7 @@ import FoundationExtensions
 
 final class VaultDecryptor {
     private let decryptor: AESGCMDecryptor
-    init(key: KeyData<Bits256>) {
+    init(key: KeyData<32>) {
         decryptor = AESGCMDecryptor(key: key.data)
     }
 

@@ -139,7 +139,7 @@ final class VaultDataModelTests {
     func loadKillphraseDigester_isNoopWhenAlreadyLoaded() async throws {
         let keyStore = KillphraseKeyStoreMock()
         keyStore.loadOrCreateHandler = {
-            try KeyData<Bits256>(data: Data(repeating: 1, count: 32))
+            try KeyData<32>(data: Data(repeating: 1, count: 32))
         }
         let sut = makeSUT(killphraseKeyStore: keyStore)
 
@@ -166,7 +166,7 @@ final class VaultDataModelTests {
     func loadSearchPassphraseDigester_isNoopWhenAlreadyLoaded() async throws {
         let keyStore = SearchPassphraseKeyStoreMock()
         keyStore.loadOrCreateHandler = {
-            try KeyData<Bits256>(data: Data(repeating: 2, count: 32))
+            try KeyData<32>(data: Data(repeating: 2, count: 32))
         }
         let sut = makeSUT(searchPassphraseKeyStore: keyStore)
 
@@ -352,7 +352,7 @@ final class VaultDataModelTests {
         let killphraseDeleter = VaultStoreKillphraseDeleterMock()
         let keyStore = KillphraseKeyStoreMock()
         keyStore.loadOrCreateHandler = {
-            (try? KeyData<Bits256>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
+            (try? KeyData<32>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
         }
         let sut = makeSUT(
             vaultStore: store,
@@ -390,7 +390,7 @@ final class VaultDataModelTests {
         let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
         let keyStore = KillphraseKeyStoreMock()
         keyStore.loadOrCreateHandler = {
-            (try? KeyData<Bits256>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
+            (try? KeyData<32>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
         }
         let sut = makeSUT(
             vaultStore: store,

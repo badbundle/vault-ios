@@ -78,7 +78,7 @@ struct VaultKeyDeriverTests {
     func createEncryptionKey_usesRandomSalt() throws {
         let sut = VaultKeyDeriver.testing
 
-        var seenKeys = Set<KeyData<Bits256>>()
+        var seenKeys = Set<KeyData<32>>()
         var seenSalt = Set<Data>()
         var seenKeyDeriver = Set<VaultKeyDeriver.Signature>()
         for _ in 0 ..< 100 {
@@ -99,7 +99,7 @@ struct VaultKeyDeriverTests {
         let salt = Data(hex: "aabbccddeeff")
         let sut = VaultKeyDeriver.testing
 
-        var seenKeys = Set<KeyData<Bits256>>()
+        var seenKeys = Set<KeyData<32>>()
         var seenSalt = Set<Data>()
         var seenKeyDeriver = Set<VaultKeyDeriver.Signature>()
 

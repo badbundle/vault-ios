@@ -5,18 +5,18 @@ import FoundationExtensions
 /// Derives keys using the *scrypt* algorithm.
 ///
 /// https://en.wikipedia.org/wiki/Scrypt
-public struct ScryptKeyDeriver<Length: KeyLength>: KeyDeriver {
+public struct ScryptKeyDeriver< let bytes: Int>: KeyDeriver {
     public let parameters: Parameters
 
     public init(parameters: Parameters) {
         self.parameters = parameters
     }
 
-    public func key(password: Data, salt: Data) throws -> KeyData<Length> {
+    public func key(password: Data, salt: Data) throws -> KeyData<bytes> {
         let engine = try Scrypt(
             password: password.byteArray,
             salt: salt.byteArray,
-            dkLen: Length.bytes,
+            dkLen: bytes,
             N: parameters.costFactor,
             r: parameters.blockSizeFactor,
             p: parameters.parallelizationFactor,
@@ -27,7 +27,7 @@ public struct ScryptKeyDeriver<Length: KeyLength>: KeyDeriver {
 
     public var uniqueAlgorithmIdentifier: String {
         let parameters = [
-            "keyLength=\(Length.bytes)",
+            "keyLength=\(bytes)",
             "costFactor=\(parameters.costFactor)",
             "blockSizeFactor=\(parameters.blockSizeFactor)",
             "parallelizationFactor=\(parameters.parallelizationFactor)",

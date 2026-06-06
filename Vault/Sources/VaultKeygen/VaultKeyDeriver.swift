@@ -16,14 +16,14 @@ public struct VaultKeyDeriver: KeyDeriver {
     /// during the key generation.
     public let signature: Signature
 
-    private let deriver: any KeyDeriver<Bits256>
+    private let deriver: any KeyDeriver<KeyData<32>>
 
-    public init(deriver: any KeyDeriver<Bits256>, signature: Signature) {
+    public init(deriver: any KeyDeriver<KeyData<32>>, signature: Signature) {
         self.deriver = deriver
         self.signature = signature
     }
 
-    public func key(password: Data, salt: Data) throws -> KeyData<Bits256> {
+    public func key(password: Data, salt: Data) throws -> KeyData<32> {
         try deriver.key(password: password, salt: salt)
     }
 
@@ -99,7 +99,7 @@ extension VaultKeyDeriver {
 
     /// A key deriver that's really fast, just for testing.
     public static let testing: VaultKeyDeriver = {
-        let deriver = HKDFKeyDeriver<Bits256>(parameters: .init(variant: .sha3_sha512))
+        let deriver = HKDFKeyDeriver<32>(parameters: .init(variant: .sha3_sha512))
         return VaultKeyDeriver(
             deriver: deriver,
             signature: .testing,
@@ -121,17 +121,17 @@ extension VaultKeyDeriver {
             ///
             /// This should be used in places where security is not required or for testing.
             public static let v1: VaultKeyDeriver = {
-                var derivers = [any KeyDeriver<Bits256>]()
-                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                var derivers = [any KeyDeriver<KeyData<32>>]()
+                derivers.append(PBKDF2KeyDeriver<32>(
                     parameters: .init(
                         iterations: 2000,
                         variant: .sha384,
                     ),
                 ))
-                derivers.append(HKDFKeyDeriver<Bits256>(
+                derivers.append(HKDFKeyDeriver<32>(
                     parameters: .init(variant: .sha3_sha512),
                 ))
-                derivers.append(ScryptKeyDeriver<Bits256>(
+                derivers.append(ScryptKeyDeriver<32>(
                     parameters: .init(
                         costFactor: 1 << 6,
                         blockSizeFactor: 4,
@@ -157,21 +157,21 @@ extension VaultKeyDeriver {
             ///
             /// This is intended to be the initial production version of the KDF for the Vault app.
             public static let v1: VaultKeyDeriver = {
-                var derivers = [any KeyDeriver<Bits256>]()
+                var derivers = [any KeyDeriver<KeyData<32>>]()
                 // Initial PBKDF2 for strong password hashing
-                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                derivers.append(PBKDF2KeyDeriver<32>(
                     parameters: .init(
                         iterations: 5_452_351,
                         variant: .sha384,
                     ),
                 ))
-                derivers.append(HKDFKeyDeriver<Bits256>(
+                derivers.append(HKDFKeyDeriver<32>(
                     parameters: .init(variant: .sha3_sha512),
                 ))
                 // Scrypt for memory-hard key derivation
                 // Requires ~250MB of memory at peak with these current parameters.
                 // This should be fine for most iOS devices to perform locally.
-                derivers.append(ScryptKeyDeriver<Bits256>(
+                derivers.append(ScryptKeyDeriver<32>(
                     parameters: .init(
                         costFactor: 1 << 18,
                         blockSizeFactor: 8,
@@ -179,7 +179,7 @@ extension VaultKeyDeriver {
                     ),
                 ))
                 return VaultKeyDeriver(
-                    deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
+                    deriver: CombinationKeyDeriver<32>(derivers: derivers),
                     signature: .backupSecureV1,
                 )
             }()
@@ -190,22 +190,22 @@ extension VaultKeyDeriver {
     public enum Item {
         public enum Fast {
             public static let v1: VaultKeyDeriver = {
-                var derivers = [any KeyDeriver<Bits256>]()
-                derivers.append(ScryptKeyDeriver<Bits256>(
+                var derivers = [any KeyDeriver<KeyData<32>>]()
+                derivers.append(ScryptKeyDeriver<32>(
                     parameters: .init(
                         costFactor: 1 << 6,
                         blockSizeFactor: 4,
                         parallelizationFactor: 1,
                     ),
                 ))
-                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                derivers.append(PBKDF2KeyDeriver<32>(
                     parameters: .init(
                         iterations: 1001,
                         variant: .sha384,
                     ),
                 ))
                 return VaultKeyDeriver(
-                    deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
+                    deriver: CombinationKeyDeriver<32>(derivers: derivers),
                     signature: .itemFastV1,
                 )
             }()
@@ -213,22 +213,22 @@ extension VaultKeyDeriver {
 
         public enum Secure {
             public static let v1: VaultKeyDeriver = {
-                var derivers = [any KeyDeriver<Bits256>]()
-                derivers.append(ScryptKeyDeriver<Bits256>(
+                var derivers = [any KeyDeriver<KeyData<32>>]()
+                derivers.append(ScryptKeyDeriver<32>(
                     parameters: .init(
                         costFactor: 1 << 8,
                         blockSizeFactor: 4,
                         parallelizationFactor: 1,
                     ),
                 ))
-                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                derivers.append(PBKDF2KeyDeriver<32>(
                     parameters: .init(
                         iterations: 372_002,
                         variant: .sha384,
                     ),
                 ))
                 return VaultKeyDeriver(
-                    deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
+                    deriver: CombinationKeyDeriver<32>(derivers: derivers),
                     signature: .itemSecureV1,
                 )
             }()

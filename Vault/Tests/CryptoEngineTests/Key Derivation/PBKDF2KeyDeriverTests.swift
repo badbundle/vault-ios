@@ -7,7 +7,7 @@ import Testing
 struct PBKDF2KeyDeriverTests {
     @Test
     func key_doesNotThrowForValidParameters() async {
-        let sut = PBKDF2KeyDeriver<Bits64>(parameters: .fastForTesting)
+        let sut = PBKDF2KeyDeriver<8>(parameters: .fastForTesting)
 
         #expect(throws: Never.self) {
             try sut.key(password: anyData(), salt: anyData())
@@ -16,7 +16,7 @@ struct PBKDF2KeyDeriverTests {
 
     @Test
     func key_throwsIfMissingSalt() async {
-        let sut = PBKDF2KeyDeriver<Bits64>(parameters: .fastForTesting)
+        let sut = PBKDF2KeyDeriver<8>(parameters: .fastForTesting)
 
         #expect(throws: (any Error).self) {
             try sut.key(password: anyData(), salt: emptyData())
@@ -27,7 +27,7 @@ struct PBKDF2KeyDeriverTests {
     func key_generatesValidKeyWithSalt() async throws {
         let password = Data(byteString: "hello world")
         let salt = Data(hex: "ABCDEF")
-        let sut = PBKDF2KeyDeriver<Bits64>(parameters: .fastForTesting)
+        let sut = PBKDF2KeyDeriver<8>(parameters: .fastForTesting)
 
         let key = try sut.key(password: password, salt: salt)
         #expect(key.data.toHexString() == "98daafce2dc5444d")
@@ -37,9 +37,9 @@ struct PBKDF2KeyDeriverTests {
     func key_generatesTheSameKeyMultipleTimes() async throws {
         let password = Data(byteString: "hello world")
         let salt = Data(hex: "ABCDEF")
-        let sut = PBKDF2KeyDeriver<Bits64>(parameters: .fastForTesting)
+        let sut = PBKDF2KeyDeriver<8>(parameters: .fastForTesting)
 
-        let expected = try KeyData<Bits64>(data: Data(hex: "98daafce2dc5444d"))
+        let expected = try KeyData<8>(data: Data(hex: "98daafce2dc5444d"))
         let keys = try [
             sut.key(password: password, salt: salt),
             sut.key(password: password, salt: salt),
@@ -50,7 +50,7 @@ struct PBKDF2KeyDeriverTests {
 
     @Test
     func uniqueAlgorithmIdentifier_matchesParameters() {
-        let sut = PBKDF2KeyDeriver<Bits64>(parameters: .init(
+        let sut = PBKDF2KeyDeriver<8>(parameters: .init(
             iterations: 456,
             variant: .sha384,
         ))

@@ -62,8 +62,8 @@ struct SearchPassphraseDigesterTests {
     @Test
     func matches_returnsFalseForDifferentKey() throws {
         let phrase = "secret"
-        let keyA = try KeyData<Bits256>(data: Data(repeating: 0x01, count: 32))
-        let keyB = try KeyData<Bits256>(data: Data(repeating: 0x02, count: 32))
+        let keyA = try KeyData<32>(data: Data(repeating: 0x01, count: 32))
+        let keyB = try KeyData<32>(data: Data(repeating: 0x02, count: 32))
         let digesterA = SearchPassphraseDigester(key: keyA)
         let digesterB = SearchPassphraseDigester(key: keyB)
         let digest = digesterA.makeDigest(phrase: phrase)
@@ -109,7 +109,7 @@ extension SearchPassphraseDigesterTests {
         SearchPassphraseDigester(key: testKey())
     }
 
-    private func testKey() -> KeyData<Bits256> {
-        (try? KeyData<Bits256>(data: Data(repeating: 0xBB, count: 32))) ?? .zero()
+    private func testKey() -> KeyData<32> {
+        (try? KeyData<32>(data: Data(repeating: 0xBB, count: 32))) ?? .zero()
     }
 }

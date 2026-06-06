@@ -7,7 +7,7 @@ import Testing
 struct CombinationKeyDeriverTests {
     @Test
     func key_throwsErrorIfNoKeyDerivers() {
-        let sut = CombinationKeyDeriver<Bits256>(derivers: [])
+        let sut = CombinationKeyDeriver<32>(derivers: [])
 
         #expect(throws: (any Error).self) {
             try sut.key(password: anyData(), salt: anyData())
@@ -16,8 +16,8 @@ struct CombinationKeyDeriverTests {
 
     @Test
     func key_returnsResultOfSingleKeyDeriver() throws {
-        let expectedData = KeyData<Bits256>.random()
-        let deriver = KeyDeriverMock<Bits256>()
+        let expectedData = KeyData<32>.random()
+        let deriver = KeyDeriverMock<KeyData<32>>()
         deriver.keyHandler = { _, _ in
             expectedData
         }
@@ -74,7 +74,7 @@ struct CombinationKeyDeriverTests {
     func key_checksCancellationBetweenAlgs() async throws {
         // We expect 3 confirmations, from the first 3 algos, the 4th should not run.
         await confirmation(expectedCount: 3) { confirmation in
-            let keyTask = SharedMutex<Task<KeyData<Bits256>, any Error>?>(nil)
+            let keyTask = SharedMutex<Task<KeyData<32>, any Error>?>(nil)
             await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
                 let d1 = SignalKeyDeriver(signal: { confirmation.confirm() })
                 let d2 = SignalKeyDeriver(signal: { confirmation.confirm() })
@@ -116,8 +116,8 @@ struct CombinationKeyDeriverTests {
 // MARK: - Helpers
 
 extension CombinationKeyDeriverTests {
-    private func mockKeyDeriver(returning: KeyData<Bits256>) -> KeyDeriverMock<Bits256> {
-        let deriver1 = KeyDeriverMock<Bits256>()
+    private func mockKeyDeriver(returning: KeyData<32>) -> KeyDeriverMock<KeyData<32>> {
+        let deriver1 = KeyDeriverMock<KeyData<32>>()
         deriver1.keyHandler = { _, _ in
             returning
         }
@@ -125,18 +125,18 @@ extension CombinationKeyDeriverTests {
     }
 
     private struct StubKeyDeriver: KeyDeriver {
-        var stubKey: KeyData<Bits256>
+        var stubKey: KeyData<32>
         var uniqueAlgorithmIdentifier: String
 
         init(
-            stubKey: KeyData<Bits256> = .zero(),
+            stubKey: KeyData<32> = .zero(),
             uniqueAlgorithmIdentifier: String = "stub",
         ) {
             self.stubKey = stubKey
             self.uniqueAlgorithmIdentifier = uniqueAlgorithmIdentifier
         }
 
-        func key(password _: Data, salt _: Data) throws -> KeyData<Bits256> {
+        func key(password _: Data, salt _: Data) throws -> KeyData<32> {
             stubKey
         }
     }
@@ -150,7 +150,7 @@ extension CombinationKeyDeriverTests {
         }
 
         var uniqueAlgorithmIdentifier: String { "signal" }
-        func key(password _: Data, salt _: Data) throws -> KeyData<Bits256> {
+        func key(password _: Data, salt _: Data) throws -> KeyData<32> {
             signal()
             return .zero()
         }

@@ -19,7 +19,7 @@ public struct SearchPassphraseDigester: SearchPassphraseMatcher, Sendable {
 
     private let key: SymmetricKey
 
-    public init(key: KeyData<Bits256>) {
+    public init(key: KeyData<32>) {
         self.key = SymmetricKey(data: key.data)
     }
 

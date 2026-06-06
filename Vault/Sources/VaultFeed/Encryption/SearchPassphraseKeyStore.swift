@@ -15,7 +15,7 @@ import VaultCore
 ///
 /// @mockable
 public protocol SearchPassphraseKeyStore: Sendable {
-    func loadOrCreate() async throws -> KeyData<Bits256>
+    func loadOrCreate() async throws -> KeyData<32>
 }
 
 public struct SearchPassphraseKeyStoreImpl: SearchPassphraseKeyStore {
@@ -25,11 +25,11 @@ public struct SearchPassphraseKeyStoreImpl: SearchPassphraseKeyStore {
         self.secureStorage = secureStorage
     }
 
-    public func loadOrCreate() async throws -> KeyData<Bits256> {
+    public func loadOrCreate() async throws -> KeyData<32> {
         if let existing = try await secureStorage.retrieveSilent(key: KeychainKey.searchPassphraseKey) {
-            return try KeyData<Bits256>(data: existing)
+            return try KeyData<32>(data: existing)
         }
-        let fresh = KeyData<Bits256>.random()
+        let fresh = KeyData<32>.random()
         try await secureStorage.storeSilent(data: fresh.data, forKey: KeychainKey.searchPassphraseKey)
         return fresh
     }
