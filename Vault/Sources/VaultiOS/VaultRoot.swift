@@ -234,6 +234,7 @@ public enum VaultRoot {
             autoBackupService.notifyDataChanged()
             reloadWidgetTimelines()
         }
+        reloadWidgetTimelines()
     }
 
     @MainActor

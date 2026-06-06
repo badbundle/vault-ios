@@ -299,7 +299,7 @@ let package = Package(
         ),
         .testTarget(
             name: "VaultiOSWidgetsTests",
-            dependencies: ["VaultiOSWidgets", "VaultiOSShared", "TestHelpers"],
+            dependencies: ["VaultiOSWidgets", "VaultiOSShared", "VaultCore", "VaultFeed", "TestHelpers"],
             exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins,

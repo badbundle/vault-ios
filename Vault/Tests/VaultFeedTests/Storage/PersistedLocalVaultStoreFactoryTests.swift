@@ -180,6 +180,33 @@ struct PersistedLocalVaultStoreFactoryTests {
     }
 
     @Test(arguments: ActiveFileScenario.all)
+    func makeVaultStoreOrThrow_openOnlyModeFailsWithoutRecoveryWhenInitialOpenFails(
+        _ scenario: ActiveFileScenario,
+    ) {
+        let directory = makeDirectoryURL()
+        let activeURLs = Set(scenario.files.map { url(for: $0, in: directory) })
+        let opener = ScriptedStoreOpener(results: [.failure(FactoryTestError.initialOpen)])
+        let fileSystem = FakeRecoveryFileSystem(existingFiles: activeURLs)
+        let sut = makeSUT(
+            directory: directory,
+            opener: opener,
+            fileSystem: fileSystem,
+            recoveryMode: .openOnly,
+        )
+
+        expectStoreConnectionError(.unableToConnect) {
+            _ = try sut.makeVaultStoreOrThrow()
+        }
+
+        #expect(opener.openedStoreURLs == [url(for: .primary, in: directory)])
+        #expect(fileSystem.createdDirectories == [])
+        #expect(fileSystem.movedItems.isEmpty)
+        for activeURL in activeURLs {
+            #expect(fileSystem.fileExists(at: activeURL))
+        }
+    }
+
+    @Test(arguments: ActiveFileScenario.all)
     func makeVaultStoreOrThrow_archivesActiveFileCombinations(_ scenario: ActiveFileScenario) throws {
         let directory = makeDirectoryURL()
         let archiveURL = directory.appending(path: "failed-store")
@@ -543,6 +570,7 @@ private func makeSUT(
     opener: ScriptedStoreOpener,
     fileSystem: FakeRecoveryFileSystem,
     archiveDirectoryName: @escaping () -> String = { "failed-store" },
+    recoveryMode: PersistedLocalVaultStoreFactory.RecoveryMode = .recoverExistingStore,
     failureHandler: @escaping (String) -> PersistedLocalVaultStore = { fatalError($0) },
 ) -> PersistedLocalVaultStoreFactory {
     PersistedLocalVaultStoreFactory(
@@ -550,6 +578,7 @@ private func makeSUT(
         storeOpener: opener,
         fileSystem: fileSystem,
         archiveDirectoryName: archiveDirectoryName,
+        recoveryMode: recoveryMode,
         failureHandler: failureHandler,
     )
 }

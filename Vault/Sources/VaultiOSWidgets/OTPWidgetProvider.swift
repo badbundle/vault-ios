@@ -45,6 +45,10 @@ public struct OTPWidgetProvider: AppIntentTimelineProvider {
         for configuration: OTPWidgetIntent,
         in _: Context,
     ) async -> Timeline<OTPWidgetEntry> {
+        await makeTimeline(for: configuration)
+    }
+
+    func makeTimeline(for configuration: OTPWidgetIntent) async -> Timeline<OTPWidgetEntry> {
         guard let entityID = configuration.item?.id else {
             return unavailableTimeline()
         }
