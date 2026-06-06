@@ -106,4 +106,57 @@ struct SecureNoteDetailEditsTests {
 
         #expect(sut.contentPreviewLine == "")
     }
+
+    @Test
+    func isValid_validWhenExistingSearchPassphraseRequiresBlankPassphrase() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.contents = "Nice"
+        sut.viewConfig = .requiresSearchPassphrase
+        sut.hasExistingSearchPassphrase = true
+        sut.searchPassphrase = ""
+
+        #expect(sut.isValid)
+    }
+
+    @Test
+    func killphrasePropertiesReflectEnabledState() {
+        var sut = SecureNoteDetailEdits.new()
+
+        #expect(sut.killphraseIsEnabled == false)
+        #expect(sut.killphraseEnabledText == "None")
+        #expect(sut.killphraseEnabledIcon == "bolt")
+
+        sut.killphraseEnabled = true
+
+        #expect(sut.killphraseIsEnabled)
+        #expect(sut.killphraseEnabledText == "Enabled")
+        #expect(sut.killphraseEnabledIcon == "bolt.badge.checkmark.fill")
+    }
+
+    @Test
+    func encryptionTextReflectsEncryptionState() {
+        var sut = SecureNoteDetailEdits.new()
+
+        #expect(sut.encrypted == false)
+        #expect(sut.encryptionEnabledText == "None")
+
+        sut.newEncryptionPassword = "password"
+
+        #expect(sut.encrypted)
+        #expect(sut.encryptionEnabledText == "Enabled")
+    }
+
+    @Test
+    func isKillphraseValid_rejectsWhitespaceOnlyValue() {
+        var sut = SecureNoteDetailEdits.new()
+
+        sut.newKillphrase = ""
+        #expect(sut.isKillphraseValid)
+
+        sut.newKillphrase = "phrase"
+        #expect(sut.isKillphraseValid)
+
+        sut.newKillphrase = "   "
+        #expect(sut.isKillphraseValid == false)
+    }
 }

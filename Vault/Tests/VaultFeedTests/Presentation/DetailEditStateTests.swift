@@ -213,6 +213,14 @@ struct DetailEditStateTests {
     }
 
     @Test
+    func operationErrorsExposeDescriptions() {
+        #expect(DetailEditState<MockState>.OperationError.save.description.isEmpty == false)
+        #expect(DetailEditState<MockState>.OperationError.delete.description.isEmpty == false)
+        #expect(DetailEditState<MockState>.OperationError.save.errorDescription?.isEmpty == false)
+        #expect(DetailEditState<MockState>.OperationError.delete.errorDescription?.isEmpty == false)
+    }
+
+    @Test
     func exitCurrentModeClearingDirtyState_clearsDirtyStateInEditMode() async {
         let sut = makeSUT()
         sut.startEditing()

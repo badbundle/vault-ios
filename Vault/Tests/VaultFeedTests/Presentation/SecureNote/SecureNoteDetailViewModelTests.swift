@@ -365,6 +365,120 @@ struct SecureNoteDetailViewModelTests {
 
         #expect(sut.tagsThatAreSelected == [tag1, tag3])
     }
+
+    @Test
+    func allTags_returnsDataModelTags() {
+        let tags = [anyVaultItemTag(), anyVaultItemTag()]
+        let dataModel = anyVaultDataModel()
+        dataModel.allTags = tags
+
+        let sut = makeSUT(dataModel: dataModel)
+
+        #expect(sut.allTags == tags)
+    }
+
+    @Test
+    func delete_callsDeleteWrapper() async throws {
+        let editor = SecureNoteDetailEditorMock()
+        let sut = makeSUTEditing(editor: editor)
+
+        await sut.delete()
+
+        #expect(editor.deleteNoteCallCount == 1)
+    }
+
+    @Test
+    func dateValues_areNilWhenCreating() {
+        let sut = makeSUTCreating()
+
+        #expect(sut.createdDateValue == nil)
+        #expect(sut.updatedDateValue == nil)
+    }
+
+    @Test
+    func dateValues_includeCreatedAndSignificantUpdateWhenEditing() {
+        let created = Date(timeIntervalSince1970: 100)
+        let updated = created.addingTimeInterval(10)
+        let metadata = VaultItem.Metadata(
+            id: .new(),
+            created: created,
+            updated: updated,
+            relativeOrder: 0,
+            userDescription: "",
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: nil,
+            killphrase: nil,
+            lockState: .notLocked,
+            color: nil,
+            showInQuickType: true,
+            previewMode: .titleAndFirstLine,
+        )
+        let sut = makeSUTEditing(storedMetadata: metadata)
+
+        #expect(sut.createdDateValue != nil)
+        #expect(sut.updatedDateValue != nil)
+    }
+
+    @Test
+    func dateValues_omitSmallUpdatedDateDelta() {
+        let created = Date(timeIntervalSince1970: 100)
+        let metadata = VaultItem.Metadata(
+            id: .new(),
+            created: created,
+            updated: created.addingTimeInterval(5),
+            relativeOrder: 0,
+            userDescription: "",
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: nil,
+            killphrase: nil,
+            lockState: .notLocked,
+            color: nil,
+            showInQuickType: true,
+            previewMode: .titleAndFirstLine,
+        )
+        let sut = makeSUTEditing(storedMetadata: metadata)
+
+        #expect(sut.updatedDateValue == nil)
+    }
+
+    @Test
+    func detailEntries_includeDatesWhenAvailableAndVisibility() {
+        let created = Date(timeIntervalSince1970: 100)
+        let metadata = VaultItem.Metadata(
+            id: .new(),
+            created: created,
+            updated: created.addingTimeInterval(10),
+            relativeOrder: 0,
+            userDescription: "",
+            tags: [],
+            visibility: .onlySearch,
+            searchableLevel: .onlyPassphrase,
+            searchPassphrase: nil,
+            killphrase: nil,
+            lockState: .notLocked,
+            color: nil,
+            showInQuickType: true,
+            previewMode: .titleAndFirstLine,
+        )
+        let sut = makeSUTEditing(storedMetadata: metadata)
+
+        let entries = sut.detailEntries
+
+        #expect(entries.count == 3)
+        #expect(entries.map(\.systemIconName) == ["clock", "clock.arrow.2.circlepath", "eye.slash"])
+    }
+
+    @Test
+    func strings_areExposed() {
+        let sut = makeSUTCreating()
+
+        #expect(sut.strings.title.isEmpty == false)
+        #expect(sut.strings.tagCount(tags: 2).isEmpty == false)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {

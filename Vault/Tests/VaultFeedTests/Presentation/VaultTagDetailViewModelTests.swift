@@ -32,6 +32,9 @@ struct VaultTagDetailViewModelTests {
         #expect(sut.currentTag.name == "")
         #expect(sut.currentTag.color == .tagDefault)
         #expect(sut.currentTag.iconName == "tag.fill")
+        #expect(sut.isNew)
+        #expect(sut.isExistingItem == false)
+        #expect(sut.isDirty == false)
     }
 
     @Test
@@ -43,6 +46,38 @@ struct VaultTagDetailViewModelTests {
         #expect(sut.currentTag.name == "tag")
         #expect(sut.currentTag.color == color)
         #expect(sut.currentTag.iconName == "figure.2.arms.open")
+        #expect(sut.isNew == false)
+        #expect(sut.isExistingItem)
+        #expect(sut.isDirty == false)
+    }
+
+    @Test
+    func staticIconOptions_includeDefaultAndExposeInstanceOptions() {
+        let sut = makeSUT()
+
+        #expect(VaultTagDetailViewModel.defaultIconOption == VaultItemTag.defaultIconName)
+        #expect(VaultTagDetailViewModel.systemIconOptions.first == VaultItemTag.defaultIconName)
+        #expect(sut.systemIconOptions == VaultTagDetailViewModel.systemIconOptions)
+    }
+
+    @Test
+    func isDirty_tracksCurrentTagChanges() {
+        let sut = makeSUT()
+
+        sut.currentTag.name = "new tag"
+
+        #expect(sut.isDirty)
+    }
+
+    @Test
+    func isValidToSave_requiresNonBlankName() {
+        let sut = makeSUT()
+
+        sut.currentTag.name = "   "
+        #expect(sut.isValidToSave == false)
+
+        sut.currentTag.name = "work"
+        #expect(sut.isValidToSave)
     }
 
     @Test

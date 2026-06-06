@@ -235,6 +235,47 @@ struct OTPCodeDetailEditsTests {
             try sut.asOTPAuthCode()
         }
     }
+
+    @Test
+    func isValid_validWhenExistingSearchPassphraseRequiresBlankPassphrase() {
+        var sut = OTPCodeDetailEdits.new()
+        sut.secretBase32String = "AA"
+        sut.issuerTitle = "issuer"
+        sut.viewConfig = .requiresSearchPassphrase
+        sut.hasExistingSearchPassphrase = true
+        sut.searchPassphrase = ""
+
+        #expect(sut.isValid)
+    }
+
+    @Test
+    func killphrasePropertiesReflectEnabledState() {
+        var sut = OTPCodeDetailEdits.new()
+
+        #expect(sut.killphraseIsEnabled == false)
+        #expect(sut.killphraseEnabledText == "None")
+        #expect(sut.killphraseEnabledIcon == "bolt")
+
+        sut.killphraseEnabled = true
+
+        #expect(sut.killphraseIsEnabled)
+        #expect(sut.killphraseEnabledText == "Enabled")
+        #expect(sut.killphraseEnabledIcon == "bolt.badge.checkmark.fill")
+    }
+
+    @Test
+    func isKillphraseValid_rejectsWhitespaceOnlyValue() {
+        var sut = OTPCodeDetailEdits.new()
+
+        sut.newKillphrase = ""
+        #expect(sut.isKillphraseValid)
+
+        sut.newKillphrase = "phrase"
+        #expect(sut.isKillphraseValid)
+
+        sut.newKillphrase = "   "
+        #expect(sut.isKillphraseValid == false)
+    }
 }
 
 // MARK: - Helpers
