@@ -2,34 +2,185 @@ import Foundation
 import SwiftData
 
 public final class PersistedLocalVaultStoreFactory {
-    private let storageDirectory: URL
+    private static let storeFilename = "vault-primary.sqlite"
+    private static let storeSidecarSuffixes = ["-shm", "-wal"]
 
-    public init(storageDirectory: URL) {
+    private let storageDirectory: URL
+    private let storeOpener: any PersistedLocalVaultStoreOpening
+    private let fileSystem: any PersistedLocalVaultStoreRecoveryFileSystem
+    private let archiveDirectoryName: () -> String
+    private let failureHandler: (String) -> PersistedLocalVaultStore
+
+    public init(
+        storageDirectory: URL,
+        fileManager: FileManager = .default,
+        archiveDirectoryName: @escaping () -> String = {
+            let timestamp = ISO8601DateFormatter()
+                .string(from: Date())
+                .replacingOccurrences(of: ":", with: "-")
+            return "vault-primary.failed-open-\(timestamp)"
+        },
+    ) {
         self.storageDirectory = storageDirectory
+        storeOpener = SwiftDataPersistedLocalVaultStoreOpener()
+        fileSystem = FileManagerPersistedLocalVaultStoreRecoveryFileSystem(fileManager: fileManager)
+        self.archiveDirectoryName = archiveDirectoryName
+        failureHandler = { fatalError($0) }
+    }
+
+    init(
+        storageDirectory: URL,
+        storeOpener: any PersistedLocalVaultStoreOpening,
+        fileSystem: any PersistedLocalVaultStoreRecoveryFileSystem,
+        archiveDirectoryName: @escaping () -> String,
+        failureHandler: @escaping (String) -> PersistedLocalVaultStore = { fatalError($0) },
+    ) {
+        self.storageDirectory = storageDirectory
+        self.storeOpener = storeOpener
+        self.fileSystem = fileSystem
+        self.archiveDirectoryName = archiveDirectoryName
+        self.failureHandler = failureHandler
     }
 
     public func makeVaultStore() -> PersistedLocalVaultStore {
         do {
-            let storeURL = storageDirectory.appending(path: "vault-primary.sqlite")
-            let configuration = ModelConfiguration(
-                "PersistedLocalVaultStore",
-                schema: .init(versionedSchema: PersistedSchemaLatestVersion.self),
-                url: storeURL,
-            )
-            let container = try ModelContainer(
-                for: PersistedVaultItem.self, PersistedVaultTag.self,
-                migrationPlan: PersistedSchemaMigrationPlan.self,
-                configurations: configuration,
-            )
-            return PersistedLocalVaultStore(modelContainer: container)
+            return try makeVaultStoreOrThrow()
+        } catch let StoreConnectionError.unableToConnect(error) {
+            return failureHandler("Unable to connect to PersistedLocalVaultStore: \(error)")
+        } catch let StoreConnectionError.unableToConnectAfterRecovery(error) {
+            return failureHandler("Unable to connect to PersistedLocalVaultStore after recovery: \(error)")
+        } catch let StoreConnectionError.unableToRecover(error) {
+            return failureHandler("Unable to recover PersistedLocalVaultStore: \(error)")
         } catch {
-            fatalError("Unable to connect to PersistedLocalVaultStore: \(error)")
+            return failureHandler("Unable to connect to PersistedLocalVaultStore: \(error)")
         }
+    }
+
+    func makeVaultStoreOrThrow() throws -> PersistedLocalVaultStore {
+        let storeURL = storageDirectory.appending(path: Self.storeFilename)
+        do {
+            return try storeOpener.open(storeURL: storeURL)
+        } catch {
+            try recoverExistingStoreIfPresent(storeURL: storeURL, connectionError: error)
+            do {
+                return try storeOpener.open(storeURL: storeURL)
+            } catch {
+                throw StoreConnectionError.unableToConnectAfterRecovery(error)
+            }
+        }
+    }
+
+    private func recoverExistingStoreIfPresent(storeURL: URL, connectionError: any Error) throws {
+        do {
+            let existingURLs = storeBundleURLs(storeURL: storeURL).filter { fileExists(at: $0.url) }
+            guard existingURLs.isEmpty == false else {
+                throw StoreConnectionError.unableToConnect(connectionError)
+            }
+
+            let archiveURL = makeUniqueArchiveDirectoryURL()
+            try fileSystem.createDirectory(at: archiveURL)
+
+            for existingURL in existingURLs {
+                let destinationURL = archiveURL.appending(path: existingURL.url.lastPathComponent)
+                do {
+                    try fileSystem.moveItem(at: existingURL.url, to: destinationURL)
+                } catch {
+                    guard fileExists(at: existingURL.url) else { continue }
+                    throw StoreConnectionError.unableToRecover(error)
+                }
+            }
+        } catch let error as StoreConnectionError {
+            throw error
+        } catch {
+            throw StoreConnectionError.unableToRecover(error)
+        }
+    }
+
+    enum StoreConnectionError: Error {
+        case unableToConnect(any Error)
+        case unableToRecover(any Error)
+        case unableToConnectAfterRecovery(any Error)
     }
 
     struct NoUserDocumentDirectory: Error, LocalizedError {
         var errorDescription: String? {
             "No user document directory available"
         }
+    }
+}
+
+protocol PersistedLocalVaultStoreOpening {
+    func open(storeURL: URL) throws -> PersistedLocalVaultStore
+}
+
+private struct SwiftDataPersistedLocalVaultStoreOpener: PersistedLocalVaultStoreOpening {
+    func open(storeURL: URL) throws -> PersistedLocalVaultStore {
+        let configuration = ModelConfiguration(
+            "PersistedLocalVaultStore",
+            schema: .init(versionedSchema: PersistedSchemaLatestVersion.self),
+            url: storeURL,
+        )
+        let container = try ModelContainer(
+            for: PersistedVaultItem.self, PersistedVaultTag.self,
+            migrationPlan: PersistedSchemaMigrationPlan.self,
+            configurations: configuration,
+        )
+        return PersistedLocalVaultStore(modelContainer: container)
+    }
+}
+
+protocol PersistedLocalVaultStoreRecoveryFileSystem {
+    func fileExists(at url: URL) -> Bool
+    func createDirectory(at url: URL) throws
+    func moveItem(at sourceURL: URL, to destinationURL: URL) throws
+}
+
+private struct FileManagerPersistedLocalVaultStoreRecoveryFileSystem: PersistedLocalVaultStoreRecoveryFileSystem {
+    let fileManager: FileManager
+
+    func fileExists(at url: URL) -> Bool {
+        fileManager.fileExists(atPath: url.path(percentEncoded: false))
+    }
+
+    func createDirectory(at url: URL) throws {
+        try fileManager.createDirectory(at: url, withIntermediateDirectories: true)
+    }
+
+    func moveItem(at sourceURL: URL, to destinationURL: URL) throws {
+        try fileManager.moveItem(at: sourceURL, to: destinationURL)
+    }
+}
+
+extension PersistedLocalVaultStoreFactory {
+    private func makeUniqueArchiveDirectoryURL() -> URL {
+        let baseName = archiveDirectoryName()
+        var candidateURL = storageDirectory.appending(path: baseName)
+        var suffix = 2
+
+        while fileExists(at: candidateURL) {
+            candidateURL = storageDirectory.appending(path: "\(baseName)-\(suffix)")
+            suffix += 1
+        }
+
+        return candidateURL
+    }
+
+    private func storeBundleURLs(storeURL: URL) -> [RecoveryFile] {
+        let sidecarURLs = Self.storeSidecarSuffixes.map { suffix in
+            URL(fileURLWithPath: storeURL.path(percentEncoded: false) + suffix)
+        }
+        return [
+            RecoveryFile(url: storeURL),
+            RecoveryFile(url: PendingKillphraseRehashStore.defaultURL(storeDirectory: storageDirectory)),
+            RecoveryFile(url: PendingSearchPassphraseRehashStore.defaultURL(storeDirectory: storageDirectory)),
+        ] + sidecarURLs.map(RecoveryFile.init(url:))
+    }
+
+    private func fileExists(at url: URL) -> Bool {
+        fileSystem.fileExists(at: url)
+    }
+
+    private struct RecoveryFile {
+        let url: URL
     }
 }
