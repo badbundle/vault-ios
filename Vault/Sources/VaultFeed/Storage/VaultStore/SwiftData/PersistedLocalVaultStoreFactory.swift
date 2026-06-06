@@ -9,6 +9,7 @@ public final class PersistedLocalVaultStoreFactory {
     private let storeOpener: any PersistedLocalVaultStoreOpening
     private let fileSystem: any PersistedLocalVaultStoreRecoveryFileSystem
     private let archiveDirectoryName: () -> String
+    private let failureHandler: (String) -> PersistedLocalVaultStore
 
     public init(
         storageDirectory: URL,
@@ -24,6 +25,7 @@ public final class PersistedLocalVaultStoreFactory {
         storeOpener = SwiftDataPersistedLocalVaultStoreOpener()
         fileSystem = FileManagerPersistedLocalVaultStoreRecoveryFileSystem(fileManager: fileManager)
         self.archiveDirectoryName = archiveDirectoryName
+        failureHandler = { fatalError($0) }
     }
 
     init(
@@ -31,24 +33,26 @@ public final class PersistedLocalVaultStoreFactory {
         storeOpener: any PersistedLocalVaultStoreOpening,
         fileSystem: any PersistedLocalVaultStoreRecoveryFileSystem,
         archiveDirectoryName: @escaping () -> String,
+        failureHandler: @escaping (String) -> PersistedLocalVaultStore = { fatalError($0) },
     ) {
         self.storageDirectory = storageDirectory
         self.storeOpener = storeOpener
         self.fileSystem = fileSystem
         self.archiveDirectoryName = archiveDirectoryName
+        self.failureHandler = failureHandler
     }
 
     public func makeVaultStore() -> PersistedLocalVaultStore {
         do {
             return try makeVaultStoreOrThrow()
         } catch let StoreConnectionError.unableToConnect(error) {
-            fatalError("Unable to connect to PersistedLocalVaultStore: \(error)")
+            return failureHandler("Unable to connect to PersistedLocalVaultStore: \(error)")
         } catch let StoreConnectionError.unableToConnectAfterRecovery(error) {
-            fatalError("Unable to connect to PersistedLocalVaultStore after recovery: \(error)")
+            return failureHandler("Unable to connect to PersistedLocalVaultStore after recovery: \(error)")
         } catch let StoreConnectionError.unableToRecover(error) {
-            fatalError("Unable to recover PersistedLocalVaultStore: \(error)")
+            return failureHandler("Unable to recover PersistedLocalVaultStore: \(error)")
         } catch {
-            fatalError("Unable to connect to PersistedLocalVaultStore: \(error)")
+            return failureHandler("Unable to connect to PersistedLocalVaultStore: \(error)")
         }
     }
 

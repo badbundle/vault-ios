@@ -47,9 +47,13 @@ struct PersistedLocalVaultStoreFactoryTests {
         let directory = try makeTemporaryDirectory()
         defer { try? FileManager.default.removeItem(at: directory) }
         let storeURL = url(for: .primary, in: directory)
+        let walURL = url(for: .wal, in: directory)
+        let shmURL = url(for: .shm, in: directory)
         let pendingKillphraseURL = url(for: .pendingKillphrase, in: directory)
         let pendingSearchPassphraseURL = url(for: .pendingSearchPassphrase, in: directory)
         let corruptData = Data("not a sqlite store".utf8)
+        let walData = Data("wal".utf8)
+        let shmData = Data("shm".utf8)
         let pendingKillphraseData = Data("[{\"itemID\":\"00000000-0000-0000-0000-000000000001\",\"phrase\":\"one\"}]"
             .utf8)
         let pendingSearchPassphraseData = Data(
@@ -57,8 +61,8 @@ struct PersistedLocalVaultStoreFactoryTests {
                 .utf8,
         )
         try corruptData.write(to: storeURL)
-        try Data("wal".utf8).write(to: url(for: .wal, in: directory))
-        try Data("shm".utf8).write(to: url(for: .shm, in: directory))
+        try walData.write(to: walURL)
+        try shmData.write(to: shmURL)
         try pendingKillphraseData.write(to: pendingKillphraseURL)
         try pendingSearchPassphraseData.write(to: pendingSearchPassphraseURL)
         let archiveURL = directory.appending(path: "failed-store")
@@ -77,6 +81,8 @@ struct PersistedLocalVaultStoreFactoryTests {
 
         #expect(result.items.map(\.id).contains(itemID))
         #expect(try Data(contentsOf: archiveURL.appending(path: storeURL.lastPathComponent)) == corruptData)
+        #expect(try Data(contentsOf: archiveURL.appending(path: walURL.lastPathComponent)) == walData)
+        #expect(try Data(contentsOf: archiveURL.appending(path: shmURL.lastPathComponent)) == shmData)
         #expect(try Data(contentsOf: archiveURL.appending(path: pendingKillphraseURL.lastPathComponent)) ==
             pendingKillphraseData)
         #expect(
@@ -85,6 +91,30 @@ struct PersistedLocalVaultStoreFactoryTests {
         )
         #expect(fileExists(at: pendingKillphraseURL) == false)
         #expect(fileExists(at: pendingSearchPassphraseURL) == false)
+    }
+
+    @Test
+    func makeVaultStore_archivesUnreadableStoreIntoNextUniqueDirectoryWhenArchiveExists() async throws {
+        let directory = try makeTemporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let storeURL = url(for: .primary, in: directory)
+        let corruptData = Data("not a sqlite store".utf8)
+        try corruptData.write(to: storeURL)
+        try FileManager.default.createDirectory(
+            at: directory.appending(path: "failed-store"),
+            withIntermediateDirectories: true,
+        )
+        let sut = PersistedLocalVaultStoreFactory(
+            storageDirectory: directory,
+            archiveDirectoryName: { "failed-store" },
+        )
+
+        let store = sut.makeVaultStore()
+        let result = try await store.retrieve(query: .init())
+
+        let archiveURL = directory.appending(path: "failed-store-2")
+        #expect(result == .empty())
+        #expect(try Data(contentsOf: archiveURL.appending(path: storeURL.lastPathComponent)) == corruptData)
     }
 
     @Test
@@ -100,6 +130,37 @@ struct PersistedLocalVaultStoreFactoryTests {
         #expect(opener.openedStoreURLs == [storeURL])
         #expect(fileSystem.createdDirectories == [])
         #expect(fileSystem.movedItems.isEmpty)
+    }
+
+    @Test(arguments: FatalMessageScenario.all)
+    func makeVaultStore_routesUnrecoverableFailuresThroughFatalMessage(_ scenario: FatalMessageScenario) throws {
+        let directory = makeDirectoryURL()
+        let primaryURL = url(for: .primary, in: directory)
+        let fileSystem = switch scenario.failure {
+        case .noActiveFiles:
+            FakeRecoveryFileSystem()
+        case .createDirectory:
+            FakeRecoveryFileSystem(
+                existingFiles: [primaryURL],
+                createDirectoryError: FactoryTestError.createDirectory,
+            )
+        case .retryOpen:
+            FakeRecoveryFileSystem(existingFiles: [primaryURL])
+        }
+        let opener = ScriptedStoreOpener(results: scenario.openResults)
+        let recorder = try FailureRecorder()
+        let sut = makeSUT(
+            directory: directory,
+            opener: opener,
+            fileSystem: fileSystem,
+            failureHandler: recorder.record,
+        )
+
+        _ = sut.makeVaultStore()
+
+        #expect(recorder.messages.count == 1)
+        #expect(recorder.messages.first?.hasPrefix(scenario.expectedPrefix) == true)
+        #expect(recorder.messages.first?.contains(scenario.expectedErrorDescription) == true)
     }
 
     @Test
@@ -272,6 +333,47 @@ struct ArchiveNameScenario: Sendable {
     let expectedName: String
 }
 
+struct FatalMessageScenario: Sendable, CustomStringConvertible {
+    enum Failure: Sendable {
+        case noActiveFiles
+        case createDirectory
+        case retryOpen
+    }
+
+    let description: String
+    let failure: Failure
+    let openResults: [ScriptedStoreOpener.Result]
+    let expectedPrefix: String
+    let expectedErrorDescription: String
+
+    static let all: [Self] = [
+        .init(
+            description: "initial open fails with no active files",
+            failure: .noActiveFiles,
+            openResults: [.failure(FactoryTestError.initialOpen)],
+            expectedPrefix: "Unable to connect to PersistedLocalVaultStore:",
+            expectedErrorDescription: "initialOpen",
+        ),
+        .init(
+            description: "archive directory creation fails",
+            failure: .createDirectory,
+            openResults: [.failure(FactoryTestError.initialOpen)],
+            expectedPrefix: "Unable to recover PersistedLocalVaultStore:",
+            expectedErrorDescription: "createDirectory",
+        ),
+        .init(
+            description: "retry open fails after recovery",
+            failure: .retryOpen,
+            openResults: [
+                .failure(FactoryTestError.initialOpen),
+                .failure(FactoryTestError.retryOpen),
+            ],
+            expectedPrefix: "Unable to connect to PersistedLocalVaultStore after recovery:",
+            expectedErrorDescription: "retryOpen",
+        ),
+    ]
+}
+
 struct DisappearingFileScenario: Sendable, CustomStringConvertible {
     let description: String
     let existingFiles: [StoreFile]
@@ -335,7 +437,7 @@ private enum StoreConnectionErrorCase {
     case unableToConnectAfterRecovery
 }
 
-private enum FactoryTestError: Error {
+private enum FactoryTestError: Error, Sendable {
     case initialOpen
     case retryOpen
     case createDirectory
@@ -343,10 +445,10 @@ private enum FactoryTestError: Error {
     case missingFile
 }
 
-private final class ScriptedStoreOpener: PersistedLocalVaultStoreOpening {
-    enum Result {
+final class ScriptedStoreOpener: PersistedLocalVaultStoreOpening {
+    enum Result: Sendable {
         case success
-        case failure(any Error)
+        case failure(any Error & Sendable)
     }
 
     private var results: [Result]
@@ -358,22 +460,28 @@ private final class ScriptedStoreOpener: PersistedLocalVaultStoreOpening {
 
     func open(storeURL: URL) throws -> PersistedLocalVaultStore {
         openedStoreURLs.append(storeURL)
-        guard results.isEmpty == false else { return try Self.makeInMemoryStore() }
+        guard results.isEmpty == false else { return try makeInMemoryStore() }
 
         switch results.removeFirst() {
         case .success:
-            return try Self.makeInMemoryStore()
+            return try makeInMemoryStore()
         case let .failure(error):
             throw error
         }
     }
+}
 
-    private static func makeInMemoryStore() throws -> PersistedLocalVaultStore {
-        let container = try ModelContainer(
-            for: PersistedVaultItem.self,
-            configurations: .init(isStoredInMemoryOnly: true),
-        )
-        return PersistedLocalVaultStore(modelContainer: container)
+private final class FailureRecorder {
+    private let fallbackStore: PersistedLocalVaultStore
+    private(set) var messages: [String] = []
+
+    init() throws {
+        fallbackStore = try makeInMemoryStore()
+    }
+
+    func record(_ message: String) -> PersistedLocalVaultStore {
+        messages.append(message)
+        return fallbackStore
     }
 }
 
@@ -435,12 +543,14 @@ private func makeSUT(
     opener: ScriptedStoreOpener,
     fileSystem: FakeRecoveryFileSystem,
     archiveDirectoryName: @escaping () -> String = { "failed-store" },
+    failureHandler: @escaping (String) -> PersistedLocalVaultStore = { fatalError($0) },
 ) -> PersistedLocalVaultStoreFactory {
     PersistedLocalVaultStoreFactory(
         storageDirectory: directory,
         storeOpener: opener,
         fileSystem: fileSystem,
         archiveDirectoryName: archiveDirectoryName,
+        failureHandler: failureHandler,
     )
 }
 
@@ -469,6 +579,14 @@ private func makeTemporaryDirectory() throws -> URL {
     let url = makeDirectoryURL()
     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
     return url
+}
+
+private func makeInMemoryStore() throws -> PersistedLocalVaultStore {
+    let container = try ModelContainer(
+        for: PersistedVaultItem.self,
+        configurations: .init(isStoredInMemoryOnly: true),
+    )
+    return PersistedLocalVaultStore(modelContainer: container)
 }
 
 private func makeDirectoryURL() -> URL {
