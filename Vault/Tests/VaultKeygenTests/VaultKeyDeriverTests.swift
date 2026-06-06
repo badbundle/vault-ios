@@ -5,8 +5,8 @@ import TestHelpers
 import Testing
 @testable import VaultKeygen
 
-/// We don't actually want to run key derivation, as it may be very slow.
-/// To check the algorithm's correctness, we verify the identifier.
+/// Key derivation may be very slow, so most tests verify the identifier.
+/// Targeted fast vector tests run real derivation where we need end-to-end coverage.
 ///
 /// Each respective version of each algorithm should never change, so it's always backwards compatible.
 struct VaultKeyDeriverTests {
@@ -41,6 +41,20 @@ struct VaultKeyDeriverTests {
     }
 
     @Test
+    func Backup_Fast_v1_recreatesExpectedKeyForSamePasswordAndSalt() throws {
+        let result = try VaultKeyDeriver.Backup.Fast.v1.recreateEncryptionKey(
+            password: "hello world",
+            salt: Data("salt".utf8),
+        )
+
+        #expect(result.key.data.toHexString() == """
+        b3adfcb644c0d7a4086e2a8a1c784eb5aa422a1b40dc4e4f088d1b7a40025e0f
+        """)
+        #expect(result.salt == Data("salt".utf8))
+        #expect(result.keyDervier == .backupFastV1)
+    }
+
+    @Test
     func Item_Fast_v1() {
         let fast = VaultKeyDeriver.Item.Fast.v1
 
@@ -52,6 +66,20 @@ struct VaultKeyDeriverTests {
         PBKDF2<keyLength=32;iterations=1001;variant=sha384>\
         >
         """)
+    }
+
+    @Test
+    func Item_Fast_v1_recreatesExpectedKeyForSamePasswordAndSalt() throws {
+        let result = try VaultKeyDeriver.Item.Fast.v1.recreateEncryptionKey(
+            password: "hello world",
+            salt: Data("salt".utf8),
+        )
+
+        #expect(result.key.data.toHexString() == """
+        a2f84c8bfccfb4794b70adb71bd5ab7f9cd311cb59fdcbcdd8ec7e46b36eb449
+        """)
+        #expect(result.salt == Data("salt".utf8))
+        #expect(result.keyDervier == .itemFastV1)
     }
 
     @Test
