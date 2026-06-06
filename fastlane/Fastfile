@@ -64,7 +64,8 @@ platform :ios do
       gym(
         workspace: "Vault.xcworkspace",
         scheme: "VaultApp",
-        export_method: "app-store-connect",
+        # Fastlane 2.235 still validates the pre-Xcode-26 name; Xcode accepts it with a warning.
+        export_method: "app-store",
         export_options: {
           provisioningProfiles: {
             "com.badbundle.vault" => "vault.mobileprovision",
