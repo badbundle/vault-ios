@@ -2,6 +2,11 @@ import Foundation
 import SwiftData
 
 public final class PersistedLocalVaultStoreFactory {
+    public enum RecoveryMode: Equatable, Sendable {
+        case recoverExistingStore
+        case openOnly
+    }
+
     private static let storeFilename = "vault-primary.sqlite"
     private static let storeSidecarSuffixes = ["-shm", "-wal"]
 
@@ -9,6 +14,7 @@ public final class PersistedLocalVaultStoreFactory {
     private let storeOpener: any PersistedLocalVaultStoreOpening
     private let fileSystem: any PersistedLocalVaultStoreRecoveryFileSystem
     private let archiveDirectoryName: () -> String
+    private let recoveryMode: RecoveryMode
     private let failureHandler: (String) -> PersistedLocalVaultStore
 
     public init(
@@ -20,11 +26,13 @@ public final class PersistedLocalVaultStoreFactory {
                 .replacingOccurrences(of: ":", with: "-")
             return "vault-primary.failed-open-\(timestamp)"
         },
+        recoveryMode: RecoveryMode = .recoverExistingStore,
     ) {
         self.storageDirectory = storageDirectory
         storeOpener = SwiftDataPersistedLocalVaultStoreOpener()
         fileSystem = FileManagerPersistedLocalVaultStoreRecoveryFileSystem(fileManager: fileManager)
         self.archiveDirectoryName = archiveDirectoryName
+        self.recoveryMode = recoveryMode
         failureHandler = { fatalError($0) }
     }
 
@@ -33,12 +41,14 @@ public final class PersistedLocalVaultStoreFactory {
         storeOpener: any PersistedLocalVaultStoreOpening,
         fileSystem: any PersistedLocalVaultStoreRecoveryFileSystem,
         archiveDirectoryName: @escaping () -> String,
+        recoveryMode: RecoveryMode = .recoverExistingStore,
         failureHandler: @escaping (String) -> PersistedLocalVaultStore = { fatalError($0) },
     ) {
         self.storageDirectory = storageDirectory
         self.storeOpener = storeOpener
         self.fileSystem = fileSystem
         self.archiveDirectoryName = archiveDirectoryName
+        self.recoveryMode = recoveryMode
         self.failureHandler = failureHandler
     }
 
@@ -56,11 +66,14 @@ public final class PersistedLocalVaultStoreFactory {
         }
     }
 
-    func makeVaultStoreOrThrow() throws -> PersistedLocalVaultStore {
+    public func makeVaultStoreOrThrow() throws -> PersistedLocalVaultStore {
         let storeURL = storageDirectory.appending(path: Self.storeFilename)
         do {
             return try storeOpener.open(storeURL: storeURL)
         } catch {
+            guard recoveryMode == .recoverExistingStore else {
+                throw StoreConnectionError.unableToConnect(error)
+            }
             try recoverExistingStoreIfPresent(storeURL: storeURL, connectionError: error)
             do {
                 return try storeOpener.open(storeURL: storeURL)
