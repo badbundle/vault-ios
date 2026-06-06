@@ -72,8 +72,8 @@ platform :ios do
       },
       clean: true,
       export_team_id: "442P244AFS",
-      # Use xcargs to pass additional options
-      xcargs: "-allowProvisioningUpdates CURRENT_PROJECT_VERSION=#{release_build_number}"
+      # Allow non-interactive release archives to run approved SwiftPM build tool plugins.
+      xcargs: "-allowProvisioningUpdates -skipPackagePluginValidation CURRENT_PROJECT_VERSION=#{release_build_number}"
     )
     
     # Upload to App Store using the correct Apple ID
