@@ -70,6 +70,20 @@ struct EncryptedVaultDecoderTests {
             _ = try sut.decryptAndDecode(key: .random(), encryptedVault: encryptedBackup)
         }
     }
+
+    @Test
+    func decoderErrorsExposeLocalizedText() {
+        let errors: [EncryptedVaultDecoderError] = [
+            .incompatibleVersion,
+            .decryption,
+            .decoding,
+        ]
+
+        for error in errors {
+            #expect(error.errorDescription?.isEmpty == false)
+            #expect(error.failureReason?.isEmpty == false)
+        }
+    }
 }
 
 // MARK: - Helpers

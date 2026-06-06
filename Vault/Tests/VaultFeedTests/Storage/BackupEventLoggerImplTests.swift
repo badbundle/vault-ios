@@ -43,6 +43,38 @@ struct BackupEventLoggerImplTests {
     }
 
     @Test
+    func exportedToDevice_savesDeviceEvent() throws {
+        let defaults = try testUserDefaults()
+        let clock = EpochClockMock(currentTime: 100)
+        let sut = makeSUT(defaults: defaults, clock: clock)
+        let date = Date(timeIntervalSince1970: 1234)
+
+        sut.exportedToDevice(date: date, hash: .init(value: Data(hex: "1234")))
+
+        let backup = sut.lastBackupEvent()
+        #expect(backup?.backupDate == clock.currentDate)
+        #expect(backup?.eventDate == date)
+        #expect(backup?.payloadHash == .init(value: Data(hex: "1234")))
+        #expect(backup?.kind == .exportedToDevice)
+    }
+
+    @Test
+    func exportedToAutoBackup_savesAutoBackupEvent() throws {
+        let defaults = try testUserDefaults()
+        let clock = EpochClockMock(currentTime: 100)
+        let sut = makeSUT(defaults: defaults, clock: clock)
+        let date = Date(timeIntervalSince1970: 1234)
+
+        sut.exportedToAutoBackup(date: date, hash: .init(value: Data(hex: "1234")), providerID: "icloud-drive")
+
+        let backup = sut.lastBackupEvent()
+        #expect(backup?.backupDate == clock.currentDate)
+        #expect(backup?.eventDate == date)
+        #expect(backup?.payloadHash == .init(value: Data(hex: "1234")))
+        #expect(backup?.kind == .exportedToAutoBackup(providerID: "icloud-drive"))
+    }
+
+    @Test
     func exportedToPDF_savesToDefaults() throws {
         let defaults = try testUserDefaults()
         let beforeKeys = defaults.keys
