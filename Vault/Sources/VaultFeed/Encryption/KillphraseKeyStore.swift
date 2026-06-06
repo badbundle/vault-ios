@@ -14,9 +14,10 @@ import VaultCore
 /// generates a random key and stores it; on every subsequent call it
 /// returns the stored value.
 ///
-/// @mockable
-public protocol KillphraseKeyStore: Sendable {
-    func loadOrCreate() async throws -> KeyData<32>
+/// @mockable(typealias: Key = KeyData<32>)
+public protocol KillphraseKeyStore<Key>: Sendable {
+    associatedtype Key: Sendable
+    func loadOrCreate() async throws -> Key
 }
 
 public struct KillphraseKeyStoreImpl: KillphraseKeyStore {

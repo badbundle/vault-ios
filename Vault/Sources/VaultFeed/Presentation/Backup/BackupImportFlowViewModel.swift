@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import PDFKit
 import VaultBackup
 import VaultCore
@@ -45,7 +46,7 @@ public final class BackupImportFlowViewModel {
     /// The backup password the user already has on their device.
     /// If the imported backup was encrypted with this same password, we don't need to prompt the user.
     private let existingBackupPassword: DerivedEncryptionKey?
-    private let encryptedVaultDecoder: any EncryptedVaultDecoder
+    private let encryptedVaultDecoder: any EncryptedVaultDecoder<KeyData<32>>
     private let backupPDFDetatcher: any VaultBackupPDFDetatcher
     private var importPDFTask: Task<Void, any Error>?
 
@@ -53,7 +54,7 @@ public final class BackupImportFlowViewModel {
         importContext: BackupImportContext,
         dataModel: VaultDataModel,
         existingBackupPassword: DerivedEncryptionKey?,
-        encryptedVaultDecoder: any EncryptedVaultDecoder,
+        encryptedVaultDecoder: any EncryptedVaultDecoder<KeyData<32>>,
         backupPDFDetatcher: any VaultBackupPDFDetatcher = VaultBackupPDFDetatcherImpl(),
     ) {
         self.importContext = importContext

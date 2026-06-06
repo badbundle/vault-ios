@@ -19,7 +19,7 @@ struct BackupImportFlowState {
     }
 
     let encryptedVault: EncryptedVault
-    let encryptedVaultDecoder: any EncryptedVaultDecoder
+    let encryptedVaultDecoder: any EncryptedVaultDecoder<KeyData<32>>
 
     /// There was a password provided, handle the state.
     func passwordProvided(password: DerivedEncryptionKey?) -> Action {

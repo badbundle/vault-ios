@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultFeed
 
 /// Object to retain and share non-observable dependencies across views.
@@ -11,7 +12,7 @@ public final class VaultInjector {
     public let intervalTimer: any IntervalTimer
     public let backupEventLogger: any BackupEventLogger
     public let vaultKeyDeriverFactory: any VaultKeyDeriverFactory
-    public let encryptedVaultDecoder: any EncryptedVaultDecoder
+    public let encryptedVaultDecoder: any EncryptedVaultDecoder<KeyData<32>>
     public let autoBackupService: any AutoBackupService
     public let defaults: Defaults
     public let fileManager: FileManager
@@ -21,7 +22,7 @@ public final class VaultInjector {
         intervalTimer: any IntervalTimer,
         backupEventLogger: any BackupEventLogger,
         vaultKeyDeriverFactory: any VaultKeyDeriverFactory,
-        encryptedVaultDecoder: any EncryptedVaultDecoder,
+        encryptedVaultDecoder: any EncryptedVaultDecoder<KeyData<32>>,
         autoBackupService: any AutoBackupService,
         defaults: Defaults,
         fileManager: FileManager,
