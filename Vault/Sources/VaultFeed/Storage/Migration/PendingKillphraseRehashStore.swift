@@ -26,10 +26,23 @@ struct PendingKillphraseRehashStore: @unchecked Sendable { // swiftlint:disable:
 
     private let fileURL: URL
     private let fileManager: FileManager
+    private let protectedWrite: (Data, URL) throws -> Void
+    private let overwriteWrite: (Data, URL) throws -> Void
 
-    init(fileURL: URL, fileManager: FileManager = .default) {
+    init(
+        fileURL: URL,
+        fileManager: FileManager = .default,
+        protectedWrite: @escaping (Data, URL) throws -> Void = { data, url in
+            try data.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        },
+        overwriteWrite: @escaping (Data, URL) throws -> Void = { data, url in
+            try data.write(to: url, options: [.atomic])
+        },
+    ) {
         self.fileURL = fileURL
         self.fileManager = fileManager
+        self.protectedWrite = protectedWrite
+        self.overwriteWrite = overwriteWrite
     }
 
     /// Default location alongside the SwiftData store.
@@ -52,7 +65,7 @@ struct PendingKillphraseRehashStore: @unchecked Sendable { // swiftlint:disable:
     /// the device at least once after boot.
     func write(_ entries: [Entry]) throws {
         let data = try JSONEncoder().encode(entries)
-        try data.write(to: fileURL, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        try protectedWrite(data, fileURL)
     }
 
     /// Overwrite the file with zeros, then delete. Best-effort residue
@@ -66,7 +79,7 @@ struct PendingKillphraseRehashStore: @unchecked Sendable { // swiftlint:disable:
             atPath: fileURL.path(percentEncoded: false),
         )[.size] as? Int, size > 0 {
             let zeros = Data(count: size)
-            try? zeros.write(to: fileURL, options: [.atomic])
+            try? overwriteWrite(zeros, fileURL)
         }
         try fileManager.removeItem(at: fileURL)
     }

@@ -299,6 +299,54 @@ final class VaultDataModelTests {
     }
 
     @Test
+    func reloadItems_syncsAutofillAndNotifiesWhenKillphraseDeletesItems() async throws {
+        let store = VaultStoreStub()
+        let killphraseDeleter = VaultStoreKillphraseDeleterMock()
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let keyStore = KillphraseKeyStoreMock()
+        keyStore.loadOrCreateHandler = {
+            (try? KeyData<Bits256>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
+        }
+        let sut = makeSUT(
+            vaultStore: store,
+            vaultKillphraseDeleter: killphraseDeleter,
+            vaultOtpAutofillStore: vaultOtpAutofillStore,
+            killphraseKeyStore: keyStore,
+        )
+        await sut.setup()
+        sut.itemsSearchQuery = "hello world"
+        let remainingItem = uniqueVaultItem()
+        var retrievedQueries: [String?] = []
+
+        killphraseDeleter.deleteItemsHandler = { query, _ in
+            #expect(query == "hello world")
+            return true
+        }
+        store.retrieveHandler = { query in
+            retrievedQueries.append(query.filterText)
+            return .init(items: [remainingItem])
+        }
+
+        await confirmation("Autofill synced", expectedCount: 1) { confirmSync in
+            vaultOtpAutofillStore.syncAllHandler = { items in
+                #expect(items.map(\.id) == [remainingItem.id])
+                confirmSync()
+            }
+
+            await confirmation("Data change notified", expectedCount: 1) { confirmChange in
+                sut.onDataChanged = {
+                    confirmChange()
+                }
+
+                await sut.reloadItems()
+            }
+        }
+
+        #expect(retrievedQueries == ["hello world", nil])
+        #expect(vaultOtpAutofillStore.syncAllCallCount == 1)
+    }
+
+    @Test
     func insert_createsItemInStoreAndReloads() async throws {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)

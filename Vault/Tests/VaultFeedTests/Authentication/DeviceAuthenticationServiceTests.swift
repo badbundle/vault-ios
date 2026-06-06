@@ -69,7 +69,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in true }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
@@ -84,7 +87,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in false }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return false
+        }
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
@@ -99,7 +105,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            throw TestError()
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: (any Error).self) {
@@ -115,7 +124,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
         )
-        policy.authenticateWithPasscodeHandler = { _ in true }
+        policy.authenticateWithPasscodeHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
@@ -130,7 +142,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
         )
-        policy.authenticateWithPasscodeHandler = { _ in false }
+        policy.authenticateWithPasscodeHandler = { reason in
+            #expect(reason == "reason")
+            return false
+        }
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
@@ -145,7 +160,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
         )
-        policy.authenticateWithPasscodeHandler = { _ in throw TestError() }
+        policy.authenticateWithPasscodeHandler = { reason in
+            #expect(reason == "reason")
+            throw TestError()
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: (any Error).self) {
@@ -161,7 +179,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in true }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
         let sut = makeSUT(policy: policy)
 
         _ = try await sut.authenticate(reason: "reason")
@@ -175,7 +196,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in true }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return true
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: Never.self) {
@@ -191,7 +215,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in false }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            return false
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: (any Error).self) {
@@ -205,7 +232,10 @@ struct DeviceAuthenticationServiceTests {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
         )
-        policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
+        policy.authenticateWithBiometricsHandler = { reason in
+            #expect(reason == "reason")
+            throw TestError()
+        }
         let sut = makeSUT(policy: policy)
 
         await #expect(throws: (any Error).self) {

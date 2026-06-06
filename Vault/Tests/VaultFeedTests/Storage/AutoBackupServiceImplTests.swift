@@ -226,6 +226,55 @@ struct AutoBackupServiceImplTests {
         #expect(sut.status == .error(.backupPasswordNotSet))
     }
 
+    @Test @LeakTracked
+    func forceBackup_writesPDFUpdatesConfigurationAndLogsEvent() async throws {
+        let clock = EpochClockMock(currentTime: 100)
+        let provider = BackupStorageProviderStub(id: "test")
+        let store = VaultStoreStub()
+        var exportDescriptions: [String] = []
+        store.exportVaultHandler = { userDescription in
+            exportDescriptions.append(userDescription)
+            return .init(userDescription: userDescription, items: [uniqueVaultItem()], tags: [])
+        }
+        let dataModel = anyVaultDataModel(vaultStore: store)
+        try await dataModel.store(backupPassword: anyBackupPassword())
+        await dataModel.setup()
+        let expectedHash = try #require(dataModel.currentPayloadHash)
+        let logger = BackupEventLoggerMock()
+        let sut = try makeSUT(
+            clock: clock,
+            providers: [provider],
+            dataModel: dataModel,
+            backupEventLogger: logger,
+        )
+        await Task.yield()
+        await sut.setRetention(.forever)
+        await sut.selectProvider(id: "test")
+
+        await confirmation("Auto-backup event logged", expectedCount: 1) { confirmLog in
+            logger.exportedToAutoBackupHandler = { date, hash, providerID in
+                #expect(date == clock.currentDate)
+                #expect(hash == expectedHash)
+                #expect(providerID == "test")
+                confirmLog()
+            }
+
+            await sut.forceBackup()
+        }
+
+        let written = try #require(provider.writtenData.first)
+        let timestamp = VaultDateFormatter(timezone: .current).formatForFileName(date: clock.currentDate)
+        #expect(provider.writeCallCount == 1)
+        #expect(written.filename == "vault-auto-backup-\(timestamp).pdf")
+        #expect(written.data.isNotEmpty)
+        #expect(sut.configuration.lastBackupHash == expectedHash.value.base64EncodedString())
+        #expect(sut.configuration.lastBackupDate == clock.currentDate)
+        #expect(sut.status == .completed(clock.currentDate))
+        #expect(logger.exportedToAutoBackupCallCount == 1)
+        #expect(provider.listBackupsCallCount == 0)
+        #expect(exportDescriptions == ["", "Auto-backup"])
+    }
+
     // MARK: - Cleanup Old Backups
 
     @Test @LeakTracked
@@ -378,10 +427,12 @@ extension AutoBackupServiceImplTests {
         clock: EpochClockMock = EpochClockMock(currentTime: 100),
         defaults: UserDefaults? = nil,
         providers: [BackupStorageProviderStub] = [],
+        dataModel: VaultDataModel? = nil,
+        backupEventLogger: BackupEventLoggerMock? = nil,
     ) throws -> AutoBackupServiceImpl {
         let userDefaults = try defaults ?? testUserDefaults()
-        let dataModel = trackForMemoryLeaks(anyVaultDataModel())
-        let backupEventLogger = trackForMemoryLeaks(BackupEventLoggerMock())
+        let dataModel = trackForMemoryLeaks(dataModel ?? anyVaultDataModel())
+        let backupEventLogger = trackForMemoryLeaks(backupEventLogger ?? BackupEventLoggerMock())
         trackForMemoryLeaks(clock)
         for provider in providers {
             trackForMemoryLeaks(provider)

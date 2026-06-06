@@ -1669,8 +1669,9 @@ final class PersistedLocalVaultStoreTests {
 
     @Test
     func deleteItemsMatchingKillphrase_hasNoEffectIfVaultEmpty() async throws {
-        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
+        let didDelete = await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
+        #expect(didDelete == false)
         try await assertStoreContains(exactlyItems: [])
     }
 
@@ -1687,8 +1688,9 @@ final class PersistedLocalVaultStoreTests {
         )
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
+        let didDelete = await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
+        #expect(didDelete == true)
         try await assertStoreContains(exactlyItems: [item2, item3])
     }
 
@@ -1705,8 +1707,9 @@ final class PersistedLocalVaultStoreTests {
         )
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
+        let didDelete = await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
+        #expect(didDelete == true)
         try await assertStoreContains(exactlyItems: [item3])
     }
 
@@ -1723,8 +1726,9 @@ final class PersistedLocalVaultStoreTests {
         )
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
+        let didDelete = await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
+        #expect(didDelete == true)
         try await assertStoreContains(exactlyItems: [item2, item3])
     }
 
@@ -1741,8 +1745,9 @@ final class PersistedLocalVaultStoreTests {
         )
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
+        let didDelete = await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
+        #expect(didDelete == true)
         try await assertStoreContains(exactlyItems: [item1, item3])
     }
 
@@ -1760,11 +1765,15 @@ final class PersistedLocalVaultStoreTests {
 
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "", using: testDigester)
-        await sut.deleteItems(matchingKillphrase: " ", using: testDigester)
-        await sut.deleteItems(matchingKillphrase: "       ", using: testDigester)
-        await sut.deleteItems(matchingKillphrase: "\n", using: testDigester)
+        let emptyDidDelete = await sut.deleteItems(matchingKillphrase: "", using: testDigester)
+        let spaceDidDelete = await sut.deleteItems(matchingKillphrase: " ", using: testDigester)
+        let spacesDidDelete = await sut.deleteItems(matchingKillphrase: "       ", using: testDigester)
+        let newlineDidDelete = await sut.deleteItems(matchingKillphrase: "\n", using: testDigester)
 
+        #expect(emptyDidDelete == false)
+        #expect(spaceDidDelete == false)
+        #expect(spacesDidDelete == false)
+        #expect(newlineDidDelete == false)
         try await assertStoreContains(exactlyItems: [item1, item2, item3])
     }
 }

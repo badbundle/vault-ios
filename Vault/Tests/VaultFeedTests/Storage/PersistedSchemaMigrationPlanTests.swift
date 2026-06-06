@@ -10,6 +10,23 @@ struct PersistedSchemaMigrationPlanTests {
         let stages = PersistedSchemaMigrationPlan.stages
 
         #expect(stages.count == 2)
+        guard case let .custom(fromVersion, toVersion, willMigrate, didMigrate) = stages[0] else {
+            Issue.record("Expected first stage to be custom")
+            return
+        }
+        #expect(ObjectIdentifier(fromVersion) == ObjectIdentifier(PersistedSchemaV1.self))
+        #expect(ObjectIdentifier(toVersion) == ObjectIdentifier(PersistedSchemaV2.self))
+        #expect(willMigrate != nil)
+        #expect(didMigrate == nil)
+
+        guard case let .custom(fromVersion, toVersion, willMigrate, didMigrate) = stages[1] else {
+            Issue.record("Expected second stage to be custom")
+            return
+        }
+        #expect(ObjectIdentifier(fromVersion) == ObjectIdentifier(PersistedSchemaV2.self))
+        #expect(ObjectIdentifier(toVersion) == ObjectIdentifier(PersistedSchemaV3.self))
+        #expect(willMigrate != nil)
+        #expect(didMigrate == nil)
     }
 
     @Test
@@ -19,6 +36,9 @@ struct PersistedSchemaMigrationPlanTests {
         // All versioned schemas must be registered so SwiftData knows
         // how to migrate forward through every step in the chain.
         #expect(schemas.count == 3)
+        #expect(ObjectIdentifier(schemas[0]) == ObjectIdentifier(PersistedSchemaV1.self))
+        #expect(ObjectIdentifier(schemas[1]) == ObjectIdentifier(PersistedSchemaV2.self))
+        #expect(ObjectIdentifier(schemas[2]) == ObjectIdentifier(PersistedSchemaV3.self))
     }
 
     // NOTE: An end-to-end migration test that seeds an earlier store and
