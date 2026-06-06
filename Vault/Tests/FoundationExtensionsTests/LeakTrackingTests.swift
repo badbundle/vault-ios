@@ -10,10 +10,10 @@ struct LeakTrackingTests {
     }
 
     @Test
-    func retainedInstance_recordsIssue() async throws {
+    func retainedInstance_recordsIssue() {
         let probe = Probe()
-        await withKnownIssue {
-            try await withLeakTracking {
+        withKnownIssue {
+            withLeakTracking {
                 _ = trackForMemoryLeaks(probe)
             }
         }
@@ -21,8 +21,8 @@ struct LeakTrackingTests {
     }
 
     @Test
-    func trackWithoutScope_recordsIssue() async {
-        await withKnownIssue {
+    func trackWithoutScope_recordsIssue() {
+        withKnownIssue {
             _ = trackForMemoryLeaks(Probe())
         }
     }
