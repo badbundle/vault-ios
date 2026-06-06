@@ -52,14 +52,14 @@ public struct OTPWidgetItemEntityQuery: EntityQuery, Sendable {
 
     public func entities(for identifiers: [OTPWidgetItemEntity.ID]) async throws -> [OTPWidgetItemEntity] {
         let lookup = Set(identifiers)
-        let items = try await loader.eligibleItems()
+        guard let items = try? await loader.eligibleItems() else { return [] }
         return items
             .filter { lookup.contains($0.id.rawValue) }
             .compactMap(Self.makeEntity(from:))
     }
 
     public func suggestedEntities() async throws -> [OTPWidgetItemEntity] {
-        let items = try await loader.eligibleItems()
+        guard let items = try? await loader.eligibleItems() else { return [] }
         return items.compactMap(Self.makeEntity(from:))
     }
 
