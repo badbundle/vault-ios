@@ -75,12 +75,11 @@ extension VaultExportPDFDocumentRendererTests {
         file _: StaticString = #filePath,
         line _: UInt = #line,
     ) -> VaultExportPDFDocumentRenderer<PDFDocumentRendererMock> {
-        let sut = VaultExportPDFDocumentRenderer(
+        VaultExportPDFDocumentRenderer(
             renderer: documentRenderer,
             dataShardBuilder: DataShardBuilder(),
             attacher: attacher,
         )
-        return sut
     }
 }
 

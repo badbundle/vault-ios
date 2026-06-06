@@ -6,7 +6,6 @@ import Testing
 import VaultKeygen
 @testable import VaultFeed
 
-@Suite
 @MainActor
 struct BackupKeyChangeViewModelTests {
     @Test
@@ -152,7 +151,9 @@ extension BackupKeyChangeViewModelTests {
     }
 
     private struct KeyDeriverErroring: KeyDeriver {
-        var uniqueAlgorithmIdentifier: String { "err" }
+        var uniqueAlgorithmIdentifier: String {
+            "err"
+        }
 
         func key(password _: Data, salt _: Data) throws -> KeyData<32> {
             struct Err: Error {}

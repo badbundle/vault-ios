@@ -6,7 +6,6 @@ import VaultBackup
 import VaultKeygen
 @testable import VaultFeed
 
-@Suite
 @MainActor
 struct BackupImportFlowViewModelTests {
     @Test
@@ -42,7 +41,7 @@ struct BackupImportFlowViewModelTests {
     }
 
     @Test
-    func handleImportFromEncryptedVault_failedToDecrypt() async throws {
+    func handleImportFromEncryptedVault_failedToDecrypt() async {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             throw TestError()
@@ -59,7 +58,7 @@ struct BackupImportFlowViewModelTests {
     }
 
     @Test
-    func handleImportFromEncryptedVault_noExistingPasswordPromptsForDifferentPassword() async throws {
+    func handleImportFromEncryptedVault_noExistingPasswordPromptsForDifferentPassword() async {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             anyVaultApplicationPayload()
@@ -77,7 +76,7 @@ struct BackupImportFlowViewModelTests {
     }
 
     @Test
-    func handleImportFromEncryptedVault_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
+    func handleImportFromEncryptedVault_wrongDecryptionPasswordPromptsForDifferentPassword() async {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             throw EncryptedVaultDecoderError.decryption
@@ -230,7 +229,7 @@ struct BackupImportFlowViewModelTests {
     }
 
     @Test
-    func importPayload_toEmptyVault() async throws {
+    func importPayload_toEmptyVault() async {
         let importer = VaultStoreImporterMock()
         let dataModel = anyVaultDataModel(vaultImporter: importer)
         let sut = makeSUT(importContext: .toEmptyVault, dataModel: dataModel)
@@ -243,7 +242,7 @@ struct BackupImportFlowViewModelTests {
     }
 
     @Test
-    func importPayload_merge() async throws {
+    func importPayload_merge() async {
         let importer = VaultStoreImporterMock()
         let dataModel = anyVaultDataModel(vaultImporter: importer)
         let sut = makeSUT(importContext: .merge, dataModel: dataModel)
@@ -256,7 +255,7 @@ struct BackupImportFlowViewModelTests {
     }
 
     @Test
-    func importPayload_override() async throws {
+    func importPayload_override() async {
         let importer = VaultStoreImporterMock()
         let dataModel = anyVaultDataModel(vaultImporter: importer)
         let sut = makeSUT(importContext: .override, dataModel: dataModel)

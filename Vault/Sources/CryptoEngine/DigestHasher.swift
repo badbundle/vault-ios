@@ -1,5 +1,5 @@
-import Foundation
 internal import CryptoSwift
+import Foundation
 
 /// Produces hashes of data.
 public struct DigestHasher {

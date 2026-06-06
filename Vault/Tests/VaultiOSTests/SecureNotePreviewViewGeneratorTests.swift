@@ -8,7 +8,6 @@ import VaultCore
 import VaultFeed
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class SecureNotePreviewViewGeneratorTests {
     @Test
@@ -20,7 +19,7 @@ final class SecureNotePreviewViewGeneratorTests {
     }
 
     @Test
-    func makeVaultPreviewItem_generatesViews() throws {
+    func makeVaultPreviewItem_generatesViews() {
         let factory = SecureNotePreviewViewFactoryMock()
         factory.makeSecureNoteViewHandler = { _, _ in AnyView(Color.red) }
         let sut = makeSUT(factory: factory)
@@ -32,7 +31,7 @@ final class SecureNotePreviewViewGeneratorTests {
     }
 
     @Test
-    func makeVaultPreviewItem_propagatesPreviewMode() throws {
+    func makeVaultPreviewItem_propagatesPreviewMode() {
         let factory = SecureNotePreviewViewFactoryMock()
         var capturedPreviewMode: NotePreviewMode?
         factory.makeSecureNoteViewHandler = { viewModel, _ in

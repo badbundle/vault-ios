@@ -7,7 +7,7 @@ import Testing
 @MainActor
 struct VaultDetailLockEditViewSnapshotTests {
     @Test
-    func layout_locked() async {
+    func layout_locked() {
         let sut = VaultDetailLockEditView(
             title: "My title",
             description: "My description",
@@ -19,7 +19,7 @@ struct VaultDetailLockEditViewSnapshotTests {
     }
 
     @Test
-    func layout_notLocked() async {
+    func layout_notLocked() {
         let sut = VaultDetailLockEditView(
             title: "My title",
             description: "My description",

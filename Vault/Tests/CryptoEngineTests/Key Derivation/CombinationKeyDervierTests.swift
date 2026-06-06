@@ -71,7 +71,7 @@ struct CombinationKeyDeriverTests {
     }
 
     @Test
-    func key_checksCancellationBetweenAlgs() async throws {
+    func key_checksCancellationBetweenAlgs() async {
         // We expect 3 confirmations, from the first 3 algos, the 4th should not run.
         await confirmation(expectedCount: 3) { confirmation in
             let keyTask = SharedMutex<Task<KeyData<32>, any Error>?>(nil)
@@ -149,7 +149,10 @@ extension CombinationKeyDeriverTests {
             self.signal = signal
         }
 
-        var uniqueAlgorithmIdentifier: String { "signal" }
+        var uniqueAlgorithmIdentifier: String {
+            "signal"
+        }
+
         func key(password _: Data, salt _: Data) throws -> KeyData<32> {
             signal()
             return .zero()

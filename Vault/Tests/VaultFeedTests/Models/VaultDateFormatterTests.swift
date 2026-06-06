@@ -3,7 +3,6 @@ import TestHelpers
 import Testing
 @testable import VaultFeed
 
-@Suite
 struct VaultDateFormatterTests {
     @Test
     func formatForFileName_usesDashesInTime() {

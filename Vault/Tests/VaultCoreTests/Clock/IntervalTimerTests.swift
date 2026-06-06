@@ -112,7 +112,7 @@ enum IntervalTimerTests {
         }
 
         @Test
-        func finishTimer_timesOutAfter5SecondsIfThereIsNoWait() async throws {
+        func finishTimer_timesOutAfter5SecondsIfThereIsNoWait() async {
             await #expect(throws: TimeoutError.self, performing: {
                 try await sut.finishTimer(at: 0)
             })
@@ -183,7 +183,7 @@ enum IntervalTimerTests {
         }
 
         @Test
-        func schedule_isolatesWorkToGlobalActor() async throws {
+        func schedule_isolatesWorkToGlobalActor() async {
             @MainActor
             class Thing {
                 var time = 100

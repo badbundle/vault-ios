@@ -86,8 +86,7 @@ public final class Defaults {
         }
 
         let decoder = JSONDecoder()
-        let decoded = try? decoder.decode(ValueType.self, from: data)
-        return decoded
+        return try? decoder.decode(ValueType.self, from: data)
     }
 
     /// Sets a value associated with the specified key.

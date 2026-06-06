@@ -32,7 +32,7 @@ struct OTPCodeRendererTests {
         (1234, 2, "34"),
         (1234, 3, "234"),
     ])
-    func render_codeTooLongTruncatesToSuffix(code: BigUInt, digits: UInt16, expected: String) throws {
+    func render_codeTooLongTruncatesToSuffix(code: BigUInt, digits: UInt16, expected: String) {
         let sut = OTPCodeRenderer()
         #expect(sut.render(code: code, digits: digits) == expected)
     }

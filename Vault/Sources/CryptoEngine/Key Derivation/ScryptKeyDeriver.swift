@@ -5,7 +5,7 @@ import FoundationExtensions
 /// Derives keys using the *scrypt* algorithm.
 ///
 /// https://en.wikipedia.org/wiki/Scrypt
-public struct ScryptKeyDeriver< let bytes: Int>: KeyDeriver {
+public struct ScryptKeyDeriver<let bytes: Int>: KeyDeriver {
     public let parameters: Parameters
 
     public init(parameters: Parameters) {

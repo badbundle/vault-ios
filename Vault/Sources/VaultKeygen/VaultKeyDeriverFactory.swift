@@ -39,23 +39,43 @@ public struct VaultKeyDeriverFactoryImpl: VaultKeyDeriverFactory {
 /// Always uses and looks up the testing deriver, to ensure that tests run fast.
 public struct VaultKeyDeriverFactoryTesting: VaultKeyDeriverFactory {
     public init() {}
-    public func makeVaultBackupKeyDeriver() -> VaultKeyDeriver { .testing }
-    public func makeVaultItemKeyDeriver() -> VaultKeyDeriver { .testing }
-    public func lookupVaultKeyDeriver(signature _: VaultKeyDeriver.Signature) -> VaultKeyDeriver { .testing }
+    public func makeVaultBackupKeyDeriver() -> VaultKeyDeriver {
+        .testing
+    }
+
+    public func makeVaultItemKeyDeriver() -> VaultKeyDeriver {
+        .testing
+    }
+
+    public func lookupVaultKeyDeriver(signature _: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
+        .testing
+    }
 }
 
 extension VaultKeyDeriverFactory where Self == VaultKeyDeriverFactoryTesting {
-    public static var testing: Self { VaultKeyDeriverFactoryTesting() }
+    public static var testing: Self {
+        VaultKeyDeriverFactoryTesting()
+    }
 }
 
 /// Always uses the key deriver that generates a key generation error.
 public struct VaultKeyDeriverFactoryFailing: VaultKeyDeriverFactory {
     public init() {}
-    public func makeVaultBackupKeyDeriver() -> VaultKeyDeriver { .failing }
-    public func makeVaultItemKeyDeriver() -> VaultKeyDeriver { .failing }
-    public func lookupVaultKeyDeriver(signature _: VaultKeyDeriver.Signature) -> VaultKeyDeriver { .failing }
+    public func makeVaultBackupKeyDeriver() -> VaultKeyDeriver {
+        .failing
+    }
+
+    public func makeVaultItemKeyDeriver() -> VaultKeyDeriver {
+        .failing
+    }
+
+    public func lookupVaultKeyDeriver(signature _: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
+        .failing
+    }
 }
 
 extension VaultKeyDeriverFactory where Self == VaultKeyDeriverFactoryFailing {
-    public static var failing: Self { VaultKeyDeriverFactoryFailing() }
+    public static var failing: Self {
+        VaultKeyDeriverFactoryFailing()
+    }
 }

@@ -17,7 +17,7 @@ struct OTPCodeScanningHandlerTests {
     }
 
     @Test
-    func decode_successCompletesWithExpectedCode() throws {
+    func decode_successCompletesWithExpectedCode() {
         let result = sut.decode(data: "otpauth://totp/issuer?secret=AA&algorithm=SHA256&digits=7&period=32")
 
         switch result {

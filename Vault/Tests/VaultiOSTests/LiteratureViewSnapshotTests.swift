@@ -3,7 +3,6 @@ import TestHelpers
 import Testing
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class LiteratureViewSnapshotTests {
     @Test

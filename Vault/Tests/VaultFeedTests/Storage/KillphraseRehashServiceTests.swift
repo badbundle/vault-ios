@@ -87,11 +87,11 @@ struct KillphraseRehashServiceTests {
 }
 
 extension KillphraseRehashServiceTests {
-    // Actor-backed recorder so the `@Sendable` writer closure can
-    // collect invocations and consult the failing-id set without
-    // resorting to `@unchecked Sendable`.
+    /// Actor-backed recorder so the `@Sendable` writer closure can
+    /// collect invocations and consult the failing-id set without
+    /// resorting to `@unchecked Sendable`.
     fileprivate actor WriterRecorder {
-        struct Call: Sendable {
+        struct Call {
             let itemID: UUID
             let digest: KillphraseDigest
         }

@@ -82,8 +82,8 @@ struct KillphraseKeyStoreImplTests {
 }
 
 extension KillphraseKeyStoreImplTests {
-    // Actor-backed recorder for the `@Sendable` store closure to write
-    // into without tripping captured-var concurrency diagnostics.
+    /// Actor-backed recorder for the `@Sendable` store closure to write
+    /// into without tripping captured-var concurrency diagnostics.
     fileprivate actor StoreRecorder {
         private(set) var stored: (data: Data, key: String)?
         func record(data: Data, key: String) {

@@ -65,8 +65,13 @@ public final class BackupKeyDecryptorViewModel {
     }
 
     private struct MissingPasswordError: Error, LocalizedError {
-        var errorDescription: String? { "Password Required" }
-        var failureReason: String? { "The password cannot be empty" }
+        var errorDescription: String? {
+            "Password Required"
+        }
+
+        var failureReason: String? {
+            "The password cannot be empty"
+        }
     }
 
     public var canAttemptDecryption: Bool {

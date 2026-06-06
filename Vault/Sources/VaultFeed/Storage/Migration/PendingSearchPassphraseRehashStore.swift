@@ -20,7 +20,7 @@ import Foundation
 /// Marked `@unchecked Sendable` so the injected dependency does not force
 /// every caller to wrap it.
 struct PendingSearchPassphraseRehashStore: @unchecked Sendable { // swiftlint:disable:this no_unchecked_sendable
-    struct Entry: Codable, Equatable, Sendable {
+    struct Entry: Codable, Equatable {
         let itemID: UUID
         let phrase: String
     }

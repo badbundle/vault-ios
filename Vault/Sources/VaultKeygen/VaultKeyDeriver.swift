@@ -82,8 +82,13 @@ extension VaultKeyDeriver {
 
 extension VaultKeyDeriver {
     public struct MissingKeyDeriverError: Error, LocalizedError {
-        public var errorDescription: String? { "Missing Key Deriver" }
-        public var failureReason: String? { "The key deriver used to generate this key is invalid" }
+        public var errorDescription: String? {
+            "Missing Key Deriver"
+        }
+
+        public var failureReason: String? {
+            "The key deriver used to generate this key is invalid"
+        }
     }
 
     public static func lookup(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {

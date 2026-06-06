@@ -27,6 +27,7 @@
 --self remove
 --semicolons inline
 --stripunusedargs always
+--test-case-name-format preserve
 --trailing-commas always
 --trimwhitespace always
 --voidtype void

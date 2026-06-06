@@ -4,7 +4,6 @@ import Testing
 import VaultCore
 import VaultFeed
 
-@Suite
 @MainActor
 struct SecureNoteDetailViewModelTests {
     @Test
@@ -84,7 +83,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_creatingUpdatesEditor() async throws {
+    func saveChanges_creatingUpdatesEditor() async {
         let editor = SecureNoteDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
@@ -98,7 +97,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_creatingDoesNotPersistEditingModelWhenSuccessful() async throws {
+    func saveChanges_creatingDoesNotPersistEditingModelWhenSuccessful() async {
         let sut = makeSUTCreating()
         makeDirty(sut: sut)
 
@@ -130,7 +129,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
+    func saveChanges_creatingSetsSavingToFalseAfterSaveError() async {
         let editor = SecureNoteDetailEditorMock()
         editor.createNoteHandler = { _ in
             throw TestError()
@@ -143,7 +142,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_updatesEditor() async throws {
+    func saveChanges_updatesEditor() async {
         let editor = SecureNoteDetailEditorMock()
         let sut = makeSUTEditing(editor: editor)
 
@@ -157,7 +156,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_persistsEditingModelIfSuccessful() async throws {
+    func saveChanges_persistsEditingModelIfSuccessful() async {
         let sut = makeSUTEditing()
         makeDirty(sut: sut)
 
@@ -167,7 +166,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_setsSavingToFalseAfterSaveError() async throws {
+    func saveChanges_setsSavingToFalseAfterSaveError() async {
         let editor = SecureNoteDetailEditorMock()
         editor.updateNoteHandler = { _, _, _ in
             throw TestError()
@@ -180,7 +179,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
+    func saveChanges_doesNotPersistEditingModelIfSaveFailed() async {
         let editor = SecureNoteDetailEditorMock()
         editor.updateNoteHandler = { _, _, _ in
             throw TestError()
@@ -207,7 +206,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func deleteNote_hasNoActionIfCreatingNote() async throws {
+    func deleteNote_hasNoActionIfCreatingNote() async {
         let editor = SecureNoteDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
@@ -217,7 +216,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func deleteNote_isSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
+    func deleteNote_isSavingSetsBackToFalseAfterSuccessfulDelete() async {
         let sut = makeSUTEditing()
 
         await sut.deleteNote()
@@ -248,7 +247,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func done_restoresInitialEditingStateIfInEditMode() async throws {
+    func done_restoresInitialEditingStateIfInEditMode() {
         let sut = makeSUTEditing()
         sut.startEditing()
         makeDirty(sut: sut)
@@ -378,7 +377,7 @@ struct SecureNoteDetailViewModelTests {
     }
 
     @Test
-    func delete_callsDeleteWrapper() async throws {
+    func delete_callsDeleteWrapper() async {
         let editor = SecureNoteDetailEditorMock()
         let sut = makeSUTEditing(editor: editor)
 

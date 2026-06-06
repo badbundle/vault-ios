@@ -8,7 +8,7 @@ import VaultFeed
 @MainActor
 struct OTPCodeIncrementerViewModelTests {
     @Test @LeakTracked
-    func isButtonEnabled_isInitiallyTrue() throws {
+    func isButtonEnabled_isInitiallyTrue() {
         let sut = makeSUT()
 
         #expect(sut.isButtonEnabled)

@@ -12,7 +12,7 @@ final class DefaultsStoredTests {
     }
 
     @Test(arguments: [0, 1234, 456])
-    func init_fallsBackToDefaultIfNoStoredValue(defaultValue: Int) throws {
+    func init_fallsBackToDefaultIfNoStoredValue(defaultValue: Int) {
         @DefaultsStored(defaults: defaults, defaultsKey: .init("test1"), defaultValue: defaultValue)
         var coolNumber: Int
 

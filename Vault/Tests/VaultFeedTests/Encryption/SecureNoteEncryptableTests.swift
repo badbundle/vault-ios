@@ -6,7 +6,7 @@ import Testing
 @MainActor
 struct SecureNoteEncryptableTests {
     @Test
-    func init_fromEncryptedContainer() throws {
+    func init_fromEncryptedContainer() {
         let container = SecureNote.EncryptedContainer(
             title: "This is a test",
             contents: "Test contents",

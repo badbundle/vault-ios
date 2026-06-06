@@ -5,11 +5,10 @@ import Testing
 import VaultFeed
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class SecureNoteDetailViewSnapshotTests {
     @Test
-    func emptyState() async {
+    func emptyState() {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -39,7 +38,7 @@ final class SecureNoteDetailViewSnapshotTests {
     }
 
     @Test
-    func lockedState() async {
+    func lockedState() {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -69,7 +68,7 @@ final class SecureNoteDetailViewSnapshotTests {
     }
 
     @Test
-    func lockedStateNoAuthentication() async {
+    func lockedStateNoAuthentication() {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -99,7 +98,7 @@ final class SecureNoteDetailViewSnapshotTests {
     }
 
     @Test
-    func titleOnly() async {
+    func titleOnly() {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -129,7 +128,7 @@ final class SecureNoteDetailViewSnapshotTests {
     }
 
     @Test
-    func titleDescriptionAndShortContent() async {
+    func titleDescriptionAndShortContent() {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents", format: .markdown),
             encryptionKey: nil,
@@ -159,7 +158,7 @@ final class SecureNoteDetailViewSnapshotTests {
     }
 
     @Test
-    func titleDescriptionAndLongContent() async {
+    func titleDescriptionAndLongContent() {
         let longContent = Array(repeating: "My content is cool.", count: 100).joined(separator: " ")
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: longContent, format: .markdown),
@@ -190,7 +189,7 @@ final class SecureNoteDetailViewSnapshotTests {
     }
 
     @Test
-    func contentUpdated() async {
+    func contentUpdated() {
         let date = fixedTestDate()
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents", format: .markdown),
@@ -221,7 +220,7 @@ final class SecureNoteDetailViewSnapshotTests {
     }
 
     @Test
-    func editMode_emptyState() async {
+    func editMode_emptyState() {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -251,7 +250,7 @@ final class SecureNoteDetailViewSnapshotTests {
     }
 
     @Test
-    func editMode_editedContent() async {
+    func editMode_editedContent() {
         let date = fixedTestDate()
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents", format: .markdown),

@@ -56,11 +56,11 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         }.store(in: &cancellables)
     }
 
-    // This function is called when autofill is initially enabled.
-    // It allows configuration before enable.
-    // It's not required, but would be good to do some config here.
-    //
-    // It's triggered by the "ASCredentialProviderExtensionShowsConfigurationUI" key in the Info.plist
+    /// This function is called when autofill is initially enabled.
+    /// It allows configuration before enable.
+    /// It's not required, but would be good to do some config here.
+    ///
+    /// It's triggered by the "ASCredentialProviderExtensionShowsConfigurationUI" key in the Info.plist
     override open func prepareInterfaceForExtensionConfiguration() {
         super.prepareInterfaceForExtensionConfiguration()
 
@@ -73,7 +73,7 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         vaultAutofillViewModel.show(feature: .setupConfiguration)
     }
 
-    /*
+    /**
      Implement this method if your extension supports showing credentials in the QuickType bar.
      When the user selects a credential from your app, this method will be called with the
      ASPasswordCredentialIdentity your app has previously saved to the ASCredentialIdentityStore.
@@ -145,7 +145,7 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         }
     }
 
-    /*
+    /**
      Implement this method if provideCredentialWithoutUserInteraction(for:) can fail with
      ASExtensionError.userInteractionRequired. In this case, the system may present your extension's
      UI and call this method. Show appropriate UI for authenticating the user then provide the password
@@ -159,7 +159,7 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         vaultAutofillViewModel.show(feature: .showAllCodesSelector)
     }
 
-    /*! @abstract Prepare the view controller to show a list of one time code credentials.
+    /** ! @abstract Prepare the view controller to show a list of one time code credentials.
      @param serviceIdentifiers the array of service identifiers.
      @discussion This method is called by the system to prepare the extension's view controller to present the list of credentials.
      A service identifier array is passed which can be used to filter or prioritize the credentials that closely match each service.
@@ -178,7 +178,7 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         vaultAutofillViewModel.show(feature: .showAllCodesSelector)
     }
 
-    /*
+    /**
      This method is called by the system to prepare the extension's view controller to present the list of credentials.
      A service identifier array is passed which can be used to filter or prioritize the credentials that closely match each service.
      The service identifier array could have zero or more items. If there are more than one item in the array, items with lower indexes

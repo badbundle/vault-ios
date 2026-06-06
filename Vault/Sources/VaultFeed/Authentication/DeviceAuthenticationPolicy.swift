@@ -32,8 +32,13 @@ extension DeviceAuthenticationPolicy {
 public struct DeviceAuthenticationPolicyAlwaysDeny: DeviceAuthenticationPolicy {
     public init() {}
 
-    public var canAuthenicateWithPasscode: Bool { true }
-    public var canAuthenticateWithBiometrics: Bool { true }
+    public var canAuthenicateWithPasscode: Bool {
+        true
+    }
+
+    public var canAuthenticateWithBiometrics: Bool {
+        true
+    }
 
     public func authenticateWithPasscode(reason _: String) async throws -> Bool {
         false
@@ -45,14 +50,21 @@ public struct DeviceAuthenticationPolicyAlwaysDeny: DeviceAuthenticationPolicy {
 }
 
 extension DeviceAuthenticationPolicy where Self == DeviceAuthenticationPolicyAlwaysDeny {
-    public static var alwaysDeny: Self { .init() }
+    public static var alwaysDeny: Self {
+        .init()
+    }
 }
 
 public struct DeviceAuthenticationPolicyCannotAuthenticate: DeviceAuthenticationPolicy {
     public init() {}
 
-    public var canAuthenicateWithPasscode: Bool { false }
-    public var canAuthenticateWithBiometrics: Bool { false }
+    public var canAuthenicateWithPasscode: Bool {
+        false
+    }
+
+    public var canAuthenticateWithBiometrics: Bool {
+        false
+    }
 
     public func authenticateWithPasscode(reason _: String) async throws -> Bool {
         false
@@ -64,14 +76,21 @@ public struct DeviceAuthenticationPolicyCannotAuthenticate: DeviceAuthentication
 }
 
 extension DeviceAuthenticationPolicy where Self == DeviceAuthenticationPolicyCannotAuthenticate {
-    public static var cannotAuthenticate: Self { .init() }
+    public static var cannotAuthenticate: Self {
+        .init()
+    }
 }
 
 public struct DeviceAuthenticationPolicyAlwaysAllow: DeviceAuthenticationPolicy {
     public init() {}
 
-    public var canAuthenicateWithPasscode: Bool { true }
-    public var canAuthenticateWithBiometrics: Bool { true }
+    public var canAuthenicateWithPasscode: Bool {
+        true
+    }
+
+    public var canAuthenticateWithBiometrics: Bool {
+        true
+    }
 
     public func authenticateWithPasscode(reason _: String) async throws -> Bool {
         true
@@ -83,7 +102,9 @@ public struct DeviceAuthenticationPolicyAlwaysAllow: DeviceAuthenticationPolicy 
 }
 
 extension DeviceAuthenticationPolicy where Self == DeviceAuthenticationPolicyAlwaysAllow {
-    public static var alwaysAllow: Self { .init() }
+    public static var alwaysAllow: Self {
+        .init()
+    }
 }
 
 /// `DeviceAuthenticationPolicy` using `LocalAuthentication`.
@@ -123,6 +144,11 @@ public struct DeviceAuthenticationPolicyUsingDevice: DeviceAuthenticationPolicy 
 }
 
 extension DeviceAuthenticationPolicy where Self == DeviceAuthenticationPolicyUsingDevice {
-    public static var `default`: Self { .init() }
-    public static var usingDevice: Self { .init() }
+    public static var `default`: Self {
+        .init()
+    }
+
+    public static var usingDevice: Self {
+        .init()
+    }
 }

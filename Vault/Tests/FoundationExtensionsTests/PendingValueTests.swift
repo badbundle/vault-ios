@@ -70,7 +70,7 @@ struct PendingValueTests {
     }
 
     @Test
-    func wait_throwsAlreadyWaitingErrorIfAlreadyWaiting() async throws {
+    func wait_throwsAlreadyWaitingErrorIfAlreadyWaiting() async {
         var task: Task<Void, any Error>?
         await withCheckedContinuation { continutation in
             task = Task.detached(priority: .high) {
@@ -89,7 +89,7 @@ struct PendingValueTests {
     }
 
     @Test
-    func wait_timeoutFulfillsWithError() async throws {
+    func wait_timeoutFulfillsWithError() async {
         await #expect(throws: TimeoutError.self, performing: {
             _ = try await sut.wait(timeout: .nanoseconds(1))
         })
@@ -137,7 +137,7 @@ struct PendingValueTests {
     }
 
     @Test
-    func reject_beforeAwaitResolvesWithInitialError() async throws {
+    func reject_beforeAwaitResolvesWithInitialError() async {
         await sut.reject(error: TestError.testCase)
 
         await #expect(throws: TestError.testCase, performing: {
@@ -146,7 +146,7 @@ struct PendingValueTests {
     }
 
     @Test
-    func reject_resolvesWithMostRecentError() async throws {
+    func reject_resolvesWithMostRecentError() async {
         await sut.reject(error: TestError.testCase)
         await sut.reject(error: TestError.testCase2)
 

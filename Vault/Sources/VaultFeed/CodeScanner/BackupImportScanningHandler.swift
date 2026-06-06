@@ -57,8 +57,7 @@ public final class BackupImportScanningHandler: CodeScanningHandler {
 
     private func decodeEncryptedVault() throws -> EncryptedVault {
         let encryptedVaultData = try shardDecoder.decodeData()
-        let decodedEncryptedVault = try EncryptedVaultCoder().decode(vaultData: encryptedVaultData)
-        return decodedEncryptedVault
+        return try EncryptedVaultCoder().decode(vaultData: encryptedVaultData)
     }
 }
 

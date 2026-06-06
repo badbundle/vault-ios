@@ -18,7 +18,7 @@ struct TaskTimeoutTests {
     }
 
     @Test
-    func cancelledReturnsCancelledError() async throws {
+    func cancelledReturnsCancelledError() async {
         let parent = Task {
             try await Task.withTimeout(delay: .milliseconds(500)) {
                 try await suspendForever()

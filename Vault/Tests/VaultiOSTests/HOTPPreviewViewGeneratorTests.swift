@@ -7,7 +7,6 @@ import VaultCore
 import VaultFeed
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class HOTPPreviewViewGeneratorTests {
     @Test
@@ -27,7 +26,7 @@ final class HOTPPreviewViewGeneratorTests {
     }
 
     @Test
-    func makeOTPView_generatesViews() throws {
+    func makeOTPView_generatesViews() {
         let repository = HOTPPreviewViewRepositoryMock()
         repository.previewViewModelHandler = { _, _ in
             MainActor.assumeIsolated {

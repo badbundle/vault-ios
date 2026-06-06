@@ -4,7 +4,6 @@ import Foundation
 import Testing
 @testable import VaultFeed
 
-@Suite
 @MainActor
 struct HOTPCodePublisherTests {
     @Test
@@ -52,8 +51,7 @@ struct HOTPCodePublisherTests {
     // MARK: - Helpers
 
     private func makeSUT(digits: UInt16) -> HOTPCodePublisher {
-        let sut = HOTPCodePublisher(hotpGenerator: fixedGenerator(digits: digits))
-        return sut
+        HOTPCodePublisher(hotpGenerator: fixedGenerator(digits: digits))
     }
 
     private func fixedGenerator(digits: UInt16) -> HOTPGenerator {

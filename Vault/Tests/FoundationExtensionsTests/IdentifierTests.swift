@@ -24,7 +24,7 @@ struct IdentifierTests {
     }
 
     @Test
-    func init_fromUUID() throws {
+    func init_fromUUID() {
         let fixed = UUID()
         let id = Identifier<Int>(id: fixed)
 
@@ -40,7 +40,7 @@ struct IdentifierTests {
     }
 
     @Test
-    func equatable_equals() throws {
+    func equatable_equals() {
         let fixed = UUID()
         let id1 = Identifier<Int>(id: fixed)
         let id2 = Identifier<Int>(id: fixed)
@@ -49,7 +49,7 @@ struct IdentifierTests {
     }
 
     @Test
-    func hashable_hashesSameIDs() throws {
+    func hashable_hashesSameIDs() {
         var set = Set<Identifier<Int>>()
 
         let fixed = UUID()
@@ -63,7 +63,7 @@ struct IdentifierTests {
     }
 
     @Test
-    func uuidString_creates() throws {
+    func uuidString_creates() {
         let fixed = UUID()
         let id1 = Identifier<Int>.uuidString(fixed.uuidString)
         let id2 = Identifier<Int>(id: fixed)
@@ -72,7 +72,7 @@ struct IdentifierTests {
     }
 
     @Test
-    func map_usesSameIdentifier() throws {
+    func map_usesSameIdentifier() {
         let fixed = UUID()
         let id1 = Identifier<Int>(id: fixed)
         let id2: Identifier<String> = id1.map()
@@ -81,7 +81,7 @@ struct IdentifierTests {
     }
 
     @Test
-    func rawValue_isUUID() throws {
+    func rawValue_isUUID() {
         let fixed = UUID()
         let id1 = Identifier<Int>(id: fixed)
 

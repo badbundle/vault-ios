@@ -449,7 +449,7 @@ extension AutoBackupServiceImplTests {
 
 // MARK: - BackupStorageProviderStub
 
-// All access is from @MainActor test methods, so MainActor isolation is sufficient for Sendable.
+/// All access is from @MainActor test methods, so MainActor isolation is sufficient for Sendable.
 @MainActor
 final class BackupStorageProviderStub: BackupStorageProvider, Sendable {
     let id: String
@@ -462,11 +462,21 @@ final class BackupStorageProviderStub: BackupStorageProvider, Sendable {
     private let backups: [BackupFileInfo]
     private let listBackupsError: (any Error)?
 
-    var isConfigured: Bool { _isConfigured }
-    var isAvailable: Bool { _isAvailable }
+    var isConfigured: Bool {
+        _isConfigured
+    }
 
-    var configurationSummary: String? { _isConfigured ? "Test folder" : nil }
-    var configurationData: Data? { _configurationData }
+    var isAvailable: Bool {
+        _isAvailable
+    }
+
+    var configurationSummary: String? {
+        _isConfigured ? "Test folder" : nil
+    }
+
+    var configurationData: Data? {
+        _configurationData
+    }
 
     private(set) var writeCallCount = 0
     private(set) var writtenData: [(data: Data, filename: String)] = []

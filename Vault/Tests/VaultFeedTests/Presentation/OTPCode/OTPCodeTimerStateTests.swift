@@ -3,7 +3,6 @@ import TestHelpers
 import Testing
 import VaultFeed
 
-@Suite
 struct OTPCodeTimerStateTests {
     @Test
     func init_startTimeAndEndTimeIsValues() {

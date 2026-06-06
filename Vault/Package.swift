@@ -3,9 +3,9 @@
 import CompilerPluginSupport
 import PackageDescription
 
-let swiftLintVersion: Version = "0.63.2"
-let swiftFormatVersion: Version = "0.58.6"
-let swiftFormatChecksum: String = "d2ee571b3f15c173b1789b82b9fcf1e799cff66de0ae9f6839bd35aa8e9b9608"
+let swiftLintVersion: Version = "0.63.3"
+let swiftFormatVersion: Version = "0.61.1"
+let swiftFormatChecksum: String = "47f7932f35c714b00430f56df1cfaf1bea0b4baae299bb2a09874cb52ee45350"
 
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ExistentialAny"),
@@ -300,7 +300,6 @@ let package = Package(
         .testTarget(
             name: "VaultiOSWidgetsTests",
             dependencies: ["VaultiOSWidgets", "VaultiOSShared", "VaultCore", "VaultFeed", "TestHelpers"],
-            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins,
         ),

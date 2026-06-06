@@ -39,7 +39,7 @@ struct KeyDataTests {
     }
 
     @Test
-    func random_createsRandomKey() throws {
+    func random_createsRandomKey() {
         var seen = Set<KeyData<32>>()
         for _ in 1 ... 100 {
             let key = KeyData<32>.random()
@@ -49,14 +49,14 @@ struct KeyDataTests {
     }
 
     @Test
-    func repeating_createsRepeatingBytes() throws {
+    func repeating_createsRepeatingBytes() {
         let key = KeyData<32>.repeating(byte: 0x32)
 
         #expect(key.data.map(\.self) == Array(repeating: 0x32, count: 32))
     }
 
     @Test
-    func zero_createsZeroedKey() throws {
+    func zero_createsZeroedKey() {
         let zero = KeyData<32>.zero()
 
         #expect(zero.data.map(\.self) == Array(repeating: 0, count: 32))
@@ -88,12 +88,12 @@ struct KeyDataTests {
 
     struct ByteLength {
         @Test
-        func bytes8() throws {
+        func bytes8() {
             #expect(KeyData<8>.random().data.count == 8)
         }
 
         @Test
-        func bytes32() throws {
+        func bytes32() {
             #expect(KeyData<32>.random().data.count == 32)
         }
     }

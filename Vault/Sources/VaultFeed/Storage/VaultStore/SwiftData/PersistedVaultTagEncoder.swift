@@ -13,12 +13,11 @@ struct PersistedVaultTagEncoder {
     }
 
     func encode(tag: VaultItemTag.Write, existing: PersistedVaultTag? = nil) -> PersistedVaultTag {
-        let tagItem = if let existing {
+        if let existing {
             encode(existingTag: existing, newData: tag)
         } else {
             encode(newTag: tag)
         }
-        return tagItem
     }
 }
 

@@ -14,10 +14,6 @@ struct VaultCardModifier: ViewModifier {
     }
 
     var configuration: Configuration
-    init(configuration: Configuration) {
-        self.configuration = configuration
-    }
-
     func body(content: Content) -> some View {
         content
             .padding(configuration.padding)

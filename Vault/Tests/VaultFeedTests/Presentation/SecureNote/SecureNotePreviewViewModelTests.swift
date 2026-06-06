@@ -3,7 +3,6 @@ import TestHelpers
 import Testing
 import VaultFeed
 
-@Suite
 struct SecureNotePreviewViewModelTests {
     @Test
     func visibleTitle_isPlaceholderEmptyTitleIfTitleEmpty() {

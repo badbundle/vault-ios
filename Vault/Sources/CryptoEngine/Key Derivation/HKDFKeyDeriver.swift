@@ -1,8 +1,8 @@
+internal import CryptoSwift
 import Foundation
 import FoundationExtensions
-internal import CryptoSwift
 
-public struct HKDFKeyDeriver< let bytes: Int>: KeyDeriver {
+public struct HKDFKeyDeriver<let bytes: Int>: KeyDeriver {
     private let parameters: Parameters
 
     public init(parameters: Parameters) {

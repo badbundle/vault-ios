@@ -17,7 +17,7 @@ func withMappedError_noErrorReturnsValue() throws {
 }
 
 @Test
-func withMappedError_throwCallsErrorMap() throws {
+func withMappedError_throwCallsErrorMap() {
     var callCount = 0
     #expect(throws: TestError.self, performing: {
         try withMappedError {
@@ -31,7 +31,7 @@ func withMappedError_throwCallsErrorMap() throws {
 }
 
 @Test
-func withCatchingError_returnsNilIfNoError() throws {
+func withCatchingError_returnsNilIfNoError() {
     let result = withCatchingError {
         100
     }
@@ -40,7 +40,7 @@ func withCatchingError_returnsNilIfNoError() throws {
 }
 
 @Test
-func withCatchingError_returnsErrorIfError() throws {
+func withCatchingError_returnsErrorIfError() {
     let result = withCatchingError {
         throw TestError()
     }

@@ -20,6 +20,11 @@ public struct PresentationError: Error, Equatable, Hashable {
 }
 
 extension PresentationError: LocalizedError {
-    public var errorDescription: String? { userTitle }
-    public var failureReason: String? { userDescription }
+    public var errorDescription: String? {
+        userTitle
+    }
+
+    public var failureReason: String? {
+        userDescription
+    }
 }

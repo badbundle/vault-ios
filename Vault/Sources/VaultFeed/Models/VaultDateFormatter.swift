@@ -7,9 +7,8 @@ public struct VaultDateFormatter {
     }
 
     public func formatForFileName(date: Date) -> String {
-        let corrected = formatter.string(from: date)
+        formatter.string(from: date)
             .replacingOccurrences(of: ":", with: "-") // colons not supported in filenames
-        return corrected
     }
 
     private var formatter: ISO8601DateFormatter {

@@ -38,14 +38,14 @@ struct SharedMutexTests {
     }
 
     @Test(arguments: [1, 2, 3, 100, 12345])
-    func value_getsValue(initialValue: Int) async {
+    func value_getsValue(initialValue: Int) {
         let a = SharedMutex(initialValue)
 
         #expect(a.value == initialValue)
     }
 
     @Test(arguments: [1, 2, 3, 100, 12345])
-    func modify_modifiesExistingValue(initialValue: Int) async {
+    func modify_modifiesExistingValue(initialValue: Int) {
         let a = SharedMutex(initialValue)
 
         a.modify { value in

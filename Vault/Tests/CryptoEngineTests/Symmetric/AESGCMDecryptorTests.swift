@@ -42,7 +42,7 @@ struct AESGCMDecryptorTests {
     }
 
     @Test
-    func decrypt_throwsErrorIfTagIsBadForNonEmptyMessage() throws {
+    func decrypt_throwsErrorIfTagIsBadForNonEmptyMessage() {
         let key = Data(hex: "0xfeffe9928665731c6d6a8f9467308308")
         let iv = Data(hex: "0xcafebabefacedbaddecaf888")
         let message = AESGCMEncryptedMessage(

@@ -5,7 +5,6 @@ import Testing
 import VaultCore
 import VaultFeed
 
-@Suite
 @MainActor
 struct OTPCodePreviewViewModelTests {
     @Test

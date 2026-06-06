@@ -1,7 +1,7 @@
 import Foundation
 
 /// A key that is generic over a specific byte length.
-public struct KeyData< let bytes: Int>: Equatable, Hashable, Sendable {
+public struct KeyData<let bytes: Int>: Equatable, Hashable, Sendable {
     public let data: Data
 
     public struct LengthError: Error {}
@@ -26,7 +26,9 @@ extension KeyData: Codable {
 }
 
 extension KeyData {
-    public static var length: Int { bytes }
+    public static var length: Int {
+        bytes
+    }
 
     public static func zero() -> Self {
         .repeating(byte: 0x00)

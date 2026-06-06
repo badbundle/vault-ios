@@ -30,7 +30,7 @@ struct BackupImportScanningHandlerTests {
     }
 
     @Test
-    func makeSimulatedHandler_returnsExampleVault() throws {
+    func makeSimulatedHandler_returnsExampleVault() {
         let simulated = sut.makeSimulatedHandler()
 
         let result = simulated.decodeSimulated()
@@ -63,7 +63,7 @@ struct BackupImportScanningHandlerTests {
     }
 
     @Test(arguments: [0, 1, 2, 3])
-    func decode_partialShardContinuesScanning(shardNumber: Int) throws {
+    func decode_partialShardContinuesScanning(shardNumber: Int) {
         let result = sut.decode(data: """
         {
             "G":{"ID":10,"N":4,"I":\(shardNumber)},

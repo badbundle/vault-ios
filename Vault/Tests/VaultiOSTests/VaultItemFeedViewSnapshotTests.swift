@@ -7,11 +7,10 @@ import VaultFeed
 import VaultSettings
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class VaultItemFeedViewSnapshotTests {
     @Test
-    func layout_noCodes() async throws {
+    func layout_noCodes() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -24,7 +23,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func layout_singleCodeAtMediumSize() async throws {
+    func layout_singleCodeAtMediumSize() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         store.retrieveHandler = { _ in .init(items: [uniqueVaultItem()]) }
@@ -38,7 +37,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func layout_multipleCodesAtMediumSize() async throws {
+    func layout_multipleCodesAtMediumSize() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         store.retrieveHandler = { _ in
@@ -58,7 +57,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func viewState_toggleEditingMode() async throws {
+    func viewState_toggleEditingMode() async {
         let state = VaultItemFeedState()
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
@@ -77,7 +76,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func searchBar_includesTagsIfTheyExistInTheVaultStore() async throws {
+    func searchBar_includesTagsIfTheyExistInTheVaultStore() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         tagStore.retrieveTagsHandler = {
@@ -96,7 +95,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func searchBar_tagsBeingFiltered() async throws {
+    func searchBar_tagsBeingFiltered() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let tag1Id = Identifier<VaultItemTag>()
@@ -119,7 +118,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func unifiedBar_searchingWithResults() async throws {
+    func unifiedBar_searchingWithResults() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         store.retrieveHandler = { _ in
@@ -140,7 +139,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func unifiedBar_searchingWithNoResults() async throws {
+    func unifiedBar_searchingWithNoResults() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         store.retrieveHandler = { _ in .init(items: []) }
@@ -156,7 +155,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func unifiedBar_tagFilteringInEditMode() async throws {
+    func unifiedBar_tagFilteringInEditMode() async {
         let state = VaultItemFeedState()
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
@@ -186,7 +185,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func unifiedBar_multipleTagsFiltered() async throws {
+    func unifiedBar_multipleTagsFiltered() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let tag1Id = Identifier<VaultItemTag>()
@@ -217,7 +216,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func unifiedBar_clearButtonVisible() async throws {
+    func unifiedBar_clearButtonVisible() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let tag1Id = Identifier<VaultItemTag>()
@@ -245,7 +244,7 @@ final class VaultItemFeedViewSnapshotTests {
     }
 
     @Test
-    func unifiedBar_narrowWidth_buttonsDoNotWrap() async throws {
+    func unifiedBar_narrowWidth_buttonsDoNotWrap() async {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let tag1Id = Identifier<VaultItemTag>()

@@ -4,7 +4,6 @@ import Testing
 import VaultCore
 @testable import VaultFeed
 
-@Suite
 struct VaultItemWidgetEligibilityTests {
     @Test
     func eligible_whenAllConditionsHold() {

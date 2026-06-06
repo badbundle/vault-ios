@@ -6,7 +6,7 @@ import Testing
 
 struct PBKDF2KeyDeriverTests {
     @Test
-    func key_doesNotThrowForValidParameters() async {
+    func key_doesNotThrowForValidParameters() {
         let sut = PBKDF2KeyDeriver<8>(parameters: .fastForTesting)
 
         #expect(throws: Never.self) {
@@ -15,7 +15,7 @@ struct PBKDF2KeyDeriverTests {
     }
 
     @Test
-    func key_throwsIfMissingSalt() async {
+    func key_throwsIfMissingSalt() {
         let sut = PBKDF2KeyDeriver<8>(parameters: .fastForTesting)
 
         #expect(throws: (any Error).self) {
@@ -24,7 +24,7 @@ struct PBKDF2KeyDeriverTests {
     }
 
     @Test
-    func key_generatesValidKeyWithSalt() async throws {
+    func key_generatesValidKeyWithSalt() throws {
         let password = Data(byteString: "hello world")
         let salt = Data(hex: "ABCDEF")
         let sut = PBKDF2KeyDeriver<8>(parameters: .fastForTesting)
@@ -34,7 +34,7 @@ struct PBKDF2KeyDeriverTests {
     }
 
     @Test
-    func key_generatesTheSameKeyMultipleTimes() async throws {
+    func key_generatesTheSameKeyMultipleTimes() throws {
         let password = Data(byteString: "hello world")
         let salt = Data(hex: "ABCDEF")
         let sut = PBKDF2KeyDeriver<8>(parameters: .fastForTesting)

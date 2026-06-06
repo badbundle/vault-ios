@@ -3,7 +3,6 @@ import TestHelpers
 import Testing
 @testable import VaultFeed
 
-@Suite
 struct SecureNoteDetailEditsTests {
     @Test
     func isValid_validForTitleWithContents() {

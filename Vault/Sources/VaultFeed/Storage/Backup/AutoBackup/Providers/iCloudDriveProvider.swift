@@ -1,7 +1,7 @@
 import Foundation
 
 /// Configuration data for the iCloud Drive provider.
-struct iCloudDriveProviderConfiguration: Codable, Equatable, Sendable {
+struct iCloudDriveProviderConfiguration: Codable, Equatable {
     /// Security-scoped bookmark data for the selected folder.
     var folderBookmark: Data?
 
@@ -117,7 +117,7 @@ public actor iCloudDriveProvider: BackupStorageProvider {
             options: [.skipsHiddenFiles],
         )
 
-        let backupFiles = try contents
+        return try contents
             .filter { $0.lastPathComponent.hasPrefix("vault-auto-backup-") }
             .filter { $0.pathExtension.lowercased() == "pdf" }
             .map { url -> BackupFileInfo in
@@ -129,8 +129,6 @@ public actor iCloudDriveProvider: BackupStorageProvider {
                 )
             }
             .sorted { $0.createdDate > $1.createdDate }
-
-        return backupFiles
     }
 
     public func delete(filename: String) async throws {

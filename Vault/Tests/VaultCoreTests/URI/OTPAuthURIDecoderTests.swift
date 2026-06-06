@@ -133,7 +133,7 @@ struct OTPAuthURIDecoderTests {
         "otpauth://totp/any?algorithm=BAD",
         "otpauth://totp/any?algorithm=%20",
     ])
-    func decodeAlgorithm_throwsForInvalidAlgorithm(uri: String) throws {
+    func decodeAlgorithm_throwsForInvalidAlgorithm(uri: String) {
         #expect(throws: OTPAuthURIDecoder.URIDecodingError.invalidAlgorithm, performing: {
             try sut.decode(uri)
         })
@@ -164,7 +164,7 @@ struct OTPAuthURIDecoderTests {
         "otpauth://totp/any?digits=-10",
         "otpauth://totp/any?digits=-9999",
     ])
-    func decodeDigits_throwsForNegativeNumber(uri: String) throws {
+    func decodeDigits_throwsForNegativeNumber(uri: String) {
         #expect(throws: OTPAuthURIDecoder.URIDecodingError.invalidValue, performing: {
             try sut.decode(uri)
         })
@@ -174,7 +174,7 @@ struct OTPAuthURIDecoderTests {
         "otpauth://totp/any?digits=80000",
         "otpauth://totp/any?digits=99999999999999",
     ])
-    func decodeDigits_throwsForTooLargeNumber(uri: String) throws {
+    func decodeDigits_throwsForTooLargeNumber(uri: String) {
         #expect(throws: OTPAuthURIDecoder.URIDecodingError.invalidValue, performing: {
             try sut.decode(uri)
         })
@@ -213,7 +213,7 @@ struct OTPAuthURIDecoderTests {
         "otpauth://totp/any?secret=ee~~~",
         "otpauth://totp/any?secret=1x%20",
     ])
-    func decodeSecret_invalidBase32ThrowsDecodingError(uri: String) throws {
+    func decodeSecret_invalidBase32ThrowsDecodingError(uri: String) {
         #expect(throws: (any Error).self, performing: {
             try sut.decode(uri)
         })

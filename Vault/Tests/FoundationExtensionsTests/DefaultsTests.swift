@@ -207,16 +207,45 @@ final class DefaultTests {
 // MARK: - Helpers
 
 extension DefaultsKey {
-    fileprivate static var integerKey: Key<Int> { .init("integerKey") }
-    fileprivate static var floatKey: Key<Float> { .init("floatKey") }
-    fileprivate static var doubleKey: Key<Double> { .init("doubleKey") }
-    fileprivate static var stringKey: Key<String> { .init("stringKey") }
-    fileprivate static var boolKey: Key<Bool> { .init("boolKey") }
-    fileprivate static var dateKey: Key<Date> { .init("dateKey") }
-    fileprivate static var enumKey: Key<EnumMock> { .init("enumKey") }
-    fileprivate static var optionSetKey: Key<OptionSetMock> { .init("optionSetKey") }
-    fileprivate static var arrayOfIntegersKey: Key<[Int]> { .init("arrayOfIntegersKey") }
-    fileprivate static var personMockKey: Key<PersonMock> { .init("personMockKey") }
+    fileprivate static var integerKey: Key<Int> {
+        .init("integerKey")
+    }
+
+    fileprivate static var floatKey: Key<Float> {
+        .init("floatKey")
+    }
+
+    fileprivate static var doubleKey: Key<Double> {
+        .init("doubleKey")
+    }
+
+    fileprivate static var stringKey: Key<String> {
+        .init("stringKey")
+    }
+
+    fileprivate static var boolKey: Key<Bool> {
+        .init("boolKey")
+    }
+
+    fileprivate static var dateKey: Key<Date> {
+        .init("dateKey")
+    }
+
+    fileprivate static var enumKey: Key<EnumMock> {
+        .init("enumKey")
+    }
+
+    fileprivate static var optionSetKey: Key<OptionSetMock> {
+        .init("optionSetKey")
+    }
+
+    fileprivate static var arrayOfIntegersKey: Key<[Int]> {
+        .init("arrayOfIntegersKey")
+    }
+
+    fileprivate static var personMockKey: Key<PersonMock> {
+        .init("personMockKey")
+    }
 }
 
 struct PersonMock: Codable {

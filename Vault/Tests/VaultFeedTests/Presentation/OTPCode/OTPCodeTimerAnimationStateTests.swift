@@ -3,7 +3,6 @@ import TestHelpers
 import Testing
 import VaultFeed
 
-@Suite
 struct OTPCodeTimerAnimationStateTests {
     @Test
     func initialFraction_freezeIsFraction() {

@@ -17,7 +17,7 @@ public protocol KeyDeriver<Key>: Sendable {
 
 // MARK: - Helpers
 
-public struct FailingKeyDeriver< let bytes: Int>: KeyDeriver {
+public struct FailingKeyDeriver<let bytes: Int>: KeyDeriver {
     public init() {}
 
     public struct KeyDeriverError: Error {}
@@ -31,9 +31,12 @@ public struct FailingKeyDeriver< let bytes: Int>: KeyDeriver {
 }
 
 /// A key deriver that is able to signal when derivation started.
-public struct SuspendingKeyDeriver< let bytes: Int>: KeyDeriver {
+public struct SuspendingKeyDeriver<let bytes: Int>: KeyDeriver {
     public typealias Handler = @Sendable (Data, Data) throws -> KeyData<bytes>
-    public var uniqueAlgorithmIdentifier: String { "suspending" }
+    public var uniqueAlgorithmIdentifier: String {
+        "suspending"
+    }
+
     public var handler: Handler
 
     private let waiter = DispatchSemaphore(value: 0)

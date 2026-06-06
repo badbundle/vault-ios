@@ -6,11 +6,10 @@ import VaultSettings
 @testable import VaultFeed
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class BackupKeyChangeViewSnapshotTests {
     @Test
-    func layout() async {
+    func layout() {
         let viewModel = BackupKeyChangeViewModel(
             dataModel: anyVaultDataModel(),
             authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
@@ -22,7 +21,7 @@ final class BackupKeyChangeViewSnapshotTests {
     }
 
     @Test
-    func layoutAuthenticated() async {
+    func layoutAuthenticated() {
         let viewModel = BackupKeyChangeViewModel(
             dataModel: anyVaultDataModel(),
             authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),

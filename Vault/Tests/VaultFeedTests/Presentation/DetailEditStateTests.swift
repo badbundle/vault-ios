@@ -76,7 +76,7 @@ struct DetailEditStateTests {
     }
 
     @Test
-    func saveChanges_failureDoesNotChangeEditMode() async throws {
+    func saveChanges_failureDoesNotChangeEditMode() async {
         let sut = makeSUT()
         sut.startEditing()
 
@@ -179,7 +179,7 @@ struct DetailEditStateTests {
     }
 
     @Test
-    func deleteItem_failureDoesNotChangeEditMode() async throws {
+    func deleteItem_failureDoesNotChangeEditMode() async {
         let sut = makeSUT()
         sut.startEditing()
 
@@ -221,7 +221,7 @@ struct DetailEditStateTests {
     }
 
     @Test
-    func exitCurrentModeClearingDirtyState_clearsDirtyStateInEditMode() async {
+    func exitCurrentModeClearingDirtyState_clearsDirtyStateInEditMode() {
         let sut = makeSUT()
         sut.startEditing()
 

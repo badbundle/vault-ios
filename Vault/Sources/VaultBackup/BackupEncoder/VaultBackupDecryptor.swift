@@ -35,11 +35,10 @@ public final class VaultBackupDecryptor {
         } error: {
             Error.decryptionFailed($0)
         }
-        let backupPayload = try withMappedError {
+        return try withMappedError {
             try IntermediateEncodedVaultDecoder().decode(encodedVault: encodedVault)
         } error: {
             Error.decodingFailed($0)
         }
-        return backupPayload
     }
 }

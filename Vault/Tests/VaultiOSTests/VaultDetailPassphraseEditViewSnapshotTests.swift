@@ -7,7 +7,7 @@ import Testing
 @MainActor
 struct VaultDetailPassphraseEditViewSnapshotTests {
     @Test
-    func layout_notEnabled() async {
+    func layout_notEnabled() {
         let sut = VaultDetailPassphraseEditView(
             title: "My title",
             description: "This is my description",
@@ -21,7 +21,7 @@ struct VaultDetailPassphraseEditViewSnapshotTests {
     }
 
     @Test
-    func layout_enabled() async {
+    func layout_enabled() {
         let sut = VaultDetailPassphraseEditView(
             title: "My title",
             description: "This is my description",

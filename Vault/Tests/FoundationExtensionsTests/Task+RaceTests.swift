@@ -67,7 +67,7 @@ enum TaskRaceTests {
         }
 
         @Test(arguments: [TestTask.t1, .t2, .t3])
-        func errorInAnyTaskPropagatesError(erroringTask: TestTask) async throws {
+        func errorInAnyTaskPropagatesError(erroringTask: TestTask) async {
             let pending1 = Pending.signal()
             let pending2 = Pending.signal()
             let pending3 = Pending.signal()

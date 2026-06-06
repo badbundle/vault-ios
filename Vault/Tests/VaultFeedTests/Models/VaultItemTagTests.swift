@@ -3,7 +3,6 @@ import FoundationExtensions
 import Testing
 @testable import VaultFeed
 
-@Suite
 struct VaultItemTagTests {
     @Test
     func equal_checksWholeObject() {

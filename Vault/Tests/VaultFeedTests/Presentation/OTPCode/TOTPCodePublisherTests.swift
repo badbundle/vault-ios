@@ -6,7 +6,6 @@ import Testing
 import VaultCore
 @testable import VaultFeed
 
-@Suite
 @MainActor
 struct TOTPCodePublisherTests {
     @Test

@@ -7,7 +7,6 @@ import VaultCore
 import VaultFeed
 @testable import VaultiOS
 
-@Suite
 @MainActor
 final class GenericVaultItemPreviewViewGeneratorTests {
     @Test
@@ -25,7 +24,7 @@ final class GenericVaultItemPreviewViewGeneratorTests {
     }
 
     @Test
-    func makeVaultPreviewView_makesTOTPViewForTOTP() throws {
+    func makeVaultPreviewView_makesTOTPViewForTOTP() {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -39,7 +38,7 @@ final class GenericVaultItemPreviewViewGeneratorTests {
     }
 
     @Test
-    func makeVaultPreviewView_makesHOTPViewForHOTP() throws {
+    func makeVaultPreviewView_makesHOTPViewForHOTP() {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -53,7 +52,7 @@ final class GenericVaultItemPreviewViewGeneratorTests {
     }
 
     @Test
-    func makeVaultPreviewView_makesSecureNoteView() throws {
+    func makeVaultPreviewView_makesSecureNoteView() {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -67,7 +66,7 @@ final class GenericVaultItemPreviewViewGeneratorTests {
     }
 
     @Test
-    func makeVaultPreviewView_makesEncryptedItemView() throws {
+    func makeVaultPreviewView_makesEncryptedItemView() {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()

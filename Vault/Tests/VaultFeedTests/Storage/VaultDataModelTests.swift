@@ -5,7 +5,6 @@ import Testing
 import VaultKeygen
 @testable import VaultFeed
 
-@Suite
 @MainActor
 final class VaultDataModelTests {
     @Test
@@ -136,7 +135,7 @@ final class VaultDataModelTests {
     }
 
     @Test
-    func loadKillphraseDigester_isNoopWhenAlreadyLoaded() async throws {
+    func loadKillphraseDigester_isNoopWhenAlreadyLoaded() async {
         let keyStore = KillphraseKeyStoreMock()
         keyStore.loadOrCreateHandler = {
             try KeyData<32>(data: Data(repeating: 1, count: 32))
@@ -163,7 +162,7 @@ final class VaultDataModelTests {
     }
 
     @Test
-    func loadSearchPassphraseDigester_isNoopWhenAlreadyLoaded() async throws {
+    func loadSearchPassphraseDigester_isNoopWhenAlreadyLoaded() async {
         let keyStore = SearchPassphraseKeyStoreMock()
         keyStore.loadOrCreateHandler = {
             try KeyData<32>(data: Data(repeating: 2, count: 32))
@@ -347,7 +346,7 @@ final class VaultDataModelTests {
     }
 
     @Test
-    func reloadItems_deletesKillphraseItemsBeforeReturningResults() async throws {
+    func reloadItems_deletesKillphraseItemsBeforeReturningResults() async {
         let store = VaultStoreStub()
         let killphraseDeleter = VaultStoreKillphraseDeleterMock()
         let keyStore = KillphraseKeyStoreMock()
@@ -384,7 +383,7 @@ final class VaultDataModelTests {
     }
 
     @Test
-    func reloadItems_syncsAutofillAndNotifiesWhenKillphraseDeletesItems() async throws {
+    func reloadItems_syncsAutofillAndNotifiesWhenKillphraseDeletesItems() async {
         let store = VaultStoreStub()
         let killphraseDeleter = VaultStoreKillphraseDeleterMock()
         let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
@@ -554,7 +553,7 @@ final class VaultDataModelTests {
     }
 
     @Test
-    func loadBackupPassword_setsFetchedFromStore() async throws {
+    func loadBackupPassword_setsFetchedFromStore() async {
         let store = BackupPasswordStoreMock()
         let password = DerivedEncryptionKey(key: .zero(), salt: Data(), keyDervier: .testing)
         store.fetchPasswordHandler = { password }
@@ -567,7 +566,7 @@ final class VaultDataModelTests {
     }
 
     @Test
-    func loadBackupPassword_setsNotCreatedIfNotInStore() async throws {
+    func loadBackupPassword_setsNotCreatedIfNotInStore() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { nil }
         let sut = makeSUT(backupPasswordStore: store)
@@ -579,7 +578,7 @@ final class VaultDataModelTests {
     }
 
     @Test
-    func loadBackupPassword_setsErrorIfStoreError() async throws {
+    func loadBackupPassword_setsErrorIfStoreError() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { throw TestError() }
         let sut = makeSUT(backupPasswordStore: store)
@@ -630,7 +629,7 @@ final class VaultDataModelTests {
     }
 
     @Test
-    func backupPassword_notFetched() async {
+    func backupPassword_notFetched() {
         let store = BackupPasswordStoreMock()
         let sut = makeSUT(backupPasswordStore: store)
 
