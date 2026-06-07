@@ -78,9 +78,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-ci-ios-xcode-${{ env.XCODE_VERSION }}-
 
-      - name: Test CI_iOS
+      - name: Build CI_iOS
         run: |
-          xcodebuild test \
+          xcodebuild build-for-testing \
             -workspace Vault.xcworkspace \
             -scheme CI_iOS \
             -testPlan iOSAllTests \
