@@ -5,9 +5,11 @@ import VaultSettings
 
 struct VaultAboutView: View {
     @State private var viewModel: SettingsViewModel
+    private let appVersionText: String
 
-    init(viewModel: SettingsViewModel) {
+    init(viewModel: SettingsViewModel, appVersionText: String = Bundle.main.vaultAboutVersionText) {
         self.viewModel = viewModel
+        self.appVersionText = appVersionText
     }
 
     var body: some View {
@@ -100,14 +102,35 @@ struct VaultAboutView: View {
                 Image("bad-bundle-logo", bundle: VaultFeedAssets.bundle)
                     .resizable(resizingMode: .stretch)
                     .scaledToFit()
-                    .frame(height: 30)
+                    .frame(height: 21.6)
                 Text("free and open since 2024 ✌️")
-                    .font(.caption2.bold())
+                    .font(.caption2)
+                Text(appVersionText)
+                    .font(.caption2)
+                    .padding(.top, 12)
             }
             .padding(.top, 24)
             .containerRelativeFrame(.horizontal)
             .foregroundStyle(.secondary)
             .noListBackground()
+        }
+    }
+}
+
+extension Bundle {
+    fileprivate var vaultAboutVersionText: String {
+        let marketingVersion = object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let buildNumber = object(forInfoDictionaryKey: "CFBundleVersion") as? String
+
+        switch (marketingVersion, buildNumber) {
+        case let (.some(marketingVersion), .some(buildNumber)):
+            return "Version \(marketingVersion) (Build \(buildNumber))"
+        case let (.some(marketingVersion), .none):
+            return "Version \(marketingVersion)"
+        case let (.none, .some(buildNumber)):
+            return "Build \(buildNumber)"
+        case (.none, .none):
+            return "Version unavailable"
         }
     }
 }
