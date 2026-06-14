@@ -161,7 +161,8 @@ jobs:
           xcodebuild test-without-building \
             -xctestrun "$XCTESTRUN" \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' \
-            -only-testing:${{ matrix.only_testing }}
+            -only-testing:${{ matrix.only_testing }} \
+            -parallel-testing-enabled NO
 
   ci-ios:
     name: CI_iOS
