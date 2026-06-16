@@ -58,8 +58,8 @@ jobs:
       - name: Check Linting & Formatting
         run: make lint
 
-  ci-ios:
-    name: CI_iOS
+  ci-ios-build:
+    name: CI_iOS Build
     timeout-minutes: 20
     runs-on: macos-26
 
@@ -85,5 +85,97 @@ jobs:
             -scheme CI_iOS \
             -testPlan iOSAllTests \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' \
+            -derivedDataPath "$RUNNER_TEMP/ci-ios-derived-data" \
             -skipMacroValidation \
             -skipPackagePluginValidation
+
+      - name: Package CI_iOS Test Products
+        run: tar -czf "$RUNNER_TEMP/ci-ios-test-products.tgz" -C "$RUNNER_TEMP/ci-ios-derived-data/Build" Products
+
+      - name: Upload CI_iOS Test Products
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-ios-test-products
+          path: ${{ runner.temp }}/ci-ios-test-products.tgz
+          if-no-files-found: error
+          retention-days: 1
+
+  ci-ios-tests:
+    name: CI_iOS Tests (${{ matrix.suite }})
+    timeout-minutes: 20
+    runs-on: macos-26
+    needs: ci-ios-build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - suite: VaultiOSTests
+            only_testing: VaultiOSTests
+          - suite: VaultSettingsTests
+            only_testing: VaultSettingsTests
+          - suite: FoundationExtensionsTests
+            only_testing: FoundationExtensionsTests
+          - suite: ImageToolsTests
+            only_testing: ImageToolsTests
+          - suite: VaultiOSAutofillTests
+            only_testing: VaultiOSAutofillTests
+          - suite: VaultiOSWidgetsTests
+            only_testing: VaultiOSWidgetsTests
+          - suite: VaultFeedTests
+            only_testing: VaultFeedTests
+          - suite: VaultKeygenTests
+            only_testing: VaultKeygenTests
+          - suite: VaultCoreTests
+            only_testing: VaultCoreTests
+          - suite: VaultKeygenSpeedtestCompileTests
+            only_testing: VaultKeygenSpeedtestCompileTests
+          - suite: VaultExportTests
+            only_testing: VaultExportTests
+          - suite: VaultBackupTests
+            only_testing: VaultBackupTests
+          - suite: CryptoEngineTests
+            only_testing: CryptoEngineTests
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+
+      - name: Download CI_iOS Test Products
+        uses: actions/download-artifact@v4
+        with:
+          name: ci-ios-test-products
+          path: ${{ runner.temp }}
+
+      - name: Run CI_iOS Tests
+        run: |
+          mkdir -p "$RUNNER_TEMP/ci-ios-derived-data/Build"
+          tar -xzf "$RUNNER_TEMP/ci-ios-test-products.tgz" -C "$RUNNER_TEMP/ci-ios-derived-data/Build"
+
+          XCTESTRUN="$(find "$RUNNER_TEMP/ci-ios-derived-data/Build/Products" -maxdepth 1 -name '*.xctestrun' -print -quit)"
+
+          if [[ -z "$XCTESTRUN" ]]; then
+            echo "No .xctestrun file found in downloaded CI_iOS test products."
+            exit 1
+          fi
+
+          xcodebuild test-without-building \
+            -xctestrun "$XCTESTRUN" \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5' \
+            -only-testing:${{ matrix.only_testing }} \
+            -parallel-testing-enabled NO
+
+  ci-ios:
+    name: CI_iOS
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [ci-ios-build, ci-ios-tests]
+    if: always()
+
+    steps:
+      - name: Check CI_iOS Shards
+        run: |
+          if [[ "${{ needs.ci-ios-build.result }}" != "success" || "${{ needs.ci-ios-tests.result }}" != "success" ]]; then
+            echo "CI_iOS build result: ${{ needs.ci-ios-build.result }}"
+            echo "CI_iOS tests result: ${{ needs.ci-ios-tests.result }}"
+            exit 1
+          fi

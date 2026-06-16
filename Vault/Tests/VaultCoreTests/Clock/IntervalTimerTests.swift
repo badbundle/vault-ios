@@ -74,8 +74,7 @@ enum IntervalTimerTests {
                     }
                 }
 
-                // Give tasks time to start and register their waits
-                await Task.yield()
+                try await waitForRegisteredWaits(count: 3)
 
                 try await sut.finishTimer(at: 0)
                 try await sut.finishTimer(at: 1)
@@ -116,6 +115,15 @@ enum IntervalTimerTests {
             await #expect(throws: TimeoutError.self, performing: {
                 try await sut.finishTimer(at: 0)
             })
+        }
+
+        private func waitForRegisteredWaits(count: Int) async throws {
+            try await Task.withTimeout(delay: .seconds(1), priority: .high) {
+                while sut.waitArgValues.count < count {
+                    try Task.checkCancellation()
+                    await Task.yield()
+                }
+            }
         }
     }
 
