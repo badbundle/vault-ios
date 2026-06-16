@@ -53,7 +53,7 @@ let package = Package(
         .package(url: "https://github.com/sunghyun-k/swiftui-toasts.git", exact: "0.2.0"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.6.2"),
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.2"),
-        .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.5.0"),
+        .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.5.1"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", exact: "2.4.1"),
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: swiftLintVersion),
         .package(url: "https://github.com/swiftlang/swift-syntax", from: "600.0.0"),
