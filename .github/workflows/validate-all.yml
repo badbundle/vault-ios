@@ -17,7 +17,7 @@ jobs:
     runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.3
 
       # The repo Actions allowlist permits GitHub-owned actions only, so this
       # uses the Ruby version already installed on the macOS runner.
@@ -42,11 +42,11 @@ jobs:
         working-directory: ./Vault
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.3
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
 
       - name: Cache SPM Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5.0.5
         with:
           path: |
             ~/Library/Caches/org.swift.swiftpm/repositories
@@ -64,14 +64,14 @@ jobs:
     runs-on: macos-26
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.3
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
 
       - name: Log Xcode Version
         run: xcodebuild -version
 
       - name: Cache SPM Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v5.0.5
         with:
           path: ~/Library/Caches/org.swift.swiftpm/repositories
           key: ${{ runner.os }}-spm-ci-ios-xcode-${{ env.XCODE_VERSION }}-${{ hashFiles('Vault/Package.resolved') }}
@@ -93,7 +93,7 @@ jobs:
         run: tar -czf "$RUNNER_TEMP/ci-ios-test-products.tgz" -C "$RUNNER_TEMP/ci-ios-derived-data/Build" Products
 
       - name: Upload CI_iOS Test Products
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: ci-ios-test-products
           path: ${{ runner.temp }}/ci-ios-test-products.tgz
@@ -137,11 +137,11 @@ jobs:
             only_testing: CryptoEngineTests
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.3
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
 
       - name: Download CI_iOS Test Products
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           name: ci-ios-test-products
           path: ${{ runner.temp }}
