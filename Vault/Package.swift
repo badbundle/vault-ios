@@ -47,7 +47,7 @@ let package = Package(
         .plugin(name: "FormatLint", targets: ["FormatLint"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.18.7"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.19.2"),
         .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.7.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.10.0"),
         .package(url: "https://github.com/sunghyun-k/swiftui-toasts.git", exact: "0.2.0"),
