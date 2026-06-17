@@ -86,18 +86,6 @@ public func withLeakTracking<R>(
     return result
 }
 
-/// Wraps the function body in ``withLeakTracking(_:)``. Apply alongside `@Test`:
-/// ```swift
-/// @Test @LeakTracked
-/// func myTest() throws {
-///     let sut = makeSUT()
-///     #expect(sut.foo)
-/// }
-/// ```
-/// The function must be `throws` (or `async throws`).
-@attached(body)
-public macro LeakTracked() = #externalMacro(module: "TestHelpersMacros", type: "LeakTrackedMacro")
-
 /// Registers `instance` with the currently active ``LeakTracker``. When the enclosing
 /// ``withLeakTracking(_:)`` scope ends, an Issue is recorded if `instance` has not been
 /// deallocated.

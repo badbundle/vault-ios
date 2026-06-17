@@ -114,7 +114,6 @@ let package = Package(
             name: "TestHelpers",
             dependencies: [
                 "FoundationExtensions",
-                "TestHelpersMacros",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             swiftSettings: swiftSettings,
@@ -232,7 +231,7 @@ let package = Package(
         ),
         .testTarget(
             name: "VaultFeedTests",
-            dependencies: ["VaultFeed", "VaultCore", "FoundationExtensions", "TestHelpers"],
+            dependencies: ["VaultFeed", "VaultCore", "FoundationExtensions", "TestHelpers", "TestHelpersMacros"],
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins,
         ),
@@ -243,7 +242,7 @@ let package = Package(
         ),
         .testTarget(
             name: "FoundationExtensionsTests",
-            dependencies: ["FoundationExtensions", "TestHelpers"],
+            dependencies: ["FoundationExtensions", "TestHelpers", "TestHelpersMacros"],
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins,
         ),
