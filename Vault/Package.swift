@@ -50,7 +50,7 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.19.2"),
         .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.7.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.10.0"),
-        .package(url: "https://github.com/sunghyun-k/swiftui-toasts.git", exact: "0.2.0"),
+        .package(url: "https://github.com/sunghyun-k/swiftui-toasts.git", exact: "1.1.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.6.2"),
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.2"),
         .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.5.1"),
