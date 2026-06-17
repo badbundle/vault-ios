@@ -1,12 +1,15 @@
-import SwiftCompilerPlugin
 import SwiftDiagnostics
 import SwiftSyntax
 import SwiftSyntaxMacros
+
+#if canImport(SwiftCompilerPlugin)
+import SwiftCompilerPlugin
 
 @main
 struct TestHelpersMacrosPlugin: CompilerPlugin {
     let providingMacros: [any Macro.Type] = [LeakTrackedMacro.self]
 }
+#endif
 
 /// Body macro that wraps the function body in a `withLeakTracking { ... }` scope. Apply alongside
 /// `@Test` so that any object registered via `trackForMemoryLeaks(_:)` inside the body is verified
